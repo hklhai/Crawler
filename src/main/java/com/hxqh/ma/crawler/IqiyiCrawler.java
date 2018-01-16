@@ -127,20 +127,12 @@ public class IqiyiCrawler {
         return null;
     }
 
-
-    public static void main(String[] arg) throws IOException, InterruptedException {
-
-        // 1.获取待爬取链接
-        final List<String> hrefList = getFetchLinks();
-        //        List<String> hrefList = Arrays.asList("http://www.iqiyi.com/v_19rrdwvld8.html#vfrm=19-9-0-1");
-        parseAndPersist(hrefList);
-
-    }
-
     private static void parseAndPersist(List<String> hrefList) throws InterruptedException {
         for (int i = 0; i < hrefList.size(); i++) {
-            WebElement webElement = fetchHTMLContent(hrefList.get(i));
-            String html = webElement.getAttribute("outerHTML");
+            //            WebElement webElement = fetchHTMLContent(hrefList.get(i));
+            //            String html = webElement.getAttribute("outerHTML");
+            String html = fetchHTMLContent(hrefList.get(i));
+
             Document doc = Jsoup.parse(html);
 
             String source = "爱奇艺";
@@ -159,6 +151,10 @@ public class IqiyiCrawler {
                 commentnum = commentnum.substring(0, commentnum.length() - 4);
                 commentnum = String.valueOf(Double.valueOf(commentnum) * 10000);
             }
+            if (commentnum.endsWith("人评分")) {
+                commentnum = commentnum.substring(0, commentnum.length() - 4);
+                commentnum = String.valueOf(Double.valueOf(commentnum));
+            }
 
             String up = doc.getElementById("widget-voteupcount").text();
             if (up.endsWith("万")) {
@@ -167,11 +163,17 @@ public class IqiyiCrawler {
             }
 
             String addtime = DateUtils.getTodayDate();
-            String playNum = doc.getElementsByClass("statistical").select("span").text();
+            String playNum = doc.getElementById("chartTrigger").select("span").text();
 
             if (playNum.endsWith("万")) {
                 playNum = playNum.substring(0, playNum.length() - 1);
-                playNum = String.valueOf(Double.valueOf(playNum) * 10000);
+                Double v = Double.valueOf(playNum) * 10000;
+                playNum = String.valueOf(v.longValue());
+            }
+            if (playNum.endsWith("亿")) {
+                playNum = playNum.substring(0, playNum.length() - 1);
+                Double v = Double.valueOf(playNum) * 100000000;
+                playNum = String.valueOf(v.longValue());
             }
             StringBuilder stringBuilder = new StringBuilder(150);
             stringBuilder.append(source.trim()).append("^").
@@ -191,7 +193,7 @@ public class IqiyiCrawler {
              */
             String fileName = SAVE_PATH + "\\" + DateUtils.getTodayDate();
             FileUtils.writeStrToFile(stringBuilder.toString(), fileName);
-            System.out.println("Success");
+            System.out.println(filmname.trim() + "Persist Success!");
         }
     }
 
@@ -219,15 +221,24 @@ public class IqiyiCrawler {
         return list;
     }
 
-    private static WebElement fetchHTMLContent(String url) throws InterruptedException {
+    private static String fetchHTMLContent(String url) throws InterruptedException {
         System.getProperties().setProperty("webdriver.chrome.driver", CHROMEDRIVER);
         WebDriver webDriver = new ChromeDriver();
         webDriver.get(url);
-        Thread.sleep(8000);
-
+        Thread.sleep(10000);
         WebElement webElement = webDriver.findElement(By.xpath("/html"));
+        String html = webElement.getAttribute("outerHTML");
+        webDriver.quit();
+        return html;
+    }
 
-        return webElement;
+
+    public static void main(String[] arg) throws IOException, InterruptedException {
+        // 1.获取待爬取链接
+        final List<String> hrefList = getFetchLinks();
+//        List<String> hrefList = Arrays.asList("http://www.iqiyi.com/v_19rr7qhp7c.html#vfrm=19-9-0-1");
+        parseAndPersist(hrefList);
+
     }
 
 }

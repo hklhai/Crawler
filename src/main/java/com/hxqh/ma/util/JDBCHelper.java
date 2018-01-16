@@ -9,8 +9,7 @@ import java.util.HashMap;
  * Created by Ocean lin on 2018/1/11.
  */
 public class JDBCHelper {
-    public static HashMap<String, JdbcTemplate> templateMap
-            = new HashMap<String, JdbcTemplate>();
+    public static HashMap<String, JdbcTemplate> templateMap = new HashMap<>();
 
     public static JdbcTemplate createMysqlTemplate(String templateName,
                                                    String url, String username, String password,
