@@ -1,5 +1,6 @@
 package com.hxqh.ma.crawler;
 
+import com.hxqh.ma.common.Constants;
 import com.hxqh.ma.util.DateUtils;
 import com.hxqh.ma.util.FileUtils;
 import org.jsoup.Jsoup;
@@ -31,14 +32,6 @@ public class IqiyiCrawler {
     private static final String A_FILM_LABEL = "href=['\"]([^'\"]*)['\"]";
 
     private static final String START_PAGE = "http://www.iqiyi.com/dianying/";
-
-
-    private static final String CHROMEDRIVER = "E://Program//chromedriver.exe";
-    //private static final String CHROMEDRIVER = "/home/hadoop/app/chromedriver";
-
-    private static final String SAVE_PATH = "E://";
-    //private static final String SAVE_PATH = "/home/hadoop/crawler";
-
 
     /**
      * 要分析的网页
@@ -191,7 +184,7 @@ public class IqiyiCrawler {
             /**
              * 3.解析并持久化至本地文件系统
              */
-            String fileName = SAVE_PATH + "\\" + DateUtils.getTodayDate();
+            String fileName = Constants.SAVE_PATH + "\\" + DateUtils.getTodayDate();
             FileUtils.writeStrToFile(stringBuilder.toString(), fileName);
             System.out.println(filmname.trim() + "Persist Success!");
         }
@@ -222,7 +215,7 @@ public class IqiyiCrawler {
     }
 
     private static String fetchHTMLContent(String url) throws InterruptedException {
-        System.getProperties().setProperty("webdriver.chrome.driver", CHROMEDRIVER);
+        System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
         WebDriver webDriver = new ChromeDriver();
         webDriver.get(url);
         Thread.sleep(10000);
