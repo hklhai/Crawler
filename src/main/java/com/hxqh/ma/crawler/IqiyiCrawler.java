@@ -18,10 +18,13 @@ import java.util.regex.Pattern;
  */
 public class IqiyiCrawler {
 
-    private static final String A_FILM_LABEL = "href=['\"]([^'\"]*)['\"]";
+    private static final String A_FILM_LABEL = "<a .*href=.* target=\"_blank\">";
 
     private static final String START_PAGE = "http://www.iqiyi.com/dianying/";
+    private static final Integer PAGE_NUM = 30;
 
+
+    private static final String A_ATTR_1 = "class=\"site-piclist_pic_link\" target=\"_blank\"";
 
     private static void parseAndPersist(List<String> hrefList) throws InterruptedException {
         StringBuilder stringBuilder = new StringBuilder(150);
@@ -106,23 +109,33 @@ public class IqiyiCrawler {
     private static List<String> getFetchLinks() throws IOException {
         List<String> list = new ArrayList<>();
 
+        String prefix = "http://list.iqiyi.com/www/1/----------0---11-1-";
+        String suffix = "-iqiyi--.html";
 
-        CrawlerUtils a = new CrawlerUtils(START_PAGE);
-        ArrayList<String> hrefList = a.getHrefList();
+        List<String> urlList = new ArrayList<>();
 
-        for (int i = 0; i < hrefList.size(); i++) {
-            if (hrefList.get(i).contains("_blank\" rseat") && !(hrefList.get(i).contains("class=\"classes_linkMore\""))) {
-                Matcher matcher = Pattern.compile(A_FILM_LABEL).matcher(hrefList.get(i));
-                while (matcher.find()) {
-                    System.out.println(matcher.group(1));
-                    list.add(matcher.group(1));
-                }
-            }
+        for (int i = 1; i <= PAGE_NUM; i++) {
+            String url = prefix + i + suffix;
+            urlList.add(url);
         }
-//        for (String s : hrefList) {
-//            System.out.println(s);
-//        }
 
+//        for (String s : urlList) {
+        CrawlerUtils a = new CrawlerUtils("http://list.iqiyi.com/www/1/----------0---11-1-27-iqiyi--.html");
+        ArrayList<String> hrefList = a.getHrefList();
+        // http://www.iqiyi.com/v_19rrhokw94.html#vfrm=2-4-0-1
+        for (int i = 0; i < hrefList.size(); i++) {
+            //if (hrefList.get(i).contains(A_ATTR_1) && !(hrefList.get(i).contains("class=\"classes_linkMore\""))) {
+            Matcher matcher = Pattern.compile(A_FILM_LABEL).matcher(hrefList.get(i));
+            while (matcher.find()) {
+                System.out.println(matcher.group(1));
+                list.add(matcher.group(1));
+            }
+            //}
+        }
+        for (String string : hrefList) {
+            System.out.println(string);
+        }
+//        }
         return list;
     }
 
