@@ -96,7 +96,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass></mainClass>
+                            <mainClass>com.hxqh.ma.crawler.IqiyiCrawler</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
