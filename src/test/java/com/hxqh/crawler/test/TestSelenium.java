@@ -1,4 +1,4 @@
-package com.hxqh.ma.crawler;
+package com.hxqh.crawler.test;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -18,13 +18,13 @@ public class TestSelenium {
 
     ArrayList<String> hrefList = new ArrayList();
 
+    private static final String url = "http://list.iqiyi.com/www/1/----------0---11-1-30-iqiyi--.html";
+
 
     @Ignore("need chrome driver")
     @Test
     public void test() throws InterruptedException {
 
-        String url = "http://www.iqiyi.com/v_19rrdwvld8.html#vfrm=19-9-0-1";
-//        String url = "http://list.iqiyi.com/www/1/-------------11-1-1-iqiyi--.html";
         System.getProperties().setProperty("webdriver.chrome.driver", "E://Program//chromedriver.exe");
         WebDriver webDriver = new ChromeDriver();
         webDriver.get(url);
@@ -33,18 +33,18 @@ public class TestSelenium {
         WebElement webElement = webDriver.findElement(By.xpath("/html"));
         String outerHTML = webElement.getAttribute("outerHTML");
         String[] split = outerHTML.split("\n");
-        System.out.println(outerHTML);
-//        for (int i = 0; i < split.length; i++) {
-//            String href = getHref(split[i]);
-//            if (href != null)
-//                hrefList.add(href);
-//        }
-//
-//        for (int i = 0; i < hrefList.size(); i++) {
-//            if (hrefList.get(i).contains("vfrm=2-4-0-1")) {
-//                System.out.println(hrefList.get(i));
-//            }
-//        }
+//        System.out.println(outerHTML);
+        for (int i = 0; i < split.length; i++) {
+            String href = getHref(split[i]);
+            if (href != null)
+                hrefList.add(href);
+        }
+
+        for (int i = 0; i < hrefList.size(); i++) {
+            if (hrefList.get(i).contains("vfrm=2-4-0-1")) {
+                System.out.println(hrefList.get(i));
+            }
+        }
 
         webDriver.close();
 

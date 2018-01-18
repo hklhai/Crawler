@@ -1,4 +1,4 @@
-package com.hxqh.ma.util;
+package com.hxqh.crawler.util;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;

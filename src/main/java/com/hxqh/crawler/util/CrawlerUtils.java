@@ -1,6 +1,6 @@
-package com.hxqh.ma.util;
+package com.hxqh.crawler.util;
 
-import com.hxqh.ma.common.Constants;
+import com.hxqh.crawler.common.Constants;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
