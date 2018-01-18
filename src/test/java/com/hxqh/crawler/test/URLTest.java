@@ -23,8 +23,9 @@ import java.util.regex.Pattern;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class URLTest {
+    private static final Integer PAGE_START_NUM = 11;
 
-    private static final Integer PAGE_NUM = 10;
+    private static final Integer PAGE_END_NUM = 30;
     private static final String URL = "<a data-searchpingback-elem=\"link\" data-searchpingback-param=\"target=3964b0adbecf7fe307271420f47339a6&amp;ptype=1&amp;site=iqiyi&amp;pos=1\" rseat=\"bigTitle\" title=\"前任2：备胎反击战\" href=\"http://www.iqiyi.com/v_19rrkih1u4.html#vfrm=2-4-0-1\" target=\"_blank\">前任2：备胎反击战</a>\n";
 
     @Autowired
@@ -48,10 +49,10 @@ public class URLTest {
         ArrayList<String> hrefList = new ArrayList();
 
         // 1.获取全部页面Url
-        String prefix = "http://list.iqiyi.com/www/1/----------0---11-1-";
-        String suffix = "-iqiyi--.html";
+        String prefix = "http://list.iqiyi.com/www/1/----------0---11-";
+        String suffix = "-1-iqiyi--.html";
 
-        for (int i = 1; i <= PAGE_NUM; i++) {
+        for (int i = PAGE_START_NUM; i <= PAGE_END_NUM; i++) {
             String url = prefix + i + suffix;
             allStartURLList.add(url);
         }
