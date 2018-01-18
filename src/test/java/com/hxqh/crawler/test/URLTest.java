@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 /**
  * Created by Ocean lin on 2018/1/17.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
 public class URLTest {
     private static final Integer PAGE_START_NUM = 11;
 
@@ -40,7 +40,7 @@ public class URLTest {
      * <p>
      * http://list.iqiyi.com/www/1/----------0---11-30-1-iqiyi--.html
      */
-    @Test
+//    @Test
     public void testAppAndPersist() {
         // 所有待爬取URLList
         List<String> allStartURLList = new ArrayList<>();
