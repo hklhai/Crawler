@@ -61,7 +61,10 @@ public class CrawlerUtils {
         webDriver.get(url);
         Thread.sleep(10000);
         WebElement webElement = webDriver.findElement(By.xpath("/html"));
-        String html = webElement.getAttribute("outerHTML");
+        String html = new String();
+        if (webElement != null) {
+            webElement.getAttribute("outerHTML");
+        }
         webDriver.quit();
         return html;
     }

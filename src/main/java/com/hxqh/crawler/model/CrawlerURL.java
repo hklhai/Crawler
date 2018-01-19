@@ -8,14 +8,17 @@ import javax.persistence.Table;
  * Created by Ocean lin on 2018/1/18.
  */
 @Entity
-@Table(name="crawler_url")
+@Table(name = "crawler_url")
 public class CrawlerURL {
 
 
-    String title;
+    private String title;
     @Id
-    String url;
-    String addTime;
+    private String url;
+    private String addTime;
+    private String category;
+    private String platform;
+
 
     public CrawlerURL() {
     }
@@ -24,6 +27,31 @@ public class CrawlerURL {
         this.title = title;
         this.url = url;
         this.addTime = addTime;
+    }
+
+    public CrawlerURL(String title, String url, String addTime, String category, String platform) {
+        this.title = title;
+        this.url = url;
+        this.addTime = addTime;
+        this.category = category;
+        this.platform = platform;
+    }
+
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 
     public String getTitle() {
