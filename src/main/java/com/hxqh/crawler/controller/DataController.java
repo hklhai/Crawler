@@ -103,14 +103,18 @@ public class DataController {
         UpdateRequest update = new UpdateRequest("book", "novel", id);
         try {
             XContentBuilder builder = XContentFactory.jsonBuilder().startObject();
-            if (null != title)
+            if (null != title) {
                 builder.field("title", title);
-            if (null != author)
+            }
+            if (null != author) {
                 builder.field("author", author);
-            if (null != title)
+            }
+            if (null != title) {
                 builder.field("word_count", wordcount);
-            if (null != title)
+            }
+            if (null != title) {
                 builder.field("publish_date", publishdate);
+            }
             builder.endObject();
 
             update.doc(builder);
