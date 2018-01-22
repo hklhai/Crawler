@@ -1,6 +1,8 @@
 package com.hxqh.crawler.controller;
 
 import com.hxqh.crawler.common.Constants;
+import com.hxqh.crawler.model.CrawlerProblem;
+import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.FileUtils;
@@ -22,28 +24,31 @@ public class PersistFilm implements Runnable {
 
 
     private List<String> l;
+    private CrawlerProblemRepository crawlerProblemRepository;
 
-    public PersistFilm(List<String> l) {
+    public PersistFilm(List<String> l, CrawlerProblemRepository crawlerProblemRepository) {
         this.l = l;
+        this.crawlerProblemRepository = crawlerProblemRepository;
     }
 
     @Override
     public void run() {
         try {
-            parseAndPersist(l);
+            parseAndPersist(l, crawlerProblemRepository);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    private static void parseAndPersist(List<String> hrefList) throws InterruptedException {
+    private static void parseAndPersist(List<String> hrefList, CrawlerProblemRepository crawlerProblemRepository) throws InterruptedException {
         StringBuilder stringBuilder = new StringBuilder(SB_SIZE);
 
 
         for (int i = 0; i < hrefList.size(); i++) {
             //            WebElement webElement = fetchHTMLContent(hrefList.get(i));
             //            String html = webElement.getAttribute("outerHTML");
-            String html = CrawlerUtils.fetchHTMLContent(hrefList.get(i));
+            String url = hrefList.get(i);
+            String html = CrawlerUtils.fetchHTMLContent(url);
             Document doc = Jsoup.parse(html);
             String source = "爱奇艺";
 
@@ -119,19 +124,21 @@ public class PersistFilm implements Runnable {
                         append(up.trim()).append("^").
                         append(addtime.trim()).append("^").
                         append(playNum.trim()).append("\n");
-
+                /**
+                 * 3.解析并持久化至本地文件系统
+                 */
+                String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT + DateUtils.getTodayDate();
+                FileUtils.writeStrToFile(stringBuilder.toString(), fileName);
+                stringBuilder.setLength(0);
+                System.out.println(filmname.trim() + " Persist Success!");
             } catch (Exception e) {
                 e.printStackTrace();
                 // 持久化无法爬取URL
-
+                CrawlerProblem crawlerProblem = new CrawlerProblem(url, null, DateUtils.getTodayDate(), 0);
+                crawlerProblemRepository.save(crawlerProblem);
 
             }
-            /**
-             * 3.解析并持久化至本地文件系统
-             */
-            String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT + DateUtils.getTodayDate();
-            FileUtils.writeStrToFile(stringBuilder.toString(), fileName);
-            System.out.println(filmname.trim() + " Persist Success!");
+
         }
     }
 

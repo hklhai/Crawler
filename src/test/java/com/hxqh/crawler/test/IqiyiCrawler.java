@@ -44,9 +44,9 @@ public class IqiyiCrawler {
 
         ExecutorService service = Executors.newFixedThreadPool(4);
 
-        for (List<String> l : lists) {
-            service.execute(new PersistFilm(l));
-        }
+//        for (List<String> l : lists) {
+//            service.execute(new PersistFilm(l));
+//        }
         service.shutdown();
 
         while (!service.isTerminated()) {

@@ -24,6 +24,9 @@ import java.util.concurrent.Executors;
 @RequestMapping("/system")
 public class SystemController {
 
+    private static final Integer THREAD_NUM = 4;
+    private static final Integer PARTITION_NUM = 12;
+
 
     @Autowired
     private SystemService systemService;
@@ -44,7 +47,7 @@ public class SystemController {
 
     /**
      * 数据接口
-     * http://127.0.0.1:8080/system/userData?name=xdm
+     * http://127.0.0.1:8090/system/userData?name=xdm
      *
      * @param name 用户名
      * @return
@@ -65,14 +68,14 @@ public class SystemController {
             hrefList.add(crawlerURL.getUrl());
         }
 
-        List<List<String>> lists = ListUtils.partition(hrefList, 222);
+        List<List<String>> lists = ListUtils.partition(hrefList, PARTITION_NUM);
 
 //        List<String> subList = hrefList.subList(0, 10);
 //        List<List<String>> lists = ListUtils.partition(subList, 3);
-        ExecutorService service = Executors.newFixedThreadPool(4);
+        ExecutorService service = Executors.newFixedThreadPool(THREAD_NUM);
 
         for (List<String> l : lists) {
-            service.execute(new PersistFilm(l));
+            service.execute(new PersistFilm(l, crawlerProblemRepository));
         }
         service.shutdown();
 

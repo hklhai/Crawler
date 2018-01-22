@@ -15,14 +15,24 @@ public class CrawlerProblem {
     private String url;
     private String label;
     private String addtime;
+    private Integer success;
 
     public CrawlerProblem() {
     }
 
-    public CrawlerProblem(String url, String label, String addtime) {
+    public CrawlerProblem(String url, String label, String addtime, Integer success) {
         this.url = url;
         this.label = label;
         this.addtime = addtime;
+        this.success = success;
+    }
+
+    public Integer getSuccess() {
+        return success;
+    }
+
+    public void setSuccess(Integer success) {
+        this.success = success;
     }
 
     public String getUrl() {
