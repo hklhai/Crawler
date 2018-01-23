@@ -1,21 +1,14 @@
 package com.hxqh.crawler.controller;
 
-import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.User;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
-import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by Ocean lin on 2017/7/1.
@@ -23,9 +16,6 @@ import java.util.concurrent.Executors;
 @Controller
 @RequestMapping("/system")
 public class SystemController {
-
-    private static final Integer THREAD_NUM = 4;
-    private static final Integer PARTITION_NUM = 12;
 
 
     @Autowired
@@ -37,6 +27,7 @@ public class SystemController {
 
     /**
      * 页面跳转接口
+     * http://127.0.0.1:8090/system/user
      *
      * @return
      */
@@ -58,32 +49,28 @@ public class SystemController {
         return systemService.findUserById(name);
     }
 
-    @RequestMapping("/iqiyi")
-    public String iqiyiFilm() {
-        // 1. 从数据库获取待爬取链接
-        List<String> hrefList = new ArrayList<>();
+//    /**
+//     * 爬取数据并上传至HDFS
+//     * http://127.0.0.1:8090/system/iqiyi
+//     *
+//     * @return
+//     */
+//    @RequestMapping("/iqiyi")
+//    public String iqiyiFilm() {
+//        iqiyiCrawler();
+//
+//        // 上传至HSDF
+//        try {
+//            persistToHDFS();
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return "crawler/notice";
+//    }
 
-        List<CrawlerURL> crawlerURLS = crawlerURLRepository.findAll();
-        for (CrawlerURL crawlerURL : crawlerURLS) {
-            hrefList.add(crawlerURL.getUrl());
-        }
-
-        List<List<String>> lists = ListUtils.partition(hrefList, PARTITION_NUM);
-
-//        List<String> subList = hrefList.subList(0, 10);
-//        List<List<String>> lists = ListUtils.partition(subList, 3);
-        ExecutorService service = Executors.newFixedThreadPool(THREAD_NUM);
-
-        for (List<String> l : lists) {
-            service.execute(new PersistFilm(l, crawlerProblemRepository));
-        }
-        service.shutdown();
-
-        while (!service.isTerminated()) {
-        }
-
-        return "crawler/notice";
-    }
 
 
 }

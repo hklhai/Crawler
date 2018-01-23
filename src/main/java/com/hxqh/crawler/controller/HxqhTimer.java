@@ -1,9 +1,26 @@
 package com.hxqh.crawler.controller;
 
+import com.hxqh.crawler.common.Constants;
+import com.hxqh.crawler.model.CrawlerURL;
+import com.hxqh.crawler.repository.CrawlerProblemRepository;
+import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
+import com.hxqh.crawler.util.DateUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Ocean lin on 2017/7/9.
@@ -13,17 +30,63 @@ public class HxqhTimer {
 
     @Autowired
     private SystemService systemService;
+    @Autowired
+    private CrawlerURLRepository crawlerURLRepository;
+    @Autowired
+    private CrawlerProblemRepository crawlerProblemRepository;
 
-
-    //每天早八点到晚八点，间隔5分钟执行任务
-    @Scheduled(cron = "0 */5 * * * * ")
+    //每天0点10分触发
+    @Scheduled(cron = "0 10 0 * * ?")
     public void iqiyi() {
-        try {
+        // 爬取数据持久化至本地
+        iqiyiCrawler();
 
-        } catch (Exception e) {
-            //TODO 日志功能
+        // 上传至HSDF
+        try {
+            persistToHDFS();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void iqiyiCrawler() {
+        // 1. 从数据库获取待爬取链接
+        List<String> hrefList = new ArrayList<>();
+
+        List<CrawlerURL> crawlerURLS = crawlerURLRepository.findAll();
+        for (CrawlerURL crawlerURL : crawlerURLS) {
+            hrefList.add(crawlerURL.getUrl());
+        }
+
+        List<List<String>> lists = ListUtils.partition(hrefList, Constants.PARTITION_NUM);
+
+        ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM);
+
+        for (List<String> l : lists) {
+            service.execute(new PersistFilm(l, crawlerProblemRepository));
+        }
+        service.shutdown();
+
+        while (!service.isTerminated()) {
+        }
+    }
+
+    public void persistToHDFS() throws URISyntaxException, IOException {
+        Configuration conf = new Configuration();
+        URI uri = new URI(Constants.HDFS_URL);
+        FileSystem fs = FileSystem.get(uri, conf);
+        String path = Constants.SAVE_PATH + DateUtils.getTodayDate();
+        Path resP = new Path(path);
+        Path destP = new Path("/videos");
+        if (!fs.exists(destP)) {
+            fs.mkdirs(destP);
+        }
+        String name = path.substring(path.lastIndexOf("/") + 1, path.length());
+        fs.copyFromLocalFile(resP, destP);
+        System.out.println("upload file " + name + " to HDFS");
+        fs.close();
     }
 
 
