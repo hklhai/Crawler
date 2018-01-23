@@ -135,7 +135,7 @@ public class PersistFilm implements Runnable {
             } catch (Exception e) {
                 e.printStackTrace();
                 // 持久化无法爬取URL
-                CrawlerProblem crawlerProblem = crawlerProblemRepository.findByUrl();
+                CrawlerProblem crawlerProblem = crawlerProblemRepository.findByUrl(crawlerURL.getUrl());
                 if (crawlerProblem != null) {
                     crawlerProblem.setSuccess(crawlerProblem.getSuccess() + 1);
                     crawlerProblemRepository.save(crawlerProblem);
