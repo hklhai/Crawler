@@ -10,10 +10,10 @@ import java.util.Date;
  */
 public class DateUtils {
 
-    public static final SimpleDateFormat TIME_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public static final SimpleDateFormat DATE_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
+    public static final SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("MM");
 
     /**
      * 判断一个时间是否在另一个时间之前
@@ -99,6 +99,25 @@ public class DateUtils {
     public static String getTodayDate() {
         return DATE_FORMAT.format(new Date());
     }
+
+    /**
+     * 获取当天日期（yyyy-MM-dd）
+     *
+     * @return 当天日期
+     */
+    public static String getTodayYear() {
+        return YEAR_FORMAT.format(new Date());
+    }
+
+    /**
+     * 获取当天日期（yyyy-MM-dd）
+     *
+     * @return 当天日期
+     */
+    public static String getTodayMonth() {
+        return MONTH_FORMAT.format(new Date());
+    }
+
 
     /**
      * 获取昨天的日期（yyyy-MM-dd）

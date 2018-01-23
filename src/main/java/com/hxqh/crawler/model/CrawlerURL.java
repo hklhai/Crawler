@@ -18,25 +18,19 @@ public class CrawlerURL {
     private String addTime;
     private String category;
     private String platform;
-
+    private String sorted;
 
     public CrawlerURL() {
     }
 
-    public CrawlerURL(String title, String url, String addTime) {
-        this.title = title;
-        this.url = url;
-        this.addTime = addTime;
-    }
-
-    public CrawlerURL(String title, String url, String addTime, String category, String platform) {
+    public CrawlerURL(String title, String url, String addTime, String category, String platform, String sorted) {
         this.title = title;
         this.url = url;
         this.addTime = addTime;
         this.category = category;
         this.platform = platform;
+        this.sorted = sorted;
     }
-
 
     public String getCategory() {
         return category;
@@ -78,12 +72,24 @@ public class CrawlerURL {
         this.addTime = addTime;
     }
 
+    public String getSorted() {
+        return sorted;
+    }
+
+    public void setSorted(String sorted) {
+        this.sorted = sorted;
+    }
+
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("CrawlerURL{");
         sb.append("title='").append(title).append('\'');
         sb.append(", url='").append(url).append('\'');
         sb.append(", addTime='").append(addTime).append('\'');
+        sb.append(", category='").append(category).append('\'');
+        sb.append(", platform='").append(platform).append('\'');
+        sb.append(", sorted='").append(sorted).append('\'');
         sb.append('}');
         return sb.toString();
     }

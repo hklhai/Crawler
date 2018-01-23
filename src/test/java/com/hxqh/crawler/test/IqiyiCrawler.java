@@ -1,12 +1,15 @@
 package com.hxqh.crawler.test;
 
 
+import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.controller.PersistFilm;
 import com.hxqh.crawler.model.CrawlerURL;
+import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
-import org.apache.commons.collections4.ListUtils;
+//import org.apache.commons.collections4.ListUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -26,7 +29,8 @@ public class IqiyiCrawler {
 
     @Resource
     private CrawlerURLRepository crawlerURLRepository;
-
+    @Autowired
+    private CrawlerProblemRepository crawlerProblemRepository;
 
     @Test
     public void persist() throws IOException, InterruptedException {
@@ -38,19 +42,19 @@ public class IqiyiCrawler {
             hrefList.add(crawlerURL.getUrl());
         }
 
-        List<List<String>> lists = ListUtils.partition(hrefList, 222);
+//        List<List<String>> lists = ListUtils.partition(hrefList, Constants.PARTITION_NUM);
 
-//        List<String> hrefList = Arrays.asList("http://www.iqiyi.com/v_19rr7pgf5g.html#vfrm=2-4-0-1");
-
-        ExecutorService service = Executors.newFixedThreadPool(4);
-
+//        ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM);
+//
 //        for (List<String> l : lists) {
-//            service.execute(new PersistFilm(l));
+//            service.execute(new PersistFilm(l, crawlerProblemRepository));
 //        }
-        service.shutdown();
+//        service.shutdown();
+//
+//        while (!service.isTerminated()) {
+//        }
 
-        while (!service.isTerminated()) {
-        }
+
 
     }
 }

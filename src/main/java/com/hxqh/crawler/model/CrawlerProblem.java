@@ -13,18 +13,23 @@ public class CrawlerProblem {
 
     @Id
     private String url;
-    private String label;
     private String addtime;
     private Integer success;
+    private String category;
+    private String platform;
+    private String sorted;
+
 
     public CrawlerProblem() {
     }
 
-    public CrawlerProblem(String url, String label, String addtime, Integer success) {
+    public CrawlerProblem(String url, String addtime, Integer success, String category, String platform, String sorted) {
         this.url = url;
-        this.label = label;
         this.addtime = addtime;
         this.success = success;
+        this.category = category;
+        this.platform = platform;
+        this.sorted = sorted;
     }
 
     public Integer getSuccess() {
@@ -43,13 +48,6 @@ public class CrawlerProblem {
         this.url = url;
     }
 
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
 
     public String getAddtime() {
         return addtime;
@@ -57,5 +55,29 @@ public class CrawlerProblem {
 
     public void setAddtime(String addtime) {
         this.addtime = addtime;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
+
+    public String getSorted() {
+        return sorted;
+    }
+
+    public void setSorted(String sorted) {
+        this.sorted = sorted;
     }
 }

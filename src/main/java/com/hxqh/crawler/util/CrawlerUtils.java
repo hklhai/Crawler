@@ -116,7 +116,7 @@ public class CrawlerUtils {
      *
      * @return
      */
-    private String getHref(String str) {
+    public static String getHref(String str) {
         Pattern pattern = Pattern.compile(A_LABEL);
         Matcher matcher = pattern.matcher(str);
         if (matcher.find()) {
@@ -124,5 +124,20 @@ public class CrawlerUtils {
         }
         return null;
     }
+
+//    /**
+//     * 从一行字符串中读取链接
+//     *
+//     * @return
+//     */
+//    private String getHref(String str) {
+//        Pattern pattern = Pattern.compile("<a .* href=.*</a>");
+//        Matcher matcher = pattern.matcher(str);
+//        if (matcher.find()) {
+//            return matcher.group(0);
+//        }
+//        return null;
+//    }
+
 
 }
