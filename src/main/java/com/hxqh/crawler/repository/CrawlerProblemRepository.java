@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CrawlerProblemRepository extends JpaRepository<CrawlerProblem, String> {
+    CrawlerProblem findByUrl();
 }

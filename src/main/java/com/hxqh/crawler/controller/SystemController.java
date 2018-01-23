@@ -121,15 +121,16 @@ public class SystemController {
         // 1. 从数据库获取待爬取链接
         List<String> hrefList = new ArrayList<>();
 
-        List<CrawlerURL> crawlerURLS = crawlerURLRepository.findAll();
-        for (CrawlerURL crawlerURL : crawlerURLS) {
-            hrefList.add(crawlerURL.getUrl());
-        }
-        List<List<String>> lists = ListUtils.partition(hrefList, Constants.PARTITION_NUM);
+        List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
+
+//        for (CrawlerURL crawlerURL : crawlerURLS) {
+//            hrefList.add(crawlerURL.getUrl());
+//        }
+        List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, Constants.PARTITION_NUM);
 
         ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM);
 
-        for (List<String> l : lists) {
+        for (List<CrawlerURL> l : lists) {
             service.execute(new PersistFilm(l, crawlerProblemRepository));
         }
         service.shutdown();
@@ -154,7 +155,7 @@ public class SystemController {
         Configuration conf = new Configuration();
         URI uri = new URI(Constants.HDFS_URL);
         FileSystem fs = FileSystem.get(uri, conf);
-        String path = Constants.SAVE_PATH + DateUtils.getTodayDate() + paltform;
+        String path = Constants.SAVE_PATH + Constants.FILE_SPLIT + DateUtils.getTodayDate() + paltform;
         Path resP = new Path(path);
         String location = loc + Constants.FILE_SPLIT +
                 DateUtils.getTodayYear() + Constants.FILE_SPLIT + DateUtils.getTodayMonth();
