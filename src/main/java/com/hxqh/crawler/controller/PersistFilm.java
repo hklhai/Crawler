@@ -75,7 +75,7 @@ public class PersistFilm implements Runnable {
                     director = directorElement.text();
                 }
 
-
+                // todo
                 String category = "电影";
 
                 Elements labelElement = doc.getElementById("datainfo-taglist").select("a");
@@ -134,7 +134,8 @@ public class PersistFilm implements Runnable {
             } catch (Exception e) {
                 e.printStackTrace();
                 // 持久化无法爬取URL
-                CrawlerProblem crawlerProblem = new CrawlerProblem(url, null, DateUtils.getTodayDate(), 0);
+                // todo null 修改及先获取是否存在的判断
+                CrawlerProblem crawlerProblem = new CrawlerProblem(url, DateUtils.getTodayDate(), 0, null, null, null);
                 crawlerProblemRepository.save(crawlerProblem);
 
             }
