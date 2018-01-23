@@ -1,4 +1,4 @@
-package com.hxqh.crawler.controller;
+package com.hxqh.crawler.controller.thread;
 
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.model.CrawlerProblem;

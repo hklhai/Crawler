@@ -1,8 +1,6 @@
 package com.hxqh.crawler.test;
 
 
-import com.hxqh.crawler.common.Constants;
-import com.hxqh.crawler.controller.PersistFilm;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
@@ -17,8 +15,6 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by Ocean lin on 2018/1/18.

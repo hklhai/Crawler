@@ -1,6 +1,7 @@
 package com.hxqh.crawler.controller;
 
 import com.hxqh.crawler.common.Constants;
+import com.hxqh.crawler.controller.thread.PersistFilm;
 import com.hxqh.crawler.domain.URLInfo;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.User;
@@ -9,6 +10,10 @@ import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +22,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 /**
  * Created by Ocean lin on 2017/7/1.
@@ -93,7 +102,6 @@ public class SystemController {
      * <p>
      * http://list.iqiyi.com/www/6/-------------4-1-1-iqiyi--.html  更新时间
      * http://list.iqiyi.com/www/6/-------------4-2-1-iqiyi--.html  更新时间
-     *
      */
     @RequestMapping("/iqiyiurl")
     public String iqiyiurl() {
@@ -166,28 +174,63 @@ public class SystemController {
     }
 
 
-//    /**
-//     * 爬取数据并上传至HDFS
-//     * http://127.0.0.1:8090/system/iqiyi
-//     *
-//     * @return
-//     */
-//    @RequestMapping("/iqiyi")
-//    public String iqiyiFilm() {
-//        iqiyiCrawler();
-//
-//        // 上传至HSDF
-//        try {
-//            persistToHDFS();
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return "crawler/notice";
-//    }
+    /**
+     * 爬取电影、影视、综艺数据并上传至HDFS
+     * http://127.0.0.1:8090/system/iqiyi
+     *
+     * @return
+     */
+    @RequestMapping("/iqiyi")
+    public String iqiyiFilm() {
+        // 1. 从数据库获取待爬取链接
+        List<String> hrefList = new ArrayList<>();
 
+        List<CrawlerURL> crawlerURLS = crawlerURLRepository.findAll();
+        for (CrawlerURL crawlerURL : crawlerURLS) {
+            hrefList.add(crawlerURL.getUrl());
+        }
+        List<List<String>> lists = ListUtils.partition(hrefList, Constants.PARTITION_NUM);
+
+        ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM);
+
+        for (List<String> l : lists) {
+            service.execute(new PersistFilm(l, crawlerProblemRepository));
+        }
+        service.shutdown();
+
+        while (!service.isTerminated()) {
+        }
+
+
+        // 2.上传至HSDF
+        try {
+            persistToHDFS("-iqiyi", Constants.FILE_LOC);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "crawler/notice";
+    }
+
+
+    public void persistToHDFS(String paltform, String loc) throws URISyntaxException, IOException {
+        Configuration conf = new Configuration();
+        URI uri = new URI(Constants.HDFS_URL);
+        FileSystem fs = FileSystem.get(uri, conf);
+        String path = Constants.SAVE_PATH + DateUtils.getTodayDate() + paltform;
+        Path resP = new Path(path);
+        String location = loc + Constants.FILE_SPLIT +
+                DateUtils.getTodayYear() + Constants.FILE_SPLIT + DateUtils.getTodayMonth();
+        Path destP = new Path(location);
+        if (!fs.exists(destP)) {
+            fs.mkdirs(destP);
+        }
+        String name = path.substring(path.lastIndexOf("/") + 1, path.length());
+        fs.copyFromLocalFile(resP, destP);
+        System.out.println("upload file " + name + " to HDFS");
+        fs.close();
+    }
 
 }
 
