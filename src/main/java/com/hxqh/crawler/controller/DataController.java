@@ -1,5 +1,6 @@
 package com.hxqh.crawler.controller;
 
+import com.hxqh.crawler.domain.VideosFilm;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
@@ -56,32 +57,6 @@ public class DataController {
         }
 
         return new ResponseEntity(result.getSource(), HttpStatus.OK);
-    }
-
-
-    @PostMapping("/add/book/novel")
-    @ResponseBody
-    public ResponseEntity add(
-            @RequestParam(name = "title") String title,
-            @RequestParam(name = "author") String author,
-            @RequestParam(name = "word_count") String wordcount,
-            @RequestParam(name = "publish_date")
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date publishdate) {
-        try {
-            XContentBuilder content = XContentFactory.jsonBuilder().startObject().
-                    field("title", title).
-                    field("author", author).
-                    field("word_count", wordcount).
-                    field("publish_date", publishdate.getTime())
-                    .endObject();
-
-            IndexResponse result = this.client.prepareIndex("book", "novel").setSource(content)
-                    .get();
-            return new ResponseEntity(result.getId(), HttpStatus.OK);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
 
@@ -166,6 +141,31 @@ public class DataController {
             result.add(hit.getSource());
         }
         return new ResponseEntity(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/add/book/novel")
+    @ResponseBody
+    public ResponseEntity add(
+            @RequestParam(name = "title") String title,
+            @RequestParam(name = "author") String author,
+            @RequestParam(name = "word_count") String wordcount,
+            @RequestParam(name = "publish_date")
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date publishdate) {
+        try {
+            XContentBuilder content = XContentFactory.jsonBuilder().startObject().
+                    field("title", title).
+                    field("author", author).
+                    field("word_count", wordcount).
+                    field("publish_date", publishdate.getTime())
+                    .endObject();
+
+            IndexResponse result = this.client.prepareIndex("book", "novel").setSource(content)
+                    .get();
+            return new ResponseEntity(result.getId(), HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

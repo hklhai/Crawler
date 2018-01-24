@@ -1,23 +1,19 @@
 package com.hxqh.crawler.service;
 
-import com.hxqh.crawler.repository.UserRepository;
+import com.hxqh.crawler.domain.VideosFilm;
 import com.hxqh.crawler.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 /**
  * Created by Ocean lin on 2017/7/1.
  */
 @Service("systemService")
-public class SystemService {
+public interface SystemService {
 
-    @Autowired
-    private UserRepository userDao;
+    User findUserById(String name);
 
-    public User findUserById(String name)
-    {
-        return userDao.findUserById(name);
-    }
 
+    ResponseEntity addVideos(VideosFilm videosFilm);
 
 }

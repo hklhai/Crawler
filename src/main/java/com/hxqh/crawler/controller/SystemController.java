@@ -129,7 +129,7 @@ public class SystemController {
         ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM);
 
         for (List<CrawlerURL> l : lists) {
-            service.execute(new PersistFilm(l, crawlerProblemRepository));
+            service.execute(new PersistFilm(l, crawlerProblemRepository,systemService));
         }
         service.shutdown();
 

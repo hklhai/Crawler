@@ -155,8 +155,8 @@
                     <groupId>javax.servlet</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
+                <!--排除与selenium冲突项-->
                 <exclusion>
-                    <!--排除与selenium冲突项-->
                     <groupId>com.google.guava</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>

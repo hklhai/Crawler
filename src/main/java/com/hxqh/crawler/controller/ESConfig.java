@@ -18,11 +18,11 @@ public class ESConfig {
     @Bean
     public TransportClient client() throws UnknownHostException {
         InetSocketTransportAddress node1 = new InetSocketTransportAddress(
-                InetAddress.getByName("192.168.89.161"), 9300
+                InetAddress.getByName("spark3"), 9300
         );
         //可以new 三个节点，将node1放入,还可以放入node2...
 
-        Settings settings = Settings.builder().put("cluster.name", "es-hk")
+        Settings settings = Settings.builder().put("cluster.name", "elasticsearch")
                 .put("client.transport.sniff",true).build();
 
         TransportClient client = new PreBuiltTransportClient(settings);
