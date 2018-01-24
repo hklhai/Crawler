@@ -12,10 +12,10 @@ public class VideosFilm {
     private String category;
     private String label;
     private float scoreVal;
-    private long commentNum;
-    private long up;
+    private Integer commentNum;
+    private Integer up;
     private String addTime;
-    private long playNum;
+    private Integer playNum;
 
 //     private String url;
 //    private String platform;
@@ -24,7 +24,7 @@ public class VideosFilm {
     public VideosFilm() {
     }
 
-    public VideosFilm(String source, String filmName, String star, String director, String category, String label, float scoreVal, long commentNum, long up, String addTime, long playNum) {
+    public VideosFilm(String source, String filmName, String star, String director, String category, String label, float scoreVal, Integer commentNum, Integer up, String addTime, Integer playNum) {
         this.source = source;
         this.filmName = filmName;
         this.star = star;
@@ -94,19 +94,19 @@ public class VideosFilm {
         this.scoreVal = scoreVal;
     }
 
-    public long getCommentNum() {
+    public Integer getCommentNum() {
         return commentNum;
     }
 
-    public void setCommentNum(long commentNum) {
+    public void setCommentNum(Integer commentNum) {
         this.commentNum = commentNum;
     }
 
-    public long getUp() {
+    public Integer getUp() {
         return up;
     }
 
-    public void setUp(long up) {
+    public void setUp(Integer up) {
         this.up = up;
     }
 
@@ -118,11 +118,11 @@ public class VideosFilm {
         this.addTime = addTime;
     }
 
-    public long getPlayNum() {
+    public Integer getPlayNum() {
         return playNum;
     }
 
-    public void setPlayNum(long playNum) {
+    public void setPlayNum(Integer playNum) {
         this.playNum = playNum;
     }
 }

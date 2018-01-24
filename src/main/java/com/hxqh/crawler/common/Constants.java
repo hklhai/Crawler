@@ -24,8 +24,8 @@ public interface Constants {
     /**
      * 爬虫线程数据与各分区的数量
      */
-    Integer THREAD_NUM = 4;
-    Integer PARTITION_NUM = 222;
+    Integer THREAD_NUM = 3;
+    Integer PARTITION_NUM = 4;
 
 
 

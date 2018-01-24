@@ -59,7 +59,7 @@ public class CrawlerUtils {
         System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
         WebDriver webDriver = new ChromeDriver();
         webDriver.get(url);
-        Thread.sleep(10000);
+        Thread.sleep(15000);
         WebElement webElement = webDriver.findElement(By.xpath("/html"));
         String html = new String();
         if (webElement != null) {

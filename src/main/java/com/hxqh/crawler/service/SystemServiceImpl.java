@@ -3,6 +3,7 @@ package com.hxqh.crawler.service;
 import com.hxqh.crawler.domain.VideosFilm;
 import com.hxqh.crawler.model.User;
 import com.hxqh.crawler.repository.UserRepository;
+import com.hxqh.crawler.util.DateUtils;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * Created by Ocean lin on 2017/7/1.
@@ -45,7 +47,7 @@ public class SystemServiceImpl implements SystemService {
                     field("scoreVal", videosFilm.getScoreVal()).
                     field("commentNum", videosFilm.getCommentNum()).
                     field("up", videosFilm.getUp()).
-                    field("addTime", videosFilm.getAddTime()).endObject();
+                    field("addTime", DateUtils.getTodayDate()).endObject();
 
             IndexResponse result = this.client.prepareIndex("market", "video").setSource(content)
                     .get();

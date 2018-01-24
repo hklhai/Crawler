@@ -138,7 +138,7 @@ public class DataController {
         SearchResponse searchResponse = searchRequestBuilder.get();
         List<Map<String, Object>> result = new ArrayList<>();
         for (SearchHit hit : searchResponse.getHits()) {
-            result.add(hit.getSource());
+            result.add(hit.getSourceAsMap());
         }
         return new ResponseEntity(result, HttpStatus.OK);
     }

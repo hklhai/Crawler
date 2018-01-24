@@ -2,20 +2,16 @@ package com.hxqh.crawler.controller;
 
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.controller.thread.PersistFilm;
-import com.hxqh.crawler.domain.URLInfo;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.User;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
-import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,10 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -120,7 +113,7 @@ public class SystemController {
     public String iqiyiFilm() {
         // 1. 从数据库获取待爬取链接
         List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
-
+        crawlerURLS = crawlerURLS.subList(39, 50);
 //        for (CrawlerURL crawlerURL : crawlerURLS) {
 //            hrefList.add(crawlerURL.getUrl());
 //        }
@@ -129,7 +122,7 @@ public class SystemController {
         ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM);
 
         for (List<CrawlerURL> l : lists) {
-            service.execute(new PersistFilm(l, crawlerProblemRepository,systemService));
+            service.execute(new PersistFilm(l, crawlerProblemRepository, systemService));
         }
         service.shutdown();
 
@@ -138,13 +131,13 @@ public class SystemController {
 
 
         // 2.上传至HSDF
-        try {
-            persistToHDFS("-iqiyi", Constants.FILE_LOC);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            persistToHDFS("-iqiyi", Constants.FILE_LOC);
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         return "crawler/notice";
     }
 

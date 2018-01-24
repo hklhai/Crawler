@@ -89,17 +89,19 @@ public class PersistFilm implements Runnable {
                 String commentNum = doc.getElementsByClass("score-user-num").text();
                 if (commentNum.endsWith("万人评分")) {
                     commentNum = commentNum.substring(0, commentNum.length() - 4);
-                    commentNum = String.valueOf(Double.valueOf(commentNum) * TEN_THOUSAND);
+                    Double v = Double.valueOf(commentNum) * TEN_THOUSAND;
+                    commentNum = String.valueOf(v.longValue());
                 }
                 if (commentNum.endsWith("人评分")) {
                     commentNum = commentNum.substring(0, commentNum.length() - 4);
-                    commentNum = String.valueOf(Double.valueOf(commentNum));
+                    commentNum = String.valueOf(Long.valueOf(commentNum));
                 }
 
                 String up = doc.getElementById("widget-voteupcount").text();
                 if (up.endsWith("万")) {
                     up = up.substring(0, up.length() - 1);
-                    up = String.valueOf(Double.valueOf(up) * TEN_THOUSAND);
+                    Double v = Double.valueOf(up) * TEN_THOUSAND;
+                    up = String.valueOf(v.longValue());
                 }
 
                 String addTime = DateUtils.getTodayDate();
@@ -139,8 +141,8 @@ public class PersistFilm implements Runnable {
                  */
                 if (!score.trim().equals("评分人数不足")) {
                     VideosFilm videosFilm = new VideosFilm(source.trim(), filmName.trim(), star.trim(), director.trim(),
-                            category.trim(), label.trim(), Float.valueOf(score.trim()), Long.valueOf(commentNum.trim()),
-                            Long.valueOf(up.trim()), addTime.trim(), Long.valueOf(playNum.trim()));
+                            category.trim(), label.trim(), Float.valueOf(score.trim()), Integer.valueOf(commentNum.trim()),
+                            Integer.valueOf(up.trim()), addTime.trim(), Integer.valueOf(playNum.trim()));
                     systemService.addVideos(videosFilm);
                 } else {
                     continue;
