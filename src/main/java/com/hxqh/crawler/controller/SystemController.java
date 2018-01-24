@@ -119,8 +119,6 @@ public class SystemController {
     @RequestMapping("/iqiyi")
     public String iqiyiFilm() {
         // 1. 从数据库获取待爬取链接
-        List<String> hrefList = new ArrayList<>();
-
         List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
 
 //        for (CrawlerURL crawlerURL : crawlerURLS) {

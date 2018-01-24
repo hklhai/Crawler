@@ -101,18 +101,18 @@ public class DateUtils {
     }
 
     /**
-     * 获取当天日期（yyyy-MM-dd）
+     * 获取当天年份（yyyy）
      *
-     * @return 当天日期
+     * @return 当天年份
      */
     public static String getTodayYear() {
         return YEAR_FORMAT.format(new Date());
     }
 
     /**
-     * 获取当天日期（yyyy-MM-dd）
+     * 获取当天月份（yyyy-MM-dd）
      *
-     * @return 当天日期
+     * @return 当天月份
      */
     public static String getTodayMonth() {
         return MONTH_FORMAT.format(new Date());
