@@ -34,7 +34,7 @@ public class ESConfig {
                     .put("client.transport.sniff", true)
                     .put("cluster.name", "elasticsearch").build();
             client = new PreBuiltTransportClient(Settings.EMPTY)
-                    .addTransportAddress(new TransportAddress(InetAddress.getByName("elasticsearch"), 9300));
+                    .addTransportAddress(new TransportAddress(InetAddress.getByName("spark3"), 9300));
         } catch (Exception ex) {
             client.close();
         } finally {
