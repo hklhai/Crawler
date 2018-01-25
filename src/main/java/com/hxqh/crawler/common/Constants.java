@@ -24,8 +24,8 @@ public interface Constants {
     /**
      * 爬虫线程数据与各分区的数量
      */
-    Integer THREAD_NUM = 3;
-    Integer PARTITION_NUM = 4;
+    Integer THREAD_NUM = 4;
+    Integer PARTITION_NUM = 500;
 
 
 
@@ -34,7 +34,7 @@ public interface Constants {
     // 起始页数
     Integer PAGE_START_NUM = 1;
     // 结束页数
-    Integer PAGE_END_NUM = 10;
+    Integer PAGE_END_NUM = 20;
 
     /**
      *
