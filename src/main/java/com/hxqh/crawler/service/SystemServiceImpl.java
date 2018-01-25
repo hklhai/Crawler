@@ -48,8 +48,8 @@ public class SystemServiceImpl implements SystemService {
                     field("up", videosFilm.getUp()).
                     field("addTime", todayTime).endObject();
 
-            IndexResponse result = this.client.prepareIndex("market_analysis", "videos").setSource(content)
-                    .get();
+            IndexResponse result = this.client.prepareIndex("market_analysis", "videos").setSource(content).get();
+            System.out.println(videosFilm.getFilmName() + " Persist to ES Success!");
             return new ResponseEntity(result.getId(), HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();

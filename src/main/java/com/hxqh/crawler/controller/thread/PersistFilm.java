@@ -1,5 +1,6 @@
 package com.hxqh.crawler.controller.thread;
 
+import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.domain.VideosFilm;
 import com.hxqh.crawler.model.CrawlerProblem;
 import com.hxqh.crawler.model.CrawlerURL;
@@ -7,6 +8,7 @@ import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
+import com.hxqh.crawler.util.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -118,6 +120,10 @@ public class PersistFilm implements Runnable {
                     playNum = String.valueOf(v.longValue());
                 }
 
+
+                /**
+                 * 3.解析并持久化至本地文件系统
+                 */
                 stringBuilder.append(source.trim()).append("^").
                         append(filmName.trim()).append("^").
                         append(star.trim()).append("^").
@@ -129,12 +135,11 @@ public class PersistFilm implements Runnable {
                         append(up.trim()).append("^").
                         append(addTime.trim()).append("^").
                         append(playNum.trim()).append("\n");
-                /**
-                 * 3.解析并持久化至本地文件系统
-                 */
-//                String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT +
-//                        DateUtils.getTodayDate() + "-" + crawlerURL.getPlatform();
-//                FileUtils.writeStrToFile(stringBuilder.toString(), fileName);
+                String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT +
+                        DateUtils.getTodayDate() + "-" + crawlerURL.getPlatform();
+                FileUtils.writeStrToFile(stringBuilder.toString(), fileName);
+                stringBuilder.setLength(0);
+                System.out.println(filmName.trim() + " Persist Success!");
 
                 /**
                  * 持久化至ES
@@ -148,8 +153,7 @@ public class PersistFilm implements Runnable {
                     continue;
                 }
 
-                stringBuilder.setLength(0);
-                System.out.println(filmName.trim() + " Persist Success!");
+
             } catch (Exception e) {
                 e.printStackTrace();
                 // 持久化无法爬取URL

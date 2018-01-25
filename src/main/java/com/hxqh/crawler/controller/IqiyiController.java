@@ -88,42 +88,12 @@ public class IqiyiController {
      */
     @RequestMapping("/filemData")
     public String filemData() {
-        // 1. 从数据库获取待爬取链接
-        List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
-
-        List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, Constants.PARTITION_NUM);
-
-        ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM);
-
-        for (List<CrawlerURL> l : lists) {
-            service.execute(new PersistFilm(l, crawlerProblemRepository, systemService));
-        }
-        service.shutdown();
-
-        while (!service.isTerminated()) {
-        }
 
         return "crawler/notice";
     }
 
 
-    public void persistToHDFS(String paltform, String loc) throws URISyntaxException, IOException {
-        Configuration conf = new Configuration();
-        URI uri = new URI(Constants.HDFS_URL);
-        FileSystem fs = FileSystem.get(uri, conf);
-        String path = Constants.SAVE_PATH + Constants.FILE_SPLIT + DateUtils.getTodayDate() + paltform;
-        Path resP = new Path(path);
-        String location = loc + Constants.FILE_SPLIT +
-                DateUtils.getTodayYear() + Constants.FILE_SPLIT + DateUtils.getTodayMonth();
-        Path destP = new Path(location);
-        if (!fs.exists(destP)) {
-            fs.mkdirs(destP);
-        }
-        String name = path.substring(path.lastIndexOf("/") + 1, path.length());
-        fs.copyFromLocalFile(resP, destP);
-        System.out.println("upload file " + name + " to HDFS");
-        fs.close();
-    }
+
 
 }
 

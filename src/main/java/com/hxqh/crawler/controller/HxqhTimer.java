@@ -1,6 +1,7 @@
 package com.hxqh.crawler.controller;
 
 import com.hxqh.crawler.common.Constants;
+import com.hxqh.crawler.controller.thread.PersistFilm;
 import com.hxqh.crawler.domain.URLInfo;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
@@ -8,21 +9,23 @@ import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
+import com.hxqh.crawler.util.HdfsUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-//import org.apache.commons.collections4.ListUtils;
-//import org.apache.hadoop.conf.Configuration;
-//import org.apache.hadoop.fs.FileSystem;
-//import org.apache.hadoop.fs.Path;
 
 /**
  * Created by Ocean lin on 2017/7/9.
@@ -110,19 +113,29 @@ public class HxqhTimer {
     //每天0点10分触发
     @Scheduled(cron = "0 10 0 * * ?")
     public void iqiyi() {
-//        // 1. 从数据库获取待爬取链接
-//        List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
-//        List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, Constants.PARTITION_NUM);
-//
-//        ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM);
-//
-//        for (List<CrawlerURL> l : lists) {
-//            service.execute(new PersistFilm(l, crawlerProblemRepository, systemService));
-//        }
-//        service.shutdown();
-//
-//        while (!service.isTerminated()) {
-//        }
+
+        // 1. 从数据库获取待爬取链接
+        List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
+
+        List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, Constants.PARTITION_NUM);
+
+        ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM);
+
+        for (List<CrawlerURL> l : lists) {
+            service.execute(new PersistFilm(l, crawlerProblemRepository, systemService));
+        }
+        service.shutdown();
+        while (!service.isTerminated()) {
+        }
+
+        // 2. 上传至HDFS
+        try {
+            HdfsUtils.persistToHDFS("-iqiyi", Constants.FILE_LOC);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
