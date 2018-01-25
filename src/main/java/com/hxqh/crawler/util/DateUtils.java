@@ -118,6 +118,14 @@ public class DateUtils {
         return MONTH_FORMAT.format(new Date());
     }
 
+    /**
+     * 获取当天日期（yyyy-MM-dd HH:mm:ss）
+     *
+     * @return 当天日期
+     */
+    public static String getTodayTime() {
+        return TIME_FORMAT.format(new Date());
+    }
 
     /**
      * 获取昨天的日期（yyyy-MM-dd）
@@ -169,4 +177,6 @@ public class DateUtils {
         }
         return null;
     }
+
+
 }

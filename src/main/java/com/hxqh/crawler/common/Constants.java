@@ -12,6 +12,15 @@ public interface Constants {
 //    String SAVE_PATH = "E://crawler";
 //    String FILE_SPLIT = "\\";
 //    String FILE_LOC = "\\videos";
+    /**
+     * 爬虫线程数据与各分区的数量
+     */
+//    Integer THREAD_NUM = 3;
+//    Integer PARTITION_NUM = 4;
+
+
+
+
 
     /**
      * Linux
@@ -22,19 +31,15 @@ public interface Constants {
     String FILE_LOC = "/videos";
 
     /**
-     * 爬虫线程数据与各分区的数量
+     * Linux 爬虫线程数据与各分区的数量
      */
     Integer THREAD_NUM = 4;
     Integer PARTITION_NUM = 500;
 
-
-
-
-
     // 起始页数
     Integer PAGE_START_NUM = 1;
     // 结束页数
-    Integer PAGE_END_NUM = 20;
+    Integer PAGE_END_NUM = 30;
 
     /**
      *

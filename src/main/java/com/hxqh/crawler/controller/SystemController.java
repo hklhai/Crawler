@@ -1,29 +1,14 @@
 package com.hxqh.crawler.controller;
 
-import com.hxqh.crawler.common.Constants;
-import com.hxqh.crawler.controller.thread.PersistFilm;
-import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.User;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
-import com.hxqh.crawler.util.DateUtils;
-import org.apache.commons.collections4.ListUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 /**
