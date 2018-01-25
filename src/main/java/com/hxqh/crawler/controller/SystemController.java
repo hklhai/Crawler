@@ -114,9 +114,6 @@ public class SystemController {
         // 1. 从数据库获取待爬取链接
         List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
         crawlerURLS = crawlerURLS.subList(39, 50);
-//        for (CrawlerURL crawlerURL : crawlerURLS) {
-//            hrefList.add(crawlerURL.getUrl());
-//        }
         List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, Constants.PARTITION_NUM);
 
         ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM);
