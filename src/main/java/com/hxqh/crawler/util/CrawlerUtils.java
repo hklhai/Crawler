@@ -55,11 +55,12 @@ public class CrawlerUtils {
     }
 
 
-    public static String fetchHTMLContent(String url) throws InterruptedException {
+    public static String fetchHTMLContent(String url, Integer second) throws InterruptedException {
+        Integer sleepTime = second * 1000;
         System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
         WebDriver webDriver = new ChromeDriver();
         webDriver.get(url);
-        Thread.sleep(15000);
+        Thread.sleep(sleepTime);
         WebElement webElement = webDriver.findElement(By.xpath("/html"));
         String html = new String();
         if (webElement != null) {

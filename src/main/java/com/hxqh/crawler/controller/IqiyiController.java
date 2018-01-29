@@ -1,29 +1,15 @@
 package com.hxqh.crawler.controller;
 
-import com.hxqh.crawler.common.Constants;
-import com.hxqh.crawler.controller.thread.PersistFilm;
-import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
-import com.hxqh.crawler.util.DateUtils;
-import org.apache.commons.collections4.ListUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 
 /**
+ * @author Ocean Lin
  * Created by Ocean lin on 2017/7/1.
  */
 @Controller
@@ -91,8 +77,6 @@ public class IqiyiController {
 
         return "crawler/notice";
     }
-
-
 
 
 }

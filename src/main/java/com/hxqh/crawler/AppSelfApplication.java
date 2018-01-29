@@ -9,12 +9,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @author Ocean Lin
+ */
 @SpringBootApplication
 @ComponentScan(basePackages = "com.hxqh.crawler.**.*")
 @RestController
 @EnableScheduling
 public class AppSelfApplication extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer {
-
 
     public static void main(String[] args) {
         SpringApplication.run(AppSelfApplication.class, args);

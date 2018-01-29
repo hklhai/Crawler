@@ -28,6 +28,7 @@ import java.util.concurrent.Executors;
 
 
 /**
+ * @author Ocean Lin
  * Created by Ocean lin on 2017/7/9.
  */
 @Component
@@ -77,7 +78,7 @@ public class HxqhTimer {
             String url = entry.getKey();
             URLInfo urlInfo = entry.getValue();
             try {
-                String outerHTML = CrawlerUtils.fetchHTMLContent(url);
+                String outerHTML = CrawlerUtils.fetchHTMLContent(url, Constants.DEFAULT_SEELP_SECOND);
 
                 String[] split = outerHTML.split("\n");
                 for (int i = 0; i < split.length; i++) {

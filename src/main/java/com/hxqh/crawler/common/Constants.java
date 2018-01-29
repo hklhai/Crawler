@@ -19,9 +19,6 @@ public interface Constants {
 //    Integer PARTITION_NUM = 4;
 
 
-
-
-
     /**
      * Linux
      */
@@ -45,6 +42,7 @@ public interface Constants {
      *
      */
     String HDFS_URL = "hdfs://spark1:9000";
+    Integer DEFAULT_SEELP_SECOND = 15;
 
 
 }
