@@ -50,6 +50,7 @@ public class HxqhTimer {
     // 每个星期日0点15分
     @Scheduled(cron = "0 15 0 ? * SUN")
     public void iqiyiUrlList() {
+
         /**
          * 取爬取列表前先将数据写入ES
          */
@@ -130,6 +131,7 @@ public class HxqhTimer {
             crawlerURLS.add(crawlerURL);
         }
         crawlerURLRepository.save(crawlerURLS);
+
     }
 
 

@@ -103,19 +103,34 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public ResponseEntity addCrawlerURLList(List<CrawlerURL> crawlerURLList) {
+        String todayTime = DateUtils.getTodayTime();
+        Integer length = null;
 
-        String index = "market_analysis_film";
-        String type = "film";
+        try {
+            String index = "market_analysis_film";
+            String type = "film";
 
-        Long count = (long) crawlerURLList.size();
-        //核心方法BulkRequestBuilder拼接多个Json
-        BulkRequestBuilder bulkRequest = client.prepareBulk();
-        for (int i = 0; i < count; i++) {
-            bulkRequest.add(client.prepareIndex(index, type).setSource(crawlerURLList.get(i)));
+            Long count = (long) crawlerURLList.size();
+            //核心方法BulkRequestBuilder拼接多个Json
+            BulkRequestBuilder bulkRequest = client.prepareBulk();
+            for (int i = 0; i < count; i++) {
+                CrawlerURL crawlerURL = crawlerURLList.get(i);
+                XContentBuilder content = XContentFactory.jsonBuilder().startObject().
+                        field("addTime", crawlerURL.getAddTime()).
+                        field("category", crawlerURL.getCategory()).
+                        field("sorted", crawlerURL.getSorted()).
+                        field("title", crawlerURL.getTitle()).
+                        field("url", crawlerURL.getUrl()).
+                        field("platform", crawlerURL.getPlatform()).
+                        field("createTime", todayTime).endObject();
+                bulkRequest.add(client.prepareIndex(index, type).setSource(content));
+            }
+            //插入文档至ES, 完成！
+            BulkResponse bulkItemResponses = bulkRequest.execute().actionGet();
+            length = bulkItemResponses.getItems().length;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        //插入文档至ES, 完成！
-        BulkResponse bulkItemResponses = bulkRequest.execute().actionGet();
-        int length = bulkItemResponses.getItems().length;
         return new ResponseEntity(length, HttpStatus.OK);
     }
 

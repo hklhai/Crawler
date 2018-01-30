@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @author Ocean Lin
- * Created by Ocean lin on 2017/7/1.
+ *         Created by Ocean lin on 2017/7/1.
  */
 @Controller
 @RequestMapping("/iqiyi")
@@ -61,6 +61,7 @@ public class IqiyiController {
      */
     @RequestMapping("/filmeUrl")
     public String filmeUrl() {
+
 
         return "crawler/notice";
     }
