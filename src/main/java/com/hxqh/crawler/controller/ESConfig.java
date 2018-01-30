@@ -1,5 +1,6 @@
 package com.hxqh.crawler.controller;
 
+import com.hxqh.crawler.common.Constants;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
@@ -17,6 +18,10 @@ import java.rmi.UnknownHostException;
 public class ESConfig {
     @Bean
     public TransportClient client() throws UnknownHostException {
+
+        /**
+         * v5.x
+         */
 //        InetSocketTransportAddress node1 = new InetSocketTransportAddress(
 //                InetAddress.getByName("spark3"), 9300
 //        );
@@ -28,13 +33,17 @@ public class ESConfig {
 //        TransportClient client = new PreBuiltTransportClient(settings);
 //        client.addTransportAddress(node1);
 //        return client;
+
+        /**
+         * v6.x
+         */
         TransportClient client = null;
         try {
             Settings settings = Settings.builder()
                     .put("client.transport.sniff", true)
                     .put("cluster.name", "es-market-analysis").build();
             client = new PreBuiltTransportClient(settings)
-                    .addTransportAddress(new TransportAddress(InetAddress.getByName("spark3"), 9300));
+                    .addTransportAddress(new TransportAddress(InetAddress.getByName(Constants.ES_HOST), Constants.ES_PORT));
         } catch (Exception ex) {
             client.close();
         } finally {

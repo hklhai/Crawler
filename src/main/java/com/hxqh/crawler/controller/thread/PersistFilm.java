@@ -2,7 +2,6 @@ package com.hxqh.crawler.controller.thread;
 
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.domain.VideosFilm;
-import com.hxqh.crawler.model.CrawlerProblem;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.service.SystemService;
@@ -21,9 +20,8 @@ import java.util.List;
  */
 public class PersistFilm implements Runnable {
 
-    private static final Integer TEN_THOUSAND = 10000;
-    private static final Integer BILLION = 100000000;
-    private static final Integer SB_SIZE = 300;
+
+    private static final Integer STRINGBUILDER_SIZE = 300;
 
 
     private List<CrawlerURL> l;
@@ -47,12 +45,10 @@ public class PersistFilm implements Runnable {
     }
 
     private static void parseAndPersist(List<CrawlerURL> hrefList, CrawlerProblemRepository crawlerProblemRepository, SystemService systemService) throws InterruptedException {
-        StringBuilder stringBuilder = new StringBuilder(SB_SIZE);
+        StringBuilder stringBuilder = new StringBuilder(STRINGBUILDER_SIZE);
 
 
         for (int i = 0; i < hrefList.size(); i++) {
-            //            WebElement webElement = fetchHTMLContent(hrefList.get(i));
-            //            String html = webElement.getAttribute("outerHTML");
             CrawlerURL crawlerURL = hrefList.get(i);
             String html = CrawlerUtils.fetchHTMLContent(crawlerURL.getUrl(), Constants.DEFAULT_SEELP_SECOND);
             Document doc = Jsoup.parse(html);
@@ -91,7 +87,7 @@ public class PersistFilm implements Runnable {
                 String commentNum = doc.getElementsByClass("score-user-num").text();
                 if (commentNum.endsWith("万人评分")) {
                     commentNum = commentNum.substring(0, commentNum.length() - 4);
-                    Double v = Double.valueOf(commentNum) * TEN_THOUSAND;
+                    Double v = Double.valueOf(commentNum) * Constants.TEN_THOUSAND;
                     commentNum = String.valueOf(v.longValue());
                 }
                 if (commentNum.endsWith("人评分")) {
@@ -102,7 +98,7 @@ public class PersistFilm implements Runnable {
                 String up = doc.getElementById("widget-voteupcount").text();
                 if (up.endsWith("万")) {
                     up = up.substring(0, up.length() - 1);
-                    Double v = Double.valueOf(up) * TEN_THOUSAND;
+                    Double v = Double.valueOf(up) * Constants.TEN_THOUSAND;
                     up = String.valueOf(v.longValue());
                 }
 
@@ -111,12 +107,12 @@ public class PersistFilm implements Runnable {
 
                 if (playNum.endsWith("万")) {
                     playNum = playNum.substring(0, playNum.length() - 1);
-                    Double v = Double.valueOf(playNum) * TEN_THOUSAND;
+                    Double v = Double.valueOf(playNum) * Constants.TEN_THOUSAND;
                     playNum = String.valueOf(v.longValue());
                 }
                 if (playNum.endsWith("亿")) {
                     playNum = playNum.substring(0, playNum.length() - 1);
-                    Double v = Double.valueOf(playNum) * BILLION;
+                    Double v = Double.valueOf(playNum) * Constants.BILLION;
                     playNum = String.valueOf(v.longValue());
                 }
 
@@ -157,17 +153,8 @@ public class PersistFilm implements Runnable {
             } catch (Exception e) {
                 e.printStackTrace();
                 // 持久化无法爬取URL
-                CrawlerProblem crawlerProblem = crawlerProblemRepository.findByUrl(crawlerURL.getUrl());
-                if (crawlerProblem != null) {
-                    crawlerProblem.setSuccess(crawlerProblem.getSuccess() + 1);
-                    crawlerProblemRepository.save(crawlerProblem);
-                } else {
-                    crawlerProblem = new CrawlerProblem(crawlerURL.getUrl(), DateUtils.getTodayDate(),
-                            0, crawlerURL.getCategory(), crawlerURL.getPlatform(), crawlerURL.getSorted());
-                    crawlerProblemRepository.save(crawlerProblem);
-                }
+                CrawlerUtils.persistProblemURL(crawlerProblemRepository, crawlerURL);
             }
-
         }
     }
 

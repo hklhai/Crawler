@@ -1,5 +1,6 @@
 package com.hxqh.crawler.service;
 
+import com.hxqh.crawler.domain.Book;
 import com.hxqh.crawler.domain.VideosFilm;
 import com.hxqh.crawler.model.User;
 import org.springframework.http.ResponseEntity;
@@ -15,4 +16,5 @@ public interface SystemService {
 
     ResponseEntity addVideos(VideosFilm videosFilm);
 
+    ResponseEntity addBook(Book book);
 }

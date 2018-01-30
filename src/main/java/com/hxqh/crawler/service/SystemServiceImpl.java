@@ -1,5 +1,6 @@
 package com.hxqh.crawler.service;
 
+import com.hxqh.crawler.domain.Book;
 import com.hxqh.crawler.domain.VideosFilm;
 import com.hxqh.crawler.model.User;
 import com.hxqh.crawler.repository.UserRepository;
@@ -27,11 +28,12 @@ public class SystemServiceImpl implements SystemService {
     @Autowired
     private TransportClient client;
 
+    @Override
     public User findUserById(String name) {
         return userDao.findUserById(name);
     }
 
-
+    @Override
     public ResponseEntity addVideos(VideosFilm videosFilm) {
         try {
             String todayTime = DateUtils.getTodayTime();
@@ -50,6 +52,44 @@ public class SystemServiceImpl implements SystemService {
 
             IndexResponse result = this.client.prepareIndex("market_analysis", "videos").setSource(content).get();
             System.out.println(videosFilm.getFilmName() + " Persist to ES Success!");
+            return new ResponseEntity(result.getId(), HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity addBook(Book book) {
+        try {
+            String todayTime = DateUtils.getTodayTime();
+
+//            XContentBuilder content = XContentFactory.jsonBuilder().startObject().
+//                    field("source", book.getSource()).
+//                    field("bookName", book.getBookName()).
+//                    field("category", book.getCategory()).
+//                    field("categoryLable", book.getCategoryLable()).
+//                    field("price", book.getPrice()).
+//                    field("commnetNum", book.getCommnetNum()).
+//                    field("author", book.getAuthor()).
+//                    field("publish", book.getPrice()).
+//                    field("addTime", todayTime).endObject();
+            /**
+             * 中文版
+             */
+            XContentBuilder content = XContentFactory.jsonBuilder().startObject().
+                    field("来源", book.getSource()).
+                    field("书名", book.getBookName()).
+                    field("分类", book.getCategory()).
+                    field("分类标签", book.getCategoryLable()).
+                    field("价格", book.getPrice()).
+                    field("评论量", book.getCommnetNum()).
+                    field("作者", book.getAuthor()).
+                    field("出版社", book.getPrice()).
+                    field("添加时间", todayTime).endObject();
+
+            IndexResponse result = this.client.prepareIndex("market_book", "book").setSource(content).get();
+            System.out.println(book.getBookName() + " Persist to ES Success!");
             return new ResponseEntity(result.getId(), HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();

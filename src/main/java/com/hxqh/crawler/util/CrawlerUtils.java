@@ -1,6 +1,9 @@
 package com.hxqh.crawler.util;
 
 import com.hxqh.crawler.common.Constants;
+import com.hxqh.crawler.model.CrawlerProblem;
+import com.hxqh.crawler.model.CrawlerURL;
+import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -126,19 +129,16 @@ public class CrawlerUtils {
         return null;
     }
 
-//    /**
-//     * 从一行字符串中读取链接
-//     *
-//     * @return
-//     */
-//    private String getHref(String str) {
-//        Pattern pattern = Pattern.compile("<a .* href=.*</a>");
-//        Matcher matcher = pattern.matcher(str);
-//        if (matcher.find()) {
-//            return matcher.group(0);
-//        }
-//        return null;
-//    }
-
+    public static void persistProblemURL(CrawlerProblemRepository crawlerProblemRepository, CrawlerURL crawlerURL) {
+        CrawlerProblem crawlerProblem = crawlerProblemRepository.findByUrl(crawlerURL.getUrl());
+        if (crawlerProblem != null) {
+            crawlerProblem.setSuccess(crawlerProblem.getSuccess() + 1);
+            crawlerProblemRepository.save(crawlerProblem);
+        } else {
+            crawlerProblem = new CrawlerProblem(crawlerURL.getUrl(), DateUtils.getTodayDate(),
+                    0, crawlerURL.getCategory(), crawlerURL.getPlatform(), crawlerURL.getSorted());
+            crawlerProblemRepository.save(crawlerProblem);
+        }
+    }
 
 }
