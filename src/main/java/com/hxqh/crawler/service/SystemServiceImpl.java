@@ -2,9 +2,12 @@ package com.hxqh.crawler.service;
 
 import com.hxqh.crawler.domain.Book;
 import com.hxqh.crawler.domain.VideosFilm;
+import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.User;
 import com.hxqh.crawler.repository.UserRepository;
 import com.hxqh.crawler.util.DateUtils;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -15,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Ocean lin on 2017/7/1.
@@ -96,5 +100,24 @@ public class SystemServiceImpl implements SystemService {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public ResponseEntity addCrawlerURLList(List<CrawlerURL> crawlerURLList) {
+
+        String index = "market_analysis_film";
+        String type = "film";
+
+        Long count = (long) crawlerURLList.size();
+        //核心方法BulkRequestBuilder拼接多个Json
+        BulkRequestBuilder bulkRequest = client.prepareBulk();
+        for (int i = 0; i < count; i++) {
+            bulkRequest.add(client.prepareIndex(index, type).setSource(crawlerURLList.get(i)));
+        }
+        //插入文档至ES, 完成！
+        BulkResponse bulkItemResponses = bulkRequest.execute().actionGet();
+        int length = bulkItemResponses.getItems().length;
+        return new ResponseEntity(length, HttpStatus.OK);
+    }
+
 
 }

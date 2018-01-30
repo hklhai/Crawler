@@ -14,6 +14,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -41,9 +42,30 @@ public class HxqhTimer {
     @Autowired
     private CrawlerProblemRepository crawlerProblemRepository;
 
+    /**
+     * 1. 获取爬取列表前先将数据写入ES
+     * 2. 清除所有mysql数据
+     * 3. 进行爬取
+     */
     // 每个星期日0点15分
-    @Scheduled(cron = "0 15 1 ? * SUN")
+    @Scheduled(cron = "0 15 0 ? * SUN")
     public void iqiyiUrlList() {
+        /**
+         * 取爬取列表前先将数据写入ES
+         */
+        List<CrawlerURL> crawlerURLList = crawlerURLRepository.findFilm();
+        ResponseEntity responseEntity = systemService.addCrawlerURLList(crawlerURLList);
+
+        /**
+         * 清除所有mysql数据
+         */
+        if (responseEntity.getStatusCodeValue() > 0) {
+            crawlerURLRepository.deleteAll();
+        }
+
+        /**
+         * 爬取数据
+         */
         // 1.所有待爬取URLList
         Map<String, URLInfo> allStartURLMap = new HashMap<>();
         Map<String, String> prefixSuffixMap = new HashMap<>();
@@ -112,7 +134,7 @@ public class HxqhTimer {
 
 
     //每天0点10分触发
-    @Scheduled(cron = "0 10 0 * * ?")
+    @Scheduled(cron = "0 40 1 * * ?")
     public void iqiyi() {
 
         // 1. 从数据库获取待爬取链接
@@ -138,6 +160,9 @@ public class HxqhTimer {
             e.printStackTrace();
         }
     }
+
+
+
 
 
 }
