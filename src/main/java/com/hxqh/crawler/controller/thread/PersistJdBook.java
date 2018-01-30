@@ -80,20 +80,18 @@ public class PersistJdBook implements Runnable {
                 Element commnetNumElement = doc.getElementById("comment-count").select("a").get(0);
                 if (commnetNumElement != null) {
                     commnetNum = commnetNumElement.text().trim();
-                    if (commnetNum.endsWith("万+")) {
-                        commnetNum = commnetNum.substring(0, commnetNum.length() - 2);
-                        Double v = Double.valueOf(commnetNum) * Constants.TEN_THOUSAND;
-                        commnetNum = String.valueOf(v.longValue());
-                    }
-                    if (commnetNum.endsWith("万")) {
-                        commnetNum = commnetNum.substring(0, commnetNum.length() - 1);
-                        Double v = Double.valueOf(commnetNum) * Constants.TEN_THOUSAND;
-                        commnetNum = String.valueOf(v.longValue());
-                    }
-                    if (commnetNum.endsWith("亿+")) {
-                        commnetNum = commnetNum.substring(0, commnetNum.length() - 2);
-                        Double v = Double.valueOf(commnetNum) * Constants.BILLION;
-                        commnetNum = String.valueOf(v.longValue());
+                    if(commnetNum.endsWith("+")){
+                        commnetNum = commnetNum.substring(0,commnetNum.length()-1);
+                        if (commnetNum.endsWith("万")) {
+                            commnetNum = commnetNum.substring(0, commnetNum.length() - 2);
+                            Double v = Double.valueOf(commnetNum) * Constants.TEN_THOUSAND;
+                            commnetNum = String.valueOf(v.longValue());
+                        }
+                        if (commnetNum.endsWith("亿")) {
+                            commnetNum = commnetNum.substring(0, commnetNum.length() - 2);
+                            Double v = Double.valueOf(commnetNum) * Constants.BILLION;
+                            commnetNum = String.valueOf(v.longValue());
+                        }
                     }
                 }
 

@@ -33,7 +33,7 @@ import java.util.concurrent.Executors;
  * Created by Ocean lin on 2017/7/9.
  */
 @Component
-public class HxqhTimer {
+public class IqiyiTimer {
 
     @Autowired
     private SystemService systemService;

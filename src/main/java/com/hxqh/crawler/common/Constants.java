@@ -25,6 +25,7 @@ public interface Constants {
     String SAVE_PATH = "/home/hadoop/crawler";
     String FILE_SPLIT = "/";
     String FILE_LOC = "/videos";
+    String BOOK_JD_FILE_LOC = "/book";
     /**
      * ElasticSearch 6.x config
      */
@@ -38,8 +39,8 @@ public interface Constants {
     Integer IQIYI_THREAD_NUM = 4;
     Integer IQIYI_PARTITION_NUM = 600; // 2319部电影
 
-    Integer JD_THREAD_NUM = 4;
-    Integer JD_PARTITION_NUM = 5;
+    Integer JD_THREAD_NUM = 5;
+    Integer JD_PARTITION_NUM = 990;  // 4916本书
 
 
     // 起始页数

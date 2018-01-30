@@ -89,7 +89,7 @@ public class SystemServiceImpl implements SystemService {
                     field("价格", book.getPrice()).
                     field("评论量", book.getCommnetNum()).
                     field("作者", book.getAuthor()).
-                    field("出版社", book.getPrice()).
+                    field("出版社", book.getPublish()).
                     field("添加时间", todayTime).endObject();
 
             IndexResponse result = this.client.prepareIndex("market_book", "book").setSource(content).get();
