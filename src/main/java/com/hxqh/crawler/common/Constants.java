@@ -36,7 +36,8 @@ public interface Constants {
      * Linux 爬虫线程数据与各分区的数量
      */
     Integer IQIYI_THREAD_NUM = 4;
-    Integer IQIYI_PARTITION_NUM = 500;
+    Integer IQIYI_PARTITION_NUM = 600; // 2319部电影
+
     Integer JD_THREAD_NUM = 4;
     Integer JD_PARTITION_NUM = 5;
 
