@@ -91,17 +91,16 @@ public class JdController {
             // 根据url样式生成前5页url
             String categoryId = (urlPageOne.split("-"))[0].split("/")[4];
 
-            String prefix = "http://book.jd.com/booktop/0-0-0.html?category=" + categoryId + "2-0-0-0-10001-";
+            String prefix = "http://book.jd.com/booktop/0-0-0.html?category=" + categoryId + "-0-0-0-10001-";
             String subfix = "#comfort";
             for (int i = 1; i < JD_PAGE_NUM; i++) {
                 String url = prefix + i + subfix;
                 urlList.add(url);
             }
             // 爬取页面中所有的url对应的页面中每本书的信息
+            List<CrawlerBookURL> crawlerURLList = new ArrayList<>();
             for (String url : urlList) {
-                List<CrawlerBookURL> crawlerURLList = new ArrayList<>();
                 try {
-
                     // 解析url获取其中的每本的信息
                     String outerHTML = CrawlerUtils.fetchHTMLContent(url, 6);
                     Document doc = Jsoup.parse(outerHTML);
@@ -117,11 +116,12 @@ public class JdController {
                         crawlerURLList.add(crawlerBookURL);
                     }
                     // 完成持久化
-                    crawlerBookURLRepository.save(crawlerURLList);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+            crawlerBookURLRepository.save(crawlerURLList);
+
         }
         return "crawler/notice";
     }
