@@ -64,38 +64,7 @@ public class JdController {
      */
     @RequestMapping("/jdBookData")
     public String jdBookData() {
-        // 1. 从数据库获取待爬取链接
-        List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findAll();
-        List<List<CrawlerBookURL>> lists = ListUtils.partition(crawlerBookURLList, Constants.JD_PARTITION_NUM);
 
-        ExecutorService service = Executors.newFixedThreadPool(Constants.JD_THREAD_NUM);
-        for (List<CrawlerBookURL> list : lists) {
-            service.execute(new PersistJdBook(list, crawlerProblemRepository, systemService));
-        }
-        service.shutdown();
-        while (!service.isTerminated()) {
-        }
-/**
- *         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
- .setNameFormat("demo-pool-%d").build();
- //Common Thread Pool
- ExecutorService pool = new ThreadPoolExecutor(5, 200,
- 0L, TimeUnit.MILLISECONDS,
- new LinkedBlockingQueue<>(1024), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
- for (List<CrawlerBookURL> list : lists) {
- pool.execute(new PersistJdBook(list, crawlerProblemRepository, systemService));
- }
- pool.shutdown();//gracefully shutdown
- */
-
-        // 2. 上传至HDFS
-        try {
-            HdfsUtils.persistToHDFS("-jd", Constants.BOOK_JD_FILE_LOC);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         return "crawler/notice";
     }
