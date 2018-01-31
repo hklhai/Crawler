@@ -75,13 +75,16 @@ public class PersistJdBook implements Runnable {
                 Element priceElement = doc.getElementById("jd-price");
                 if (priceElement != null) {
                     price = priceElement.text().substring(1, priceElement.text().length());
+                    if (price.equals("无报价")) {
+                        price = "0";
+                    }
                 }
 
                 Element commnetNumElement = doc.getElementById("comment-count").select("a").get(0);
                 if (commnetNumElement != null) {
                     commnetNum = commnetNumElement.text().trim();
-                    if(commnetNum.endsWith("+")){
-                        commnetNum = commnetNum.substring(0,commnetNum.length()-1);
+                    if (commnetNum.endsWith("+")) {
+                        commnetNum = commnetNum.substring(0, commnetNum.length() - 1);
                         if (commnetNum.endsWith("万")) {
                             commnetNum = commnetNum.substring(0, commnetNum.length() - 2);
                             Double v = Double.valueOf(commnetNum) * Constants.TEN_THOUSAND;
