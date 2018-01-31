@@ -2,8 +2,7 @@ package com.hxqh.crawler;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -16,15 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @ComponentScan(basePackages = "com.hxqh.crawler.**.*")
 @RestController
 @EnableScheduling
-public class AppSelfApplication extends SpringBootServletInitializer implements EmbeddedServletContainerCustomizer {
+public class AppSelfApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(AppSelfApplication.class, args);
-    }
-
-    @Override
-    public void customize(ConfigurableEmbeddedServletContainer container) {
-        container.setPort(8090);
     }
 
     /**
@@ -37,9 +31,9 @@ public class AppSelfApplication extends SpringBootServletInitializer implements 
      *
      * @return
      */
-//    @Override
-//    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-//        return builder.sources(this.getClass());
-//    }
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(AppSelfApplication.class);
+    }
 
 }

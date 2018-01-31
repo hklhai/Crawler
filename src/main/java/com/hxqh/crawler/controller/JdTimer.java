@@ -16,6 +16,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -55,8 +56,20 @@ public class JdTimer {
     // 每个星期日1点15分
     @Scheduled(cron = "0 15 1 ? * SUN")
     public void jdUrlList() {
+// todo
+//        /**
+//         * 取爬取列表前先将数据写入ES
+//         */
+//        List<CrawlerBookURL> crawlerURLList = crawlerBookURLRepository.findBookUrl();
+//        ResponseEntity responseEntity = systemService.add List(crawlerURLList);
+//
+//        /**
+//         * 清除所有mysql数据
+//         */
+//        if (responseEntity.getStatusCodeValue() > 0) {
+//            crawlerURLRepository.deleteIqiyiFilm();
+//        }
 
-        // todo 更新策略
 
         // 根据其实页面，爬取页面获取Url对应关系
         Map<String, String> map = new HashMap<>(500);

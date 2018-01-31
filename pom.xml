@@ -6,7 +6,7 @@
     <groupId>com.hxqh.crawler</groupId>
     <artifactId>hxqh-Crawler</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <name>Crawler</name>
     <description>hxqh Crawler</description>
@@ -167,6 +167,7 @@
     </dependencies>
 
     <build>
+        <finalName>Crawler</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
