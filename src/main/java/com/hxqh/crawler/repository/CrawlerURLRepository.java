@@ -12,6 +12,11 @@ import java.util.List;
  */
 @Repository
 public interface CrawlerURLRepository extends JpaRepository<CrawlerURL, String> {
-    @Query("select o from CrawlerURL o where o.category = 'film'")
+
+    @Query("select o from CrawlerURL o where o.category = 'film' and o.platform = 'iqiyi' ")
     List<CrawlerURL> findFilm();
+
+    @Query("delete from CrawlerURL o where o.category = 'film' and o.platform = 'iqiyi' ")
+    void deleteIqiyiFilm();
+
 }

@@ -61,7 +61,7 @@ public class IqiyiTimer {
          * 清除所有mysql数据
          */
         if (responseEntity.getStatusCodeValue() > 0) {
-            crawlerURLRepository.deleteAll();
+            crawlerURLRepository.deleteIqiyiFilm();
         }
 
         /**
