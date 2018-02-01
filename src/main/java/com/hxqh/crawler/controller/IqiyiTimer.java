@@ -48,77 +48,84 @@ public class IqiyiTimer {
     @Scheduled(cron = "0 15 0 ? * SUN")
     public void iqiyiUrlList() {
 
-        /**
-         * 取爬取列表前先将数据写入ES
-         */
-        List<CrawlerURL> crawlerURLList = crawlerURLRepository.findFilm();
-        ResponseEntity responseEntity = systemService.addCrawlerURLList(crawlerURLList);
+        try {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
+                /**
+                 * 取爬取列表前先将数据写入ES
+                 */
+                List<CrawlerURL> crawlerURLList = crawlerURLRepository.findFilm();
+                ResponseEntity responseEntity = systemService.addCrawlerURLList(crawlerURLList);
 
-        /**
-         * 清除所有mysql数据
-         */
-        if (responseEntity.getStatusCodeValue() > 0) {
-            crawlerURLRepository.deleteIqiyiFilm();
-        }
+                /**
+                 * 清除所有mysql数据
+                 */
+                if (responseEntity.getStatusCodeValue() > 0) {
+                    crawlerURLRepository.deleteIqiyiFilm();
+                }
 
-        /**
-         * 爬取数据
-         */
-        // 1.所有待爬取URLList
-        Map<String, URLInfo> allStartURLMap = new HashMap<>();
-        Map<String, String> prefixSuffixMap = new HashMap<>();
-        Map<String, URLInfo> hrefMap = new HashMap<>();
+                /**
+                 * 爬取数据
+                 */
+                // 1.所有待爬取URLList
+                Map<String, URLInfo> allStartURLMap = new HashMap<>();
+                Map<String, String> prefixSuffixMap = new HashMap<>();
+                Map<String, URLInfo> hrefMap = new HashMap<>();
 
-        // 2.获取全部页面Url
-        prefixSuffixMap.put("http://list.iqiyi.com/www/1/-------------11-", "-1-iqiyi--.html|iqiyi|film|hot");
-        prefixSuffixMap.put("http://list.iqiyi.com/www/1/-------------4-", "-1-iqiyi--.html|iqiyi|film|new");
-        prefixSuffixMap.put("http://list.iqiyi.com/www/1/-------------8-", "-1-iqiyi--.html|iqiyi|film|score");
-//        prefixSuffixMap.put("http://list.iqiyi.com/www/2/-------------11-", "-1-iqiyi--.html|iqiyi|soap|hot");
-//        prefixSuffixMap.put("http://list.iqiyi.com/www/2/-------------4-", "-1-iqiyi--.html|iqiyi|soap|new");
-//        prefixSuffixMap.put("http://list.iqiyi.com/www/6/-------------11-", "-1-iqiyi--.html|iqiyi|variety|hot");
-//        prefixSuffixMap.put("http://list.iqiyi.com/www/6/-------------4-", "-1-iqiyi--.html|iqiyi|variety|new");
+                // 2.获取全部页面Url
+                prefixSuffixMap.put("http://list.iqiyi.com/www/1/-------------11-", "-1-iqiyi--.html|iqiyi|film|hot");
+                prefixSuffixMap.put("http://list.iqiyi.com/www/1/-------------4-", "-1-iqiyi--.html|iqiyi|film|new");
+                prefixSuffixMap.put("http://list.iqiyi.com/www/1/-------------8-", "-1-iqiyi--.html|iqiyi|film|score");
+    //        prefixSuffixMap.put("http://list.iqiyi.com/www/2/-------------11-", "-1-iqiyi--.html|iqiyi|soap|hot");
+    //        prefixSuffixMap.put("http://list.iqiyi.com/www/2/-------------4-", "-1-iqiyi--.html|iqiyi|soap|new");
+    //        prefixSuffixMap.put("http://list.iqiyi.com/www/6/-------------11-", "-1-iqiyi--.html|iqiyi|variety|hot");
+    //        prefixSuffixMap.put("http://list.iqiyi.com/www/6/-------------4-", "-1-iqiyi--.html|iqiyi|variety|new");
 
-        for (Map.Entry<String, String> entry : prefixSuffixMap.entrySet()) {
-            String prefix = entry.getKey();
-            String[] split = entry.getValue().split("\\|");
-            String suffix = split[0];
-            String platform = split[1];
-            String category = split[2];
-            String sorted = split[3];
+                for (Map.Entry<String, String> entry : prefixSuffixMap.entrySet()) {
+                    String prefix = entry.getKey();
+                    String[] split = entry.getValue().split("\\|");
+                    String suffix = split[0];
+                    String platform = split[1];
+                    String category = split[2];
+                    String sorted = split[3];
 
-            URLInfo urlInfo = new URLInfo(platform, category, sorted);
+                    URLInfo urlInfo = new URLInfo(platform, category, sorted);
 
-            for (int i = Constants.PAGE_START_NUM; i <= Constants.PAGE_END_NUM; i++) {
-                String url = prefix + i + suffix;
-                allStartURLMap.put(url, urlInfo);
-            }
-        }
-
-        for (Map.Entry<String, URLInfo> entry : allStartURLMap.entrySet()) {
-            String url = entry.getKey();
-            URLInfo urlInfo = entry.getValue();
-            try {
-                String outerHTML = CrawlerUtils.fetchHTMLContent(url, Constants.DEFAULT_SEELP_SECOND);
-
-                String[] split = outerHTML.split("\n");
-                for (int i = 0; i < split.length; i++) {
-                    String href = CrawlerUtils.getHref(split[i]);
-                    if (href != null && href.contains("vfrm=2-4-0-1")) {
-                        hrefMap.put(href, urlInfo);
+                    for (int i = Constants.PAGE_START_NUM; i <= Constants.PAGE_END_NUM; i++) {
+                        String url = prefix + i + suffix;
+                        allStartURLMap.put(url, urlInfo);
                     }
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+
+                for (Map.Entry<String, URLInfo> entry : allStartURLMap.entrySet()) {
+                    String url = entry.getKey();
+                    URLInfo urlInfo = entry.getValue();
+                    try {
+                        String outerHTML = CrawlerUtils.fetchHTMLContent(url, Constants.DEFAULT_SEELP_SECOND);
+
+                        String[] split = outerHTML.split("\n");
+                        for (int i = 0; i < split.length; i++) {
+                            String href = CrawlerUtils.getHref(split[i]);
+                            if (href != null && href.contains("vfrm=2-4-0-1")) {
+                                hrefMap.put(href, urlInfo);
+                            }
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                CrawlerUtils.persistCrawlerURL(hrefMap, crawlerURLRepository);
             }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        CrawlerUtils.persistCrawlerURL(hrefMap,crawlerURLRepository);
-
     }
 
 
-    //每天0点10分触发
-    @Scheduled(cron = "0 40 1 * * ?")
+    //每天1点15分触发
+    @Scheduled(cron = "0 15 1 * * ?")
     public void iqiyi() {
 
 
