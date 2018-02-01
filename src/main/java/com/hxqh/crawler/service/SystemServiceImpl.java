@@ -46,6 +46,7 @@ public class SystemServiceImpl implements SystemService {
         return userDao.findUserById(name);
     }
 
+
     @Override
     public ResponseEntity addVideos(VideosFilm videosFilm) {
         try {
@@ -62,6 +63,7 @@ public class SystemServiceImpl implements SystemService {
                     field("scoreVal", videosFilm.getScoreVal()).
                     field("commentNum", videosFilm.getCommentNum()).
                     field("up", videosFilm.getUp()).
+                    field("playNum", videosFilm.getPlayNum()).
                     field("addTime", todayTime).endObject();
 
             IndexResponse result = this.client.prepareIndex(indexName, typeName).setSource(content).get();
