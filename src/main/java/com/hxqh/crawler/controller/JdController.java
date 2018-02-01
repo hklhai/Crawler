@@ -30,7 +30,7 @@ public class JdController {
     private CrawlerProblemRepository crawlerProblemRepository;
 
     /**
-     * http://127.0.0.1:8090/jd/bookUrl
+     * http://127.0.0.1:8666/jd/bookUrl
      *
      * @return
      */
@@ -42,7 +42,7 @@ public class JdController {
     }
 
     /**
-     * http://127.0.0.1:8090/jd/jdBookData
+     * http://127.0.0.1:8666/jd/jdBookData
      *
      * @return
      */
@@ -55,7 +55,7 @@ public class JdController {
 
 
     /**
-     * http://127.0.0.1:8090/jd/test
+     * http://127.0.0.1:8666/jd/test
      *
      * @return
      */

@@ -26,6 +26,11 @@ public interface Constants {
     String FILE_SPLIT = "/";
     String FILE_LOC = "/videos";
     String BOOK_JD_FILE_LOC = "/book";
+    String HOST_SPARK1 = "spark1";
+    String HOST_SPARK2 = "spark2";
+    String HOST_SPARK3 = "spark3";
+    String HOST_SPARK4 = "spark4";
+
     /**
      * ElasticSearch 6.x config
      */

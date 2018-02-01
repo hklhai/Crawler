@@ -1,11 +1,23 @@
 package com.hxqh.crawler.controller;
 
+import com.hxqh.crawler.common.Constants;
+import com.hxqh.crawler.controller.thread.PersistFilm;
+import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
+import com.hxqh.crawler.util.HdfsUtils;
+import com.hxqh.crawler.util.HostUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -25,40 +37,6 @@ public class IqiyiController {
     private CrawlerProblemRepository crawlerProblemRepository;
 
 
-    /**
-     * 生成待爬取页面集合 电影
-     * <p>
-     * http://list.iqiyi.com/www/1/-------------11-1-1-iqiyi--.html  热门
-     * http://list.iqiyi.com/www/1/-------------11-2-1-iqiyi--.html  热门
-     * <p>
-     * http://list.iqiyi.com/www/1/-------------4-1-1-iqiyi--.html  更新时间
-     * http://list.iqiyi.com/www/1/-------------4-2-1-iqiyi--.html  更新时间
-     * <p>
-     * http://list.iqiyi.com/www/1/-------------8-1-1-iqiyi--.html  评分
-     * http://list.iqiyi.com/www/1/-------------8-2-1-iqiyi--.html  评分
-     * <p>
-     * <p>
-     * <p>
-     * 生成待爬取页面集合 电视剧
-     * http://list.iqiyi.com/www/2/-------------11-1-1-iqiyi--.html  热门
-     * http://list.iqiyi.com/www/2/-------------11-2-1-iqiyi--.html  热门
-     * <p>
-     * http://list.iqiyi.com/www/2/-------------4-1-1-iqiyi--.html  更新时间
-     * http://list.iqiyi.com/www/2/-------------4-2-1-iqiyi--.html  更新时间
-     * <p>
-     * <p>
-     * <p>
-     * 生成待爬取页面集合 综艺
-     * http://list.iqiyi.com/www/6/-------------11-1-1-iqiyi--.html  热门
-     * http://list.iqiyi.com/www/6/-------------11-2-1-iqiyi--.html  热门
-     * <p>
-     * http://list.iqiyi.com/www/6/-------------4-1-1-iqiyi--.html  更新时间
-     * http://list.iqiyi.com/www/6/-------------4-2-1-iqiyi--.html  更新时间
-     * <p>
-     * <p>
-     * <p>
-     * http://127.0.0.1:8090/iqiyi/filmeUrl
-     */
     @RequestMapping("/filmeUrl")
     public String filmeUrl() {
 
@@ -69,12 +47,13 @@ public class IqiyiController {
 
     /**
      * 爬取电影、影视、综艺数据并上传至HDFS
-     * http://127.0.0.1:8090/iqiyi/filemData
+     * http://127.0.0.1:8666/iqiyi/filemData
      *
      * @return
      */
     @RequestMapping("/filemData")
     public String filemData() {
+
 
         return "crawler/notice";
     }
