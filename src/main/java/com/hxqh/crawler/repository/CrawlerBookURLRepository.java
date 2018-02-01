@@ -17,4 +17,7 @@ public interface CrawlerBookURLRepository extends JpaRepository<CrawlerBookURL, 
 
     @Query("select o from CrawlerBookURL o where o.platform = 'jd' ")
     List<CrawlerBookURL> findBookUrl();
+
+    @Query("delete from CrawlerBookURL o where o.platform = 'jd'")
+    void deleteJdBooks();
 }

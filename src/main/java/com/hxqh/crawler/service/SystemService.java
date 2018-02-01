@@ -2,6 +2,7 @@ package com.hxqh.crawler.service;
 
 import com.hxqh.crawler.domain.Book;
 import com.hxqh.crawler.domain.VideosFilm;
+import com.hxqh.crawler.model.CrawlerBookURL;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.User;
 import org.springframework.http.ResponseEntity;
@@ -26,4 +27,6 @@ public interface SystemService {
     void export();
 
     void migrate();
+
+    ResponseEntity addJdCrawlerBookURLList(List<CrawlerBookURL> crawlerBookURLList);
 }

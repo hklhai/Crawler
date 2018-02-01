@@ -2,6 +2,7 @@ package com.hxqh.crawler.service;
 
 import com.hxqh.crawler.domain.Book;
 import com.hxqh.crawler.domain.VideosFilm;
+import com.hxqh.crawler.model.CrawlerBookURL;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.User;
 import com.hxqh.crawler.repository.UserRepository;
@@ -208,6 +209,11 @@ public class SystemServiceImpl implements SystemService {
                 break;
             }
         }
+    }
+
+    @Override
+    public ResponseEntity addJdCrawlerBookURLList(List<CrawlerBookURL> crawlerBookURLList) {
+        return null;
     }
 
 

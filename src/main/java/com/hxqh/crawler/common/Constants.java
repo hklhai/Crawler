@@ -34,7 +34,6 @@ public interface Constants {
     /**
      * ElasticSearch 6.x config
      */
-    String ES_HOST = "spark3";
     Integer ES_PORT = 9300;
 
 
