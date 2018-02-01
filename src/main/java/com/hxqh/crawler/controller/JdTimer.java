@@ -10,6 +10,7 @@ import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.HdfsUtils;
+import com.hxqh.crawler.util.HostUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -149,27 +150,35 @@ public class JdTimer {
     //每天3点5分触发
     @Scheduled(cron = "0 5 3 * * ?")
     public void jdData() {
-        // 1. 从数据库获取待爬取链接
-        List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findAll();
-        List<List<CrawlerBookURL>> lists = ListUtils.partition(crawlerBookURLList, Constants.JD_PARTITION_NUM);
 
-        ExecutorService service = Executors.newFixedThreadPool(Constants.JD_THREAD_NUM);
-        for (List<CrawlerBookURL> list : lists) {
-            service.execute(new PersistJdBook(list, crawlerProblemRepository, systemService));
-        }
-        service.shutdown();
-        while (!service.isTerminated()) {
-        }
-
-        // 2. 上传至HDFS
         try {
-            HdfsUtils.persistToHDFS("-jd", Constants.BOOK_JD_FILE_LOC);
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
+                // 1. 从数据库获取待爬取链接
+                List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findAll();
+                List<List<CrawlerBookURL>> lists = ListUtils.partition(crawlerBookURLList, Constants.JD_PARTITION_NUM);
+
+                ExecutorService service = Executors.newFixedThreadPool(Constants.JD_THREAD_NUM);
+                for (List<CrawlerBookURL> list : lists) {
+                    service.execute(new PersistJdBook(list, crawlerProblemRepository, systemService));
+                }
+                service.shutdown();
+                while (!service.isTerminated()) {
+                }
+
+                // 2. 上传至HDFS
+                try {
+                    HdfsUtils.persistToHDFS("-jd", Constants.BOOK_JD_FILE_LOC);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         } catch (URISyntaxException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 

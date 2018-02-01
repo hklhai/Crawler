@@ -1,9 +1,13 @@
 package com.hxqh.crawler.util;
 
 import com.hxqh.crawler.common.Constants;
+import com.hxqh.crawler.domain.URLInfo;
 import com.hxqh.crawler.model.CrawlerProblem;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
+import com.hxqh.crawler.repository.CrawlerURLRepository;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -16,6 +20,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -174,6 +180,21 @@ public class CrawlerUtils {
                     0, crawlerURL.getCategory(), crawlerURL.getPlatform(), crawlerURL.getSorted());
             crawlerProblemRepository.save(crawlerProblem);
         }
+    }
+
+    public static void persistCrawlerURL(Map<String, URLInfo> hrefMap, CrawlerURLRepository crawlerURLRepository){
+        List<CrawlerURL> crawlerURLS = new ArrayList<>();
+        for (Map.Entry<String, URLInfo> entry : hrefMap.entrySet()) {
+            String html = entry.getKey();
+            URLInfo urlInfo = entry.getValue();
+            Document doc = Jsoup.parse(html);
+            String title = doc.select("a").get(0).attr("title").toString();
+            String url = doc.select("a").get(0).attr("href").toString();
+            String addTime = DateUtils.getTodayDate();
+            CrawlerURL crawlerURL = new CrawlerURL(title, url, addTime, urlInfo.getCategory(), urlInfo.getPlatform(), urlInfo.getSorted());
+            crawlerURLS.add(crawlerURL);
+        }
+        crawlerURLRepository.save(crawlerURLS);
     }
 
 }

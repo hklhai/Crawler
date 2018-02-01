@@ -8,12 +8,9 @@ import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
-import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.HdfsUtils;
 import com.hxqh.crawler.util.HostUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,22 +112,7 @@ public class IqiyiTimer {
             }
         }
 
-        // 3.解析
-        List<CrawlerURL> crawlerURLS = new ArrayList<>();
-        // 4.取每个页面的需要持久化URL
-        for (Map.Entry<String, URLInfo> entry : hrefMap.entrySet()) {
-            String html = entry.getKey();
-            URLInfo urlInfo = entry.getValue();
-            Document doc = Jsoup.parse(html);
-            String title = doc.select("a").get(0).attr("title").toString();
-            String url = doc.select("a").get(0).attr("href").toString();
-            String addTime = DateUtils.getTodayDate();
-
-            CrawlerURL crawlerURL =
-                    new CrawlerURL(title, url, addTime, urlInfo.getCategory(), urlInfo.getPlatform(), urlInfo.getSorted());
-            crawlerURLS.add(crawlerURL);
-        }
-        crawlerURLRepository.save(crawlerURLS);
+        CrawlerUtils.persistCrawlerURL(hrefMap,crawlerURLRepository);
 
     }
 
@@ -166,8 +147,6 @@ public class IqiyiTimer {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-
             }
         } catch (URISyntaxException e) {
             e.printStackTrace();

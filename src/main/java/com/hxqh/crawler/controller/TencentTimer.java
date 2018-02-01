@@ -8,11 +8,9 @@ import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
-import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.HdfsUtils;
+import com.hxqh.crawler.util.HostUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,40 +112,40 @@ public class TencentTimer {
                 e.printStackTrace();
             }
         }
-        List<CrawlerURL> crawlerURLS = new ArrayList<>();
-        for (Map.Entry<String, URLInfo> entry : hrefMap.entrySet()) {
-            String html = entry.getKey();
-            URLInfo urlInfo = entry.getValue();
-            Document doc = Jsoup.parse(html);
-            String title = doc.select("a").get(0).attr("title").toString();
-            String url = doc.select("a").get(0).attr("href").toString();
-            String addTime = DateUtils.getTodayDate();
-            CrawlerURL crawlerURL = new CrawlerURL(title, url, addTime, urlInfo.getCategory(), urlInfo.getPlatform(), urlInfo.getSorted());
-            crawlerURLS.add(crawlerURL);
-        }
-        crawlerURLRepository.save(crawlerURLS);
+        CrawlerUtils.persistCrawlerURL(hrefMap,crawlerURLRepository);
     }
 
     //每天0点10分触发
     @Scheduled(cron = "0 40 1 * * ?")
     public void tencent(){
-        // 1. 从数据库获取待爬取链接
-        List<CrawlerURL> crawlerURLS = crawlerURLRepository.findTencentFilm();
 
-        List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, Constants.TENCENT_PARTITION_NUM);
-
-        ExecutorService service = Executors.newFixedThreadPool(Constants.TENCENT_THREAD_NUM);
-
-        for (List<CrawlerURL> l : lists) {
-            service.execute(new PersistTencentFilm(l, crawlerProblemRepository, systemService));
-        }
-        service.shutdown();
-        while (!service.isTerminated()) {
-        }
-
-        // 2. 上传至HDFS
         try {
-            HdfsUtils.persistToHDFS("-tencent", Constants.FILE_LOC);
+            if(HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
+
+                // 1. 从数据库获取待爬取链接
+                List<CrawlerURL> crawlerURLS = crawlerURLRepository.findTencentFilm();
+
+
+                List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, Constants.TENCENT_PARTITION_NUM);
+
+                ExecutorService service = Executors.newFixedThreadPool(Constants.TENCENT_THREAD_NUM);
+
+                for (List<CrawlerURL> l : lists) {
+                    service.execute(new PersistTencentFilm(l, crawlerProblemRepository, systemService));
+                }
+                service.shutdown();
+                while (!service.isTerminated()) {
+                }
+
+                // 2. 上传至HDFS
+                try {
+                    HdfsUtils.persistToHDFS("-tencent", Constants.FILE_LOC);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         } catch (URISyntaxException e) {
             e.printStackTrace();
         } catch (IOException e) {
