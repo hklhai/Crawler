@@ -5,6 +5,7 @@ import com.hxqh.crawler.model.CrawlerProblem;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -26,7 +27,7 @@ public class CrawlerUtils {
     private static final String ENCODE = "charset=.*";
 
     private static final String A_LABEL = "<a .* href=.*</a>";
-
+    private static final String S_LABEL = "<strong class=.*</strong>";
     /**
      * 要分析的网页
      */
@@ -73,6 +74,27 @@ public class CrawlerUtils {
         return html;
     }
 
+    public static String fetchHTMLAndIframeContent(String url, Integer second) throws InterruptedException {
+        Integer sleepTime = second * 1000;
+        System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
+        WebDriver webDriver = new ChromeDriver();
+        webDriver.get(url);
+        Thread.sleep(sleepTime);
+        WebElement webElement = webDriver.findElement(By.xpath("/html"));
+        String html = new String();
+        if (webElement != null) {
+            html = webElement.getAttribute("outerHTML");
+        }
+        ((JavascriptExecutor) webDriver).executeScript("window.scrollTo(0,1600)");
+        Thread.sleep(sleepTime);
+        WebDriver commentIframe = webDriver.switchTo().frame("commentIframe");
+        WebElement element = commentIframe.findElement(By.xpath("/html"));
+        String outerHTML = element.getAttribute("outerHTML");
+        webDriver.quit();
+        return html+"hxqh"+outerHTML;
+
+    }
+
     /**
      * 解析网页链接
      *
@@ -115,6 +137,9 @@ public class CrawlerUtils {
         return null;
     }
 
+
+
+
     /**
      * 从一行字符串中读取链接
      *
@@ -128,6 +153,16 @@ public class CrawlerUtils {
         }
         return null;
     }
+    public static String TencentgetHref(String s) {
+        Pattern pattern = Pattern.compile(S_LABEL);
+        Matcher matcher = pattern.matcher(s);
+        if (matcher.find()) {
+            return matcher.group(0);
+        }
+        return null;
+    }
+
+
 
     public static void persistProblemURL(CrawlerProblemRepository crawlerProblemRepository, CrawlerURL crawlerURL) {
         CrawlerProblem crawlerProblem = crawlerProblemRepository.findByUrl(crawlerURL.getUrl());

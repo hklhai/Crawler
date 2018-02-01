@@ -39,6 +39,9 @@ public interface Constants {
     Integer IQIYI_THREAD_NUM = 4;
     Integer IQIYI_PARTITION_NUM = 600; // 2319部电影
 
+    Integer TENCENT_THREAD_NUM = 3;
+    Integer TENCENT_PARTITION_NUM = 300; // 900部电影
+
     Integer JD_THREAD_NUM = 5;
     Integer JD_PARTITION_NUM = 990;  // 4916本书
 
@@ -47,6 +50,11 @@ public interface Constants {
     Integer PAGE_START_NUM = 1;
     // 结束页数
     Integer PAGE_END_NUM = 30;
+
+    // 腾讯视频起始页数
+    Integer TENCENT_PAGE_START_NUM = 0;
+    // 结束页数
+    Integer TENCENT_PAGE_END_NUM = 30;
 
     /**
      *
