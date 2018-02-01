@@ -22,4 +22,8 @@ public interface SystemService {
     ResponseEntity addBook(Book book);
 
     ResponseEntity addCrawlerURLList(List<CrawlerURL> crawlerURLList);
+
+    void export();
+
+    void migrate();
 }

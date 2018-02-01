@@ -62,7 +62,7 @@ public class JdController {
     @RequestMapping("/test")
     public String test() {
 
-        String str = "https://v.qq.com/x/cover/dhdm0lalbqrgtru.html";
+        String str = "https://item.jd.com/11672203.html";
 
         String html = null;
         try {
@@ -72,10 +72,9 @@ public class JdController {
         }
         Document doc = Jsoup.parse(html);
 
-        Elements elementsByClass = doc.getElementsByClass("video_title _video_title");
-
-        String title = elementsByClass.text();
-        System.out.println(title);
+        Elements authorElement = doc.getElementById("p-author").select("a");
+        String author = authorElement.text();
+        System.out.println(author);
 
 
         return "crawler/notice";
