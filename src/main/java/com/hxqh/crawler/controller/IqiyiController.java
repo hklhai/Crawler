@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 
 /**
  * @author Ocean Lin
- *         Created by Ocean lin on 2017/7/1.
+ * Created by Ocean lin on 2017/7/1.
  */
 @Controller
 @RequestMapping("/iqiyi")
@@ -53,6 +53,39 @@ public class IqiyiController {
      */
     @RequestMapping("/filemData")
     public String filemData() {
+
+
+        try {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
+
+                // 1. 从数据库获取待爬取链接
+                List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
+
+                List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, Constants.IQIYI_PARTITION_NUM);
+
+                ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
+
+                for (List<CrawlerURL> l : lists) {
+                    service.execute(new PersistFilm(l, crawlerProblemRepository, systemService));
+                }
+                service.shutdown();
+                while (!service.isTerminated()) {
+                }
+
+                // 2. 上传至HDFS
+                try {
+                    HdfsUtils.persistToHDFS("-iqiyi", Constants.FILE_LOC);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         return "crawler/notice";
