@@ -25,7 +25,7 @@ public class BaiduCrawlerTest {
 
     Integer NUM = 6;
 
-    @Test
+//    @Test
     public void test() {
         // <电影名称，Url>
         Map<String, String> detailMap = new HashMap<>();
@@ -73,7 +73,7 @@ public class BaiduCrawlerTest {
 
     }
 
-    @Test
+//    @Test
     public void urlEncode() {
         String str1 = "%E6%88%98%E7%8B%BC2";
         String str2 = "%E8%8A%B3%E5%8D%8E";

@@ -29,7 +29,7 @@ public class IqiyiCrawler {
     @Autowired
     private CrawlerProblemRepository crawlerProblemRepository;
 
-    @Test
+//    @Test
     public void persist() throws IOException, InterruptedException {
         // 1. 从数据库获取待爬取链接
         List<String> hrefList = new ArrayList<>();
