@@ -151,8 +151,9 @@ public class FileUtils {
             // File("D:\\DwcrTmpFile\\" + filename),true);
             File file = new File(filename);
             //如果文件所在文件夹不存在 则 创建文件夹
-            if (!file.getParentFile().exists())
+            if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
+            }
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -176,8 +177,9 @@ public class FileUtils {
             // File("D:\\DwcrTmpFile\\" + filename),true);
             File file = new File(filename);
             //如果文件所在文件夹不存在 则 创建文件夹
-            if (!file.getParentFile().exists())
+            if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
+            }
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -210,8 +212,9 @@ public class FileUtils {
         if (filePath != null && !"".equals(filePath)) {
             try {
                 File f = new File(filePath); // 输入要删除的文件位置
-                if (f.exists())
+                if (f.exists()) {
                     return f.delete();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

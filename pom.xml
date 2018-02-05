@@ -164,6 +164,12 @@
             </exclusions>
             <version>2.4.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.44</version>
+        </dependency>
+
     </dependencies>
 
     <build>
