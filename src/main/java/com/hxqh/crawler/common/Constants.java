@@ -76,5 +76,8 @@ public interface Constants {
     Integer TEN_THOUSAND = 10000;
     Integer BILLION = 100000000;
 
+    // 猫眼数据下载周期1小时一次
+    Integer ONE_HOUR = 3600000;
+
 
 }

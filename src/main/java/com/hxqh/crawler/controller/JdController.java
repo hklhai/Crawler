@@ -1,28 +1,15 @@
 package com.hxqh.crawler.controller;
 
-import com.hxqh.crawler.common.Constants;
-import com.hxqh.crawler.model.CrawlerBookURL;
 import com.hxqh.crawler.repository.CrawlerBookURLRepository;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
-import com.hxqh.crawler.util.DateUtils;
-import com.hxqh.crawler.util.HostUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Ocean lin on 2018/1/29.
@@ -49,7 +36,6 @@ public class JdController {
      */
     @RequestMapping("/bookUrl")
     public String bookUrl() {
-
 
 
         return "crawler/notice";

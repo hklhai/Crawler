@@ -26,6 +26,9 @@ import java.util.concurrent.Executors;
 
 import static com.hxqh.crawler.common.Constants.*;
 
+/**
+ *  spark4 执行
+ */
 @Component
 public class TencentTimer {
 
@@ -128,6 +131,41 @@ public class TencentTimer {
     //每天1点10分触发
     @Scheduled(cron = "0 10 1 * * ?")
     public void tencent() {
+
+
+        try {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
+
+                // 1. 从数据库获取待爬取链接
+                List<CrawlerURL> crawlerURLS = crawlerURLRepository.findTencentFilm();
+
+
+                List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, Constants.TENCENT_PARTITION_NUM);
+
+                ExecutorService service = Executors.newFixedThreadPool(Constants.TENCENT_THREAD_NUM);
+
+                for (List<CrawlerURL> l : lists) {
+                    service.execute(new PersistTencentFilm(l, crawlerProblemRepository, systemService));
+                }
+                service.shutdown();
+                while (!service.isTerminated()) {
+                }
+
+                // 2. 上传至HDFS
+                try {
+                    HdfsUtils.persistToHDFS("-tencent", Constants.FILE_LOC);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
