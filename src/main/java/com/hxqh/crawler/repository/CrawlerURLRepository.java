@@ -16,6 +16,9 @@ public interface CrawlerURLRepository extends JpaRepository<CrawlerURL, String> 
     @Query("select o from CrawlerURL o where o.category = 'film' and o.platform = 'iqiyi' ")
     List<CrawlerURL> findFilm();
 
+    @Query("select o from CrawlerURL o where o.sorted = 'hot' and o.platform = 'iqiyi' ")
+    List<CrawlerURL> findHotFilm();
+
     @Query("select o from CrawlerURL o where o.category='film' and o.platform='tencent'")
     List<CrawlerURL> findTencentFilm();
 

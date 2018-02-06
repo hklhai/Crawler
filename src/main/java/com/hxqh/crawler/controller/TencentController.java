@@ -42,8 +42,8 @@ public class TencentController {
     @RequestMapping("/filemData")
     public String filemData() {
 
-        try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
+//        try {
+//            if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
 
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerURL> crawlerURLS = crawlerURLRepository.findTencentFilm();
@@ -68,12 +68,12 @@ public class TencentController {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//            }
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
 
 
