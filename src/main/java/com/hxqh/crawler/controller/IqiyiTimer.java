@@ -6,6 +6,7 @@ import com.hxqh.crawler.domain.URLInfo;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
+import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.HdfsUtils;
@@ -27,7 +28,7 @@ import java.util.concurrent.Executors;
 
 /**
  * @author Ocean Lin
- *         Created by Ocean lin on 2017/7/9.
+ * Created by Ocean lin on 2017/7/9.
  */
 @Component
 public class IqiyiTimer {
@@ -38,6 +39,8 @@ public class IqiyiTimer {
     private CrawlerURLRepository crawlerURLRepository;
     @Autowired
     private CrawlerProblemRepository crawlerProblemRepository;
+    @Autowired
+    private CrawlerService crawlerService;
 
     /**
      * 1. 获取爬取列表前先将数据写入ES
@@ -60,7 +63,7 @@ public class IqiyiTimer {
                  * 清除所有mysql数据
                  */
                 if (responseEntity.getStatusCodeValue() > 0) {
-                    crawlerURLRepository.deleteIqiyiFilm();
+                    crawlerService.deleteIqiyiFilm();
                 }
 
                 /**
@@ -75,10 +78,10 @@ public class IqiyiTimer {
                 prefixSuffixMap.put("http://list.iqiyi.com/www/1/-------------11-", "-1-iqiyi--.html|iqiyi|film|hot");
                 prefixSuffixMap.put("http://list.iqiyi.com/www/1/-------------4-", "-1-iqiyi--.html|iqiyi|film|new");
                 prefixSuffixMap.put("http://list.iqiyi.com/www/1/-------------8-", "-1-iqiyi--.html|iqiyi|film|score");
-    //        prefixSuffixMap.put("http://list.iqiyi.com/www/2/-------------11-", "-1-iqiyi--.html|iqiyi|soap|hot");
-    //        prefixSuffixMap.put("http://list.iqiyi.com/www/2/-------------4-", "-1-iqiyi--.html|iqiyi|soap|new");
-    //        prefixSuffixMap.put("http://list.iqiyi.com/www/6/-------------11-", "-1-iqiyi--.html|iqiyi|variety|hot");
-    //        prefixSuffixMap.put("http://list.iqiyi.com/www/6/-------------4-", "-1-iqiyi--.html|iqiyi|variety|new");
+                //        prefixSuffixMap.put("http://list.iqiyi.com/www/2/-------------11-", "-1-iqiyi--.html|iqiyi|soap|hot");
+                //        prefixSuffixMap.put("http://list.iqiyi.com/www/2/-------------4-", "-1-iqiyi--.html|iqiyi|soap|new");
+                //        prefixSuffixMap.put("http://list.iqiyi.com/www/6/-------------11-", "-1-iqiyi--.html|iqiyi|variety|hot");
+                //        prefixSuffixMap.put("http://list.iqiyi.com/www/6/-------------4-", "-1-iqiyi--.html|iqiyi|variety|new");
 
                 for (Map.Entry<String, String> entry : prefixSuffixMap.entrySet()) {
                     String prefix = entry.getKey();
@@ -128,7 +131,37 @@ public class IqiyiTimer {
     @Scheduled(cron = "0 15 1 * * ?")
     public void iqiyi() {
 
+        try {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
 
+                // 1. 从数据库获取待爬取链接
+                List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
+
+                List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, Constants.IQIYI_PARTITION_NUM);
+
+                ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
+
+                for (List<CrawlerURL> l : lists) {
+                    service.execute(new PersistFilm(l, crawlerProblemRepository, systemService));
+                }
+                service.shutdown();
+                while (!service.isTerminated()) {
+                }
+
+                // 2. 上传至HDFS
+                try {
+                    HdfsUtils.persistToHDFS("-iqiyi", Constants.FILE_LOC);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 

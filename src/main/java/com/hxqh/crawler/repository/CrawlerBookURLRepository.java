@@ -2,6 +2,7 @@ package com.hxqh.crawler.repository;
 
 import com.hxqh.crawler.model.CrawlerBookURL;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +19,7 @@ public interface CrawlerBookURLRepository extends JpaRepository<CrawlerBookURL, 
     @Query("select o from CrawlerBookURL o where o.platform = 'jd' ")
     List<CrawlerBookURL> findBookUrl();
 
+    @Modifying
     @Query("delete from CrawlerBookURL o where o.platform = 'jd'")
     void deleteJdBooks();
 }

@@ -8,7 +8,7 @@ import javax.persistence.Table;
  * Created by Ocean lin on 2018/1/18.
  */
 @Entity
-@Table(name = "crawler_url")
+@Table(name = "test_tb_del")
 public class CrawlerURL {
 
 

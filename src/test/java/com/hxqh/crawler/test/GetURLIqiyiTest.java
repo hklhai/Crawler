@@ -1,6 +1,6 @@
 package com.hxqh.crawler.test;
 
-import com.hxqh.crawler.repository.CrawlerURLRepository;
+import com.hxqh.crawler.service.CrawlerService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +14,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class GetURLIqiyiTest {
 
-
     @Autowired
-    private CrawlerURLRepository crawlerURLRepository;
+    private CrawlerService crawlerService;
 
+//    @Test
+//    public void deleteIqiyiFilm() {
+//        crawlerService.deleteIqiyiFilm();
+//    }
+//
+//    @Test
+//    public void delTencentFilm() {
+//        crawlerService.delTencentFilm();
+//    }
 
-    @Test
-    public void testAppAndPersist() {
-
-    }
 
 }
