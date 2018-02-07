@@ -24,7 +24,7 @@ public interface CrawlerURLRepository extends JpaRepository<CrawlerURL, String> 
     List<CrawlerURL> findTencentFilm();
 
     @Modifying
-    @Query("delete from CrawlerURL o where o.category ='film'and o.platform ='tencent'")
+    @Query("delete from CrawlerURL o where o.category ='film' and o.platform ='tencent'")
     void delTencentFilm();
 
     @Modifying

@@ -36,7 +36,7 @@ public class PersistTencentFilm implements Runnable {
     public void run() {
         try {
             parseAndPersist(l, crawlerProblemRepository, systemService);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
