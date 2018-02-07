@@ -77,10 +77,6 @@ public interface Constants {
     Integer TEN_THOUSAND = 10000;
     Integer BILLION = 100000000;
 
-    // 猫眼数据下载周期1h一次
-    Integer ONE_HOUR = 3600000;
-    // 猫眼数据下载周期3s一次
-    Integer THREE_SECOND = 3000;
 
     String MAO_YAN = "maoyan";
 
