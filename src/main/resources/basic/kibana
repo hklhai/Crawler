@@ -150,4 +150,36 @@ GET /market_analysis/videos/_search
 
 
 
+PUT market_analysis_book
+PUT /market_analysis_book/_mapping/book
+{
+  "properties":{
+               "title": {
+                  "type": "text",
+                  "fielddata": true,
+                  "analyzer": "ik_max_word",
+                  "search_analyzer": "ik_max_word"
+                },
+                "url": {
+                    "type": "text"
+                },
+                "addTime": {
+                    "type": "text"
+                },
+                "platform": {
+                    "type": "keyword"
+                },
+                "category": {
+                    "type": "keyword"
+                },
+                "createTime": {
+                    "type": "date",
+                    "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+                }
+         }
+}
+GET /market_analysis_book/book/_search
+
+
+
 

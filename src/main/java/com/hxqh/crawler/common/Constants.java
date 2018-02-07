@@ -5,9 +5,9 @@ package com.hxqh.crawler.common;
  */
 public interface Constants {
 
-    /**
-     * Windows
-     */
+//    /**
+//     * Windows
+//     */
 //    String CHROMEDRIVER = "E://Program//chromedriver.exe";
 //    String SAVE_PATH = "E://crawler";
 //    String FILE_SPLIT = "\\";
@@ -38,12 +38,10 @@ public interface Constants {
     String HOST_SPARK3 = "spark3";
     String HOST_SPARK4 = "spark4";
     String MAOYAN_PATH = "/home/hadoop/crawler/maoyan";
-
     /**
      * ElasticSearch 6.x config
      */
     Integer ES_PORT = 9300;
-
 
 
     /**
@@ -79,8 +77,10 @@ public interface Constants {
     Integer TEN_THOUSAND = 10000;
     Integer BILLION = 100000000;
 
-    // 猫眼数据下载周期1小时一次
+    // 猫眼数据下载周期1h一次
     Integer ONE_HOUR = 3600000;
+    // 猫眼数据下载周期3s一次
+    Integer THREE_SECOND = 3000;
 
     String MAO_YAN = "maoyan";
 
