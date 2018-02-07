@@ -19,9 +19,8 @@ public class TencentController {
     private CrawlerURLRepository crawlerURLRepository;
     @Autowired
     private CrawlerProblemRepository crawlerProblemRepository;
-    @Autowired
-    private CrawlerService crawlerService;
 
+    Integer TENCENT_PAGE_SIZE = 0;
 
 
     @RequestMapping("/filmeUrl")

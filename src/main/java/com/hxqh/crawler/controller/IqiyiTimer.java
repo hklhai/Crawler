@@ -27,6 +27,8 @@ import java.util.concurrent.Executors;
 
 
 /**
+ * spark4 执行
+ *
  * @author Ocean Lin
  * Created by Ocean lin on 2017/7/9.
  */
@@ -119,9 +121,7 @@ public class IqiyiTimer {
 
                 CrawlerUtils.persistCrawlerURL(hrefMap, crawlerURLRepository);
             }
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

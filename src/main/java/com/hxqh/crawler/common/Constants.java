@@ -8,39 +8,42 @@ public interface Constants {
     /**
      * Windows
      */
-    String CHROMEDRIVER = "E://Program//chromedriver.exe";
-    String SAVE_PATH = "E://crawler";
-    String FILE_SPLIT = "\\";
-    String FILE_LOC = "\\videos";
-    String BOOK_JD_FILE_LOC = "\\book";
-    String HOST_SPARK1 = "spark1";
-    String HOST_SPARK2 = "spark2";
-    String HOST_SPARK3 = "spark3";
-    String HOST_SPARK4 = "spark4";
-    /**
-     * ElasticSearch 6.x config
-     */
-    String ES_HOST = "127.0.0.1";
-    Integer ES_PORT = 9300;
-    String MAOYAN_PATH = "E:\\crawler\\maoyan";
+//    String CHROMEDRIVER = "E://Program//chromedriver.exe";
+//    String SAVE_PATH = "E://crawler";
+//    String FILE_SPLIT = "\\";
+//    String FILE_LOC = "\\videos";
+//    String BOOK_JD_FILE_LOC = "\\book";
+//    String HOST_SPARK1 = "spark1";
+//    String HOST_SPARK2 = "spark2";
+//    String HOST_SPARK3 = "spark3";
+//    String HOST_SPARK4 = "spark4";
+//    String MAOYAN_PATH = "E:\\crawler\\maoyan";
+//    /**
+//     * ElasticSearch 6.x config
+//     */
+//    String ES_HOST = "127.0.0.1";
+//    Integer ES_PORT = 9300;
 
 
     /**
      * Linux
      */
-//    String CHROMEDRIVER = "/usr/bin/chromedriver";
-//    String SAVE_PATH = "/home/hadoop/crawler";
-//    String FILE_SPLIT = "/";
-//    String FILE_LOC = "/videos";
-//    String BOOK_JD_FILE_LOC = "/book";
-//    String HOST_SPARK1 = "spark1";
-//    String HOST_SPARK2 = "spark2";
-//    String HOST_SPARK3 = "spark3";
-//    String HOST_SPARK4 = "spark4";
-//    /**
-//     * ElasticSearch 6.x config
-//     */
-//    Integer ES_PORT = 9300;
+    String CHROMEDRIVER = "/usr/bin/chromedriver";
+    String SAVE_PATH = "/home/hadoop/crawler";
+    String FILE_SPLIT = "/";
+    String FILE_LOC = "/videos";
+    String BOOK_JD_FILE_LOC = "/book";
+    String HOST_SPARK1 = "spark1";
+    String HOST_SPARK2 = "spark2";
+    String HOST_SPARK3 = "spark3";
+    String HOST_SPARK4 = "spark4";
+    String MAOYAN_PATH = "/home/hadoop/crawler/maoyan";
+
+    /**
+     * ElasticSearch 6.x config
+     */
+    Integer ES_PORT = 9300;
+
 
 
     /**
@@ -76,5 +79,9 @@ public interface Constants {
     Integer TEN_THOUSAND = 10000;
     Integer BILLION = 100000000;
 
+    // 猫眼数据下载周期1小时一次
+    Integer ONE_HOUR = 3600000;
+
+    String MAO_YAN = "maoyan";
 
 }

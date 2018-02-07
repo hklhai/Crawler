@@ -1,6 +1,7 @@
 package com.hxqh.crawler.service;
 
 import com.hxqh.crawler.domain.Book;
+import com.hxqh.crawler.domain.RealTimeMovie;
 import com.hxqh.crawler.domain.VideosFilm;
 import com.hxqh.crawler.model.CrawlerBookURL;
 import com.hxqh.crawler.model.CrawlerURL;
@@ -213,7 +214,46 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public ResponseEntity addJdCrawlerBookURLList(List<CrawlerBookURL> crawlerBookURLList) {
+        // todo
         return null;
+    }
+
+    @Override
+    public ResponseEntity addMaoYanList(List<RealTimeMovie> movieArrayList) {
+
+        String todayTime = DateUtils.getTodayTime();
+        Integer length = null;
+        String index = "maoyan";
+        String type = "film";
+
+        try {
+            Long count = (long) movieArrayList.size();
+            //核心方法BulkRequestBuilder拼接多个Json
+            BulkRequestBuilder bulkRequest = client.prepareBulk();
+            for (int i = 0; i < count; i++) {
+                RealTimeMovie realTimeMovie = movieArrayList.get(i);
+
+                XContentBuilder content = XContentFactory.jsonBuilder().startObject().
+                        field("platform", realTimeMovie.getPlatform()).
+                        field("filmName", realTimeMovie.getFilmName()).
+                        field("boxInfo", realTimeMovie.getBoxInfo()).
+                        field("sumBoxInfo", realTimeMovie.getSumBoxInfo()).
+                        field("splitBoxInfo", realTimeMovie.getSplitBoxInfo()).
+                        field("splitSumBoxInfo", realTimeMovie.getSplitSumBoxInfo()).
+                        field("releaseInfo", realTimeMovie.getReleaseInfo()).
+                        field("addTime", todayTime).
+                        field("showInfo", realTimeMovie.getShowInfo()).endObject();
+                bulkRequest.add(client.prepareIndex(index, type).setSource(content));
+            }
+            //插入文档至ES, 完成！
+            BulkResponse bulkItemResponses = bulkRequest.execute().actionGet();
+            length = bulkItemResponses.getItems().length;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity(length, HttpStatus.OK);
+
+
     }
 
 

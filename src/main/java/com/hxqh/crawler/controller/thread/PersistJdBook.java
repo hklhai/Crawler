@@ -38,13 +38,13 @@ public class PersistJdBook implements Runnable {
     public void run() {
         try {
             parseAndPersist(list, crawlerProblemRepository, systemService);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    private static void parseAndPersist(List<CrawlerBookURL> hrefList, CrawlerProblemRepository crawlerProblemRepository, SystemService systemService) throws InterruptedException {
+    private static void parseAndPersist(List<CrawlerBookURL> hrefList, CrawlerProblemRepository crawlerProblemRepository, SystemService systemService) throws Exception {
         StringBuilder stringBuilder = new StringBuilder(STRINGBUILDER_SIZE);
 
         for (int i = 0; i < hrefList.size(); i++) {

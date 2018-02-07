@@ -32,6 +32,8 @@ import java.util.concurrent.Executors;
 
 
 /**
+ * spark4 执行
+ * <p>
  * Created by Ocean lin on 2018/1/30.
  *
  * @author Ocean Lin
@@ -65,6 +67,7 @@ public class JdTimer {
                 /**
                  * 取爬取列表前先将数据写入ES
                  */
+                // todo 持久化至ES
                 List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findBookUrl();
                 ResponseEntity responseEntity = systemService.addJdCrawlerBookURLList(crawlerBookURLList);
 
@@ -94,7 +97,7 @@ public class JdTimer {
                         map.put(element.attr("href"), element.text());
                     }
 
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
