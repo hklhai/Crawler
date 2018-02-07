@@ -57,13 +57,12 @@ public class JdTimer {
      * 2. 清除所有mysql数据
      * 3. 进行爬取
      */
-    // 每个星期日0点15分
-    @Scheduled(cron = "0 15 0 ? * SUN")
+    // 每个星期日12点0分
+    @Scheduled(cron = "0 0 12 ? * SUN")
     public void jdUrlList() {
 
-
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
                 /**
                  * 取爬取列表前先将数据写入ES
                  */
@@ -161,12 +160,12 @@ public class JdTimer {
     }
 
 
-    //每天1点5分触发
-    @Scheduled(cron = "0 5 1 * * ?")
+    //每天23点0分触发
+    @Scheduled(cron = "0 0 23 * * ?")
     public void jdData() {
 
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findAll();
                 List<List<CrawlerBookURL>> lists = ListUtils.partition(crawlerBookURLList, Constants.JD_PARTITION_NUM);

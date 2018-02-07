@@ -49,8 +49,8 @@ public class IqiyiTimer {
      * 2. 清除所有mysql数据
      * 3. 进行爬取
      */
-    // 每个星期日0点15分
-    @Scheduled(cron = "0 15 0 ? * SUN")
+    // 每个星期日9点00分
+    @Scheduled(cron = "0 0 9 ? * SUN")
     public void iqiyiUrlList() {
 
         try {
@@ -127,10 +127,9 @@ public class IqiyiTimer {
     }
 
 
-    //每天1点15分触发
-    @Scheduled(cron = "0 15 1 * * ?")
+    //每天19点0分触发
+    @Scheduled(cron = "0 0 19 * * ?")
     public void iqiyi() {
-
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
 
