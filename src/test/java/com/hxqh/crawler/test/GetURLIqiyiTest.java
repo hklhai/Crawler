@@ -10,8 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 /**
  * Created by Ocean lin on 2018/1/17.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
 public class GetURLIqiyiTest {
 
     @Autowired

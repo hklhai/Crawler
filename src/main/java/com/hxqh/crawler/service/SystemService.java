@@ -1,6 +1,7 @@
 package com.hxqh.crawler.service;
 
 import com.hxqh.crawler.domain.Book;
+import com.hxqh.crawler.domain.RealTimeMovie;
 import com.hxqh.crawler.domain.VideosFilm;
 import com.hxqh.crawler.model.CrawlerBookURL;
 import com.hxqh.crawler.model.CrawlerURL;
@@ -12,6 +13,8 @@ import java.util.List;
 
 /**
  * Created by Ocean lin on 2017/7/1.
+ *
+ * @author Lin
  */
 @Service("systemService")
 public interface SystemService {
@@ -29,4 +32,8 @@ public interface SystemService {
     void migrate();
 
     ResponseEntity addJdCrawlerBookURLList(List<CrawlerBookURL> crawlerBookURLList);
+
+    ResponseEntity addMaoYanList(List<RealTimeMovie> movieArrayList);
+
+
 }

@@ -79,5 +79,6 @@ public interface Constants {
     // 猫眼数据下载周期1小时一次
     Integer ONE_HOUR = 3600000;
 
+    String MAO_YAN = "maoyan";
 
 }
