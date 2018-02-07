@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 import static com.hxqh.crawler.common.Constants.*;
 
 /**
- *  spark4 执行
+ * spark4 执行
  */
 @Component
 public class TencentTimer {
@@ -113,7 +113,7 @@ public class TencentTimer {
                                 hrefMap.put(href, urlInfo);
                             }
                         }
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }

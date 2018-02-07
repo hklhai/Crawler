@@ -5,7 +5,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -25,7 +24,7 @@ public class DoubanCrawlerTest {
     Integer NUM = 4;
 
 
-//    @Test
+    //    @Test
     public void test() {
         String category = "电影";
 
@@ -89,7 +88,7 @@ public class DoubanCrawlerTest {
                     }
                 }
 
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

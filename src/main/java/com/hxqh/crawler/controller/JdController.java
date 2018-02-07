@@ -67,7 +67,7 @@ public class JdController {
         String html = null;
         try {
             html = CrawlerUtils.fetchHTMLContent(str, 6);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         Document doc = Jsoup.parse(html);

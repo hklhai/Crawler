@@ -121,9 +121,7 @@ public class IqiyiTimer {
 
                 CrawlerUtils.persistCrawlerURL(hrefMap, crawlerURLRepository);
             }
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

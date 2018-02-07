@@ -49,7 +49,7 @@ public class BaiduCrawlerTest {
                         detailMap.put(title, href);
                     }
                 }
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -64,7 +64,7 @@ public class BaiduCrawlerTest {
                 String keys = doc.getElementsByClass("basicInfo-item name").text();
                 String values = doc.getElementsByClass("basicInfo-item value").text();
                 System.out.println(keys + " " + values);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

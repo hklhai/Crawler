@@ -97,7 +97,7 @@ public class JdTimer {
                         map.put(element.attr("href"), element.text());
                     }
 
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 

@@ -39,26 +39,26 @@ public class PersistFilm implements Runnable {
     public void run() {
         try {
             parseAndPersist(l, crawlerProblemRepository, systemService);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void parseAndPersist(List<CrawlerURL> hrefList, CrawlerProblemRepository crawlerProblemRepository, SystemService systemService) throws InterruptedException {
+    private static void parseAndPersist(List<CrawlerURL> hrefList, CrawlerProblemRepository crawlerProblemRepository, SystemService systemService) {
         StringBuilder stringBuilder = new StringBuilder(STRINGBUILDER_SIZE);
+        CrawlerURL crawlerURL = null;
+        try {
+            for (int i = 0; i < hrefList.size(); i++) {
+                crawlerURL = hrefList.get(i);
+                String html = CrawlerUtils.fetchHTMLContent(crawlerURL.getUrl(), Constants.DEFAULT_SEELP_SECOND);
+                Document doc = Jsoup.parse(html);
+                String source = crawlerURL.getPlatform();
+
+                String filmName = new String();
+                String star = new String();
+                String director = new String();
 
 
-        for (int i = 0; i < hrefList.size(); i++) {
-            CrawlerURL crawlerURL = hrefList.get(i);
-            String html = CrawlerUtils.fetchHTMLContent(crawlerURL.getUrl(), Constants.DEFAULT_SEELP_SECOND);
-            Document doc = Jsoup.parse(html);
-            String source = crawlerURL.getPlatform();
-
-            String filmName = new String();
-            String star = new String();
-            String director = new String();
-
-            try {
                 Element filmNameElement = doc.getElementById("widget-videotitle");
                 if (filmNameElement != null) {
                     filmName = filmNameElement.text();
@@ -149,12 +149,12 @@ public class PersistFilm implements Runnable {
                     continue;
                 }
 
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // 持久化无法爬取URL
-                CrawlerUtils.persistProblemURL(crawlerProblemRepository, crawlerURL);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 持久化无法爬取URL
+            CrawlerUtils.persistProblemURL(crawlerProblemRepository, crawlerURL);
+
         }
     }
 

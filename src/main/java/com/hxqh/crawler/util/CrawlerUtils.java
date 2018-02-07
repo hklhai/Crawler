@@ -13,8 +13,10 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -65,9 +67,24 @@ public class CrawlerUtils {
     }
 
 
-    public static String fetchHTMLContent(String url, Integer second) throws InterruptedException {
+    public static String fetchHTMLContent(String url, Integer second) throws Exception {
+//        Integer sleepTime = second * 1000;
+//        System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
+//        WebDriver webDriver = new ChromeDriver();
+//        webDriver.get(url);
+//        Thread.sleep(sleepTime);
+//        WebElement webElement = webDriver.findElement(By.xpath("/html"));
+//        String html = new String();
+//        if (webElement != null) {
+//            html = webElement.getAttribute("outerHTML");
+//        }
+//        webDriver.quit();
+
         Integer sleepTime = second * 1000;
         System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
+        ChromeDriverService service = new ChromeDriverService
+                .Builder().usingDriverExecutable(new File(Constants.CHROMEDRIVER)).usingAnyFreePort().build();
+        service.start();
         WebDriver webDriver = new ChromeDriver();
         webDriver.get(url);
         Thread.sleep(sleepTime);
@@ -76,7 +93,9 @@ public class CrawlerUtils {
         if (webElement != null) {
             html = webElement.getAttribute("outerHTML");
         }
+        // 关闭 ChromeDriver 接口
         webDriver.quit();
+        service.stop();
         return html;
     }
 
@@ -97,7 +116,7 @@ public class CrawlerUtils {
         WebElement element = commentIframe.findElement(By.xpath("/html"));
         String outerHTML = element.getAttribute("outerHTML");
         webDriver.quit();
-        return html+"hxqh"+outerHTML;
+        return html + "hxqh" + outerHTML;
 
     }
 
@@ -144,8 +163,6 @@ public class CrawlerUtils {
     }
 
 
-
-
     /**
      * 从一行字符串中读取链接
      *
@@ -159,6 +176,7 @@ public class CrawlerUtils {
         }
         return null;
     }
+
     public static String TencentgetHref(String s) {
         Pattern pattern = Pattern.compile(S_LABEL);
         Matcher matcher = pattern.matcher(s);
@@ -167,7 +185,6 @@ public class CrawlerUtils {
         }
         return null;
     }
-
 
 
     public static void persistProblemURL(CrawlerProblemRepository crawlerProblemRepository, CrawlerURL crawlerURL) {
@@ -182,7 +199,7 @@ public class CrawlerUtils {
         }
     }
 
-    public static void persistCrawlerURL(Map<String, URLInfo> hrefMap, CrawlerURLRepository crawlerURLRepository){
+    public static void persistCrawlerURL(Map<String, URLInfo> hrefMap, CrawlerURLRepository crawlerURLRepository) {
         List<CrawlerURL> crawlerURLS = new ArrayList<>();
         for (Map.Entry<String, URLInfo> entry : hrefMap.entrySet()) {
             String html = entry.getKey();
