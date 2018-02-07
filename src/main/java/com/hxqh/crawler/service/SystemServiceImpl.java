@@ -232,7 +232,6 @@ public class SystemServiceImpl implements SystemService {
                         field("addTime", crawlerBookURL.getAddTime()).
                         field("category", crawlerBookURL.getCategory()).
                         field("platform", crawlerBookURL.getPlatform()).
-                        field("platform", crawlerBookURL.getPlatform()).
                         field("createTime", todayTime).endObject();
                 bulkRequest.add(client.prepareIndex(index, type).setSource(content));
             }
@@ -281,8 +280,6 @@ public class SystemServiceImpl implements SystemService {
         }
         return new ResponseEntity(length, HttpStatus.OK);
     }
-
-
 
 
 }
