@@ -24,7 +24,7 @@ public class NumUtils {
     public static Integer getReleaseInfo(String releaseInfo) {
         Integer integer = null;
         String s = releaseInfo.replaceAll("上映", "").replaceAll("天", "");
-        if (s.equals("首")) {
+        if (s.equals("首日")) {
             integer = 1;
         } else {
             integer = Integer.valueOf(s);
