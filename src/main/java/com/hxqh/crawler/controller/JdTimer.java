@@ -66,7 +66,6 @@ public class JdTimer {
                 /**
                  * 取爬取列表前先将数据写入ES
                  */
-                // todo 持久化至ES
                 List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findBookUrl();
                 ResponseEntity responseEntity = systemService.addJdCrawlerBookURLList(crawlerBookURLList);
 

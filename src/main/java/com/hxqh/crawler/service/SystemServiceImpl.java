@@ -214,8 +214,36 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public ResponseEntity addJdCrawlerBookURLList(List<CrawlerBookURL> crawlerBookURLList) {
-        // todo
-        return null;
+        String todayTime = DateUtils.getTodayTime();
+        Integer length = null;
+
+        try {
+            String index = "market_analysis_book";
+            String type = "book";
+
+            Long count = (long) crawlerBookURLList.size();
+            //核心方法BulkRequestBuilder拼接多个Json
+            BulkRequestBuilder bulkRequest = client.prepareBulk();
+            for (int i = 0; i < count; i++) {
+                CrawlerBookURL crawlerBookURL = crawlerBookURLList.get(i);
+                XContentBuilder content = XContentFactory.jsonBuilder().startObject().
+                        field("url", crawlerBookURL.getUrl()).
+                        field("title", crawlerBookURL.getTitle()).
+                        field("addTime", crawlerBookURL.getAddTime()).
+                        field("category", crawlerBookURL.getCategory()).
+                        field("platform", crawlerBookURL.getPlatform()).
+                        field("platform", crawlerBookURL.getPlatform()).
+                        field("createTime", todayTime).endObject();
+                bulkRequest.add(client.prepareIndex(index, type).setSource(content));
+            }
+            BulkResponse bulkItemResponses = bulkRequest.execute().actionGet();
+            length = bulkItemResponses.getItems().length;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity(length, HttpStatus.OK);
+
+
     }
 
     @Override
@@ -252,9 +280,9 @@ public class SystemServiceImpl implements SystemService {
             e.printStackTrace();
         }
         return new ResponseEntity(length, HttpStatus.OK);
-
-
     }
+
+
 
 
 }
