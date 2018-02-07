@@ -1,5 +1,9 @@
 package com.hxqh.crawler.test;
 
+import com.hxqh.crawler.model.CrawlerDoubanScore;
+import com.hxqh.crawler.model.CrawlerURL;
+import com.hxqh.crawler.repository.CrawlerDoubanSocreRepository;
+import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.util.CrawlerUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -109,6 +113,8 @@ public class DoubanCrawlerTest {
                 }
 
             } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 //            }

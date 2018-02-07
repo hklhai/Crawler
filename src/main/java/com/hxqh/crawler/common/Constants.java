@@ -53,7 +53,7 @@ public interface Constants {
     Integer IQIYI_PARTITION_NUM = 600; // 2319部电影
 
     Integer TENCENT_THREAD_NUM = 3;
-    Integer TENCENT_PARTITION_NUM = 10; // 900部电影
+    Integer TENCENT_PARTITION_NUM = 300; // ？？？部电影
 
     Integer JD_THREAD_NUM = 5;
     Integer JD_PARTITION_NUM = 990;  // 4916本书
