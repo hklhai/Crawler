@@ -5,9 +5,9 @@ package com.hxqh.crawler.common;
  */
 public interface Constants {
 
-//    /**
-//     * Windows
-//     */
+    /**
+     * Windows
+     */
 //    String CHROMEDRIVER = "E://Program//chromedriver.exe";
 //    String SAVE_PATH = "E://crawler";
 //    String FILE_SPLIT = "\\";
