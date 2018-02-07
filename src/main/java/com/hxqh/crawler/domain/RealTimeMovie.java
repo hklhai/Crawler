@@ -20,7 +20,7 @@ public class RealTimeMovie {
     private Double splitBoxInfo;
     private Double splitSumBoxInfo;
 
-    private Integer releaseInfo;
+    private String releaseInfo;
     private Date addTime;
 
     private Integer showInfo;
@@ -28,7 +28,7 @@ public class RealTimeMovie {
     public RealTimeMovie() {
     }
 
-    public RealTimeMovie(String platform, String filmName, Double boxInfo, Double sumBoxInfo, Double splitBoxInfo, Double splitSumBoxInfo, Integer releaseInfo, Date addTime, Integer showInfo) {
+    public RealTimeMovie(String platform, String filmName, Double boxInfo, Double sumBoxInfo, Double splitBoxInfo, Double splitSumBoxInfo, String releaseInfo, Date addTime, Integer showInfo) {
         this.platform = platform;
         this.filmName = filmName;
         this.boxInfo = boxInfo;
@@ -98,11 +98,11 @@ public class RealTimeMovie {
     }
 
 
-    public Integer getReleaseInfo() {
+    public String getReleaseInfo() {
         return releaseInfo;
     }
 
-    public void setReleaseInfo(Integer releaseInfo) {
+    public void setReleaseInfo(String releaseInfo) {
         this.releaseInfo = releaseInfo;
     }
 

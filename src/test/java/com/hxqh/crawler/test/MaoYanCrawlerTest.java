@@ -82,7 +82,7 @@ public class MaoYanCrawlerTest {
                     NumUtils.getNumber(sumBoxInfo),
                     NumUtils.getNumber(splitBoxInfo),
                     NumUtils.getNumber(splitSumBoxInfo),
-                    NumUtils.getReleaseInfo(releaseInfo),
+                    releaseInfo,
                     new Date(),
                     showInfo
             );
