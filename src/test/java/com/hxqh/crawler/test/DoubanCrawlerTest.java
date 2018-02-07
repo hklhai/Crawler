@@ -28,8 +28,8 @@ import java.util.Map;
  *
  * @author Lin
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
 public class DoubanCrawlerTest {
 
     @Autowired
