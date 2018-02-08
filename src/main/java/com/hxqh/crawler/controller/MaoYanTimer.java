@@ -46,7 +46,7 @@ public class MaoYanTimer {
 
 
     //3s执行一次
-    @Scheduled(cron = "*/3  * * * * ")
+    @Scheduled(cron = "0/3 * * * * ?")
     public void maoYanPerThreeSecond() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
