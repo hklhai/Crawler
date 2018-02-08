@@ -21,8 +21,8 @@ import org.springframework.stereotype.Component;
 public class MaoYanTimer {
 
     //每一个小时执行一次
-    @Scheduled(cron = "0 0 * * * ?")
-    public void jdData() {
+    @Scheduled(cron = "0 */60 * * * * ")
+    public void maoYanOnehour() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
                 while (true) {
@@ -33,6 +33,31 @@ public class MaoYanTimer {
                         JsonObject xpath = ReadUrlUtils.getXpath(url);
                         FileUtils.writeStrToFile(xpath.toString(),
                                 Constants.MAOYAN_PATH + Constants.FILE_SPLIT + dateString);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //3s执行一次
+    @Scheduled(cron = "*/3  * * * * ")
+    public void maoYanPerThreeSecond() {
+        try {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
+                while (true) {
+                    //  获取当前时间
+                    String dateString = DateUtils.getTodayDate();
+                    try {
+                        String url = "https://box.maoyan.com/promovie/api/box/second.json";
+                        JsonObject xpath = ReadUrlUtils.getXpath(url);
+                        FileUtils.writeStrToFile(xpath.toString(),
+                                Constants.MAOYAN_THREE_SECOND_PATH + Constants.FILE_SPLIT + dateString);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

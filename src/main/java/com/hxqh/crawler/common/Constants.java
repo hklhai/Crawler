@@ -18,6 +18,7 @@ public interface Constants {
 //    String HOST_SPARK3 = "spark3";
 //    String HOST_SPARK4 = "spark4";
 //    String MAOYAN_PATH = "E:\\crawler\\maoyan";
+//    String MAOYAN_THREE_SECOND_PATH = "E:\\crawler\\maoyan_three";
 //    /**
 //     * ElasticSearch 6.x config
 //     */
@@ -38,6 +39,7 @@ public interface Constants {
     String HOST_SPARK3 = "spark3";
     String HOST_SPARK4 = "spark4";
     String MAOYAN_PATH = "/home/hadoop/crawler/maoyan";
+    String MAOYAN_THREE_SECOND_PATH = "/home/hadoop/crawler/maoyan_three";
     /**
      * ElasticSearch 6.x config
      */
