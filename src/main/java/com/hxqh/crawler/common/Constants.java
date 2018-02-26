@@ -40,7 +40,7 @@ public interface Constants {
     String MAOYAN_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler\\maoyan" : "/home/hadoop/crawler/maoyan";
     String MAOYAN_THREE_SECOND_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler\\maoyan_three" : "/home/hadoop/crawler/maoyan_three";
     String PHANTOMJS_PATH = os.toLowerCase().startsWith("win") == true ?
-            "E:\\Program\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe" : "/usr/bin/phantomjs ";
+            "E:\\Program\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe" : "/usr/bin/phantomjs";
 
 
     /**
