@@ -66,7 +66,7 @@ public class JdController {
 
         String html = null;
         try {
-            html = CrawlerUtils.fetchHTMLContent(str, 6);
+            html = CrawlerUtils.fetchHTMLContentByPhantomJs(str, 6);
         } catch (Exception e) {
             e.printStackTrace();
         }

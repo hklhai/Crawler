@@ -14,6 +14,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,6 +27,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,6 +70,36 @@ public class CrawlerUtils {
         return hrefList;
     }
 
+
+    public static String fetchHTMLContentByPhantomJs(String url, Integer second) throws Exception {
+        //设置必要参数
+        DesiredCapabilities dcaps = new DesiredCapabilities();
+        //ssl证书支持
+        dcaps.setCapability("acceptSslCerts", true);
+        //截屏支持
+        dcaps.setCapability("takesScreenshot", true);
+        //css搜索支持
+        dcaps.setCapability("cssSelectorsEnabled", true);
+        //js支持
+        dcaps.setJavascriptEnabled(true);
+        //驱动支持（第二参数表明的是你的phantomjs引擎所在的路径）
+        dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, Constants.PHANTOMJS_PATH);
+        //创建无界面浏览器对象
+        PhantomJSDriver driver = new PhantomJSDriver(dcaps);
+
+        //设置隐性等待（作用于全局）
+        driver.manage().timeouts().implicitlyWait(second, TimeUnit.SECONDS);
+        //打开页面
+        driver.get(url);
+        //查找元素
+        WebElement webElement = driver.findElement(By.xpath("/html"));
+        String html = new String();
+        if (driver != null) {
+            html = webElement.getAttribute("outerHTML");
+        }
+
+        return html;
+    }
 
     public static String fetchHTMLContent(String url, Integer second) throws Exception {
 //        Integer sleepTime = second * 1000;
