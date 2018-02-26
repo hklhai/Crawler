@@ -28,9 +28,11 @@ public class StartCrawlerTest {
     @Test
     public void os() {
         String os = System.getProperty("os.name");
-        System.out.println(os);
         if (os.toLowerCase().startsWith("win")) {
-            System.out.println(os + " can't gunzip");
+            System.out.println("win");
+        }else if(os.toLowerCase().startsWith("linux"))
+        {
+            System.out.println("Linux");
         }
     }
 
