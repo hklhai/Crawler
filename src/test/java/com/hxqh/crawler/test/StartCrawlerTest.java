@@ -1,15 +1,18 @@
 package com.hxqh.crawler.test;
 
+import org.junit.Test;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
  * Created by Ocean lin on 2018/1/25.
+ *
  * @author Lin
  */
 public class StartCrawlerTest {
 
-    //    @Test
+    @Test
     public void test() {
         InetAddress addr = null;
         try {
@@ -19,6 +22,16 @@ public class StartCrawlerTest {
         }
         String hostName = addr.getHostName().toString(); //获取本机计算机名称
         System.out.println("本机名称:" + hostName);
+    }
+
+
+    @Test
+    public void os() {
+        String os = System.getProperty("os.name");
+        System.out.println(os);
+        if (os.toLowerCase().startsWith("win")) {
+            System.out.println(os + " can't gunzip");
+        }
     }
 
 }
