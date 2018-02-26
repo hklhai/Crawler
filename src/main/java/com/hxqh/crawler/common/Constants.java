@@ -6,30 +6,11 @@ package com.hxqh.crawler.common;
  * @author Lin
  */
 public interface Constants {
-
     String os = System.getProperty("os.name");
-//    /**
-//     * Windows
-//     */
-//    String CHROMEDRIVER = ;
-//    String SAVE_PATH = ;
-//    String FILE_SPLIT = "\\";
-//    String FILE_LOC = ;
-//    String BOOK_JD_FILE_LOC = "\\book";
-//    String HOST_SPARK1 = "spark1";
-//    String HOST_SPARK2 = "spark2";
-//    String HOST_SPARK3 = "spark3";
-//    String HOST_SPARK4 = "spark4";
-//    String MAOYAN_PATH = "E:\\crawler\\maoyan";
-//    String MAOYAN_THREE_SECOND_PATH = "E:\\crawler\\maoyan_three";
-//    /**
-//     * ElasticSearch 6.x config
-//     */
-//    Integer ES_PORT = 9300;
 
 
-    String CHROMEDRIVER = os.toLowerCase().startsWith("win") == true ? "E://Program//chromedriver.exe" : "/usr/bin/chromedriver";
-    String SAVE_PATH = os.toLowerCase().startsWith("win") == true ? "E://crawler" : "/home/hadoop/crawler";
+    String CHROMEDRIVER = os.toLowerCase().startsWith("win") == true ? "E:\\Program\\ hromedriver.exe" : "/usr/bin/chromedriver";
+    String SAVE_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler" : "/home/hadoop/crawler";
     String FILE_SPLIT = os.toLowerCase().startsWith("win") == true ? "\\" : "/";
     String FILE_LOC = os.toLowerCase().startsWith("win") == true ? "\\videos" : "/videos";
     String BOOK_JD_FILE_LOC = os.toLowerCase().startsWith("win") == true ? "\\book" : "/book";

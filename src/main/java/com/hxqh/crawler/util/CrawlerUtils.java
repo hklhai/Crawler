@@ -87,10 +87,13 @@ public class CrawlerUtils {
         //创建无界面浏览器对象
         PhantomJSDriver driver = new PhantomJSDriver(dcaps);
 
+        Integer sleepTime = second * 1000;
         //设置隐性等待（作用于全局）
-        driver.manage().timeouts().implicitlyWait(second, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         //打开页面
         driver.get(url);
+        Thread.sleep(sleepTime);
+
         //查找元素
         WebElement webElement = driver.findElement(By.xpath("/html"));
         String html = new String();

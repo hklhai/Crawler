@@ -50,11 +50,11 @@ public class IqiyiTimer {
      * 3. 进行爬取
      */
     // 每个星期日9点00分
-    @Scheduled(cron = "0 0 9 ? * SUN")
+    @Scheduled(cron = "0 0 7 ? * SUN")
     public void iqiyiUrlList() {
 
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
                 /**
                  * 取爬取列表前先将数据写入ES
                  */
@@ -128,10 +128,11 @@ public class IqiyiTimer {
 
 
     //每天19点0分触发
-    @Scheduled(cron = "0 0 19 * * ?")
+    @Scheduled(cron = "0 0 3 * * ?")
     public void iqiyi() {
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
+
 
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
@@ -155,6 +156,8 @@ public class IqiyiTimer {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+
             }
         } catch (URISyntaxException e) {
             e.printStackTrace();

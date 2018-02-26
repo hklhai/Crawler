@@ -6,9 +6,17 @@ import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
+import com.hxqh.crawler.util.HdfsUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -43,7 +51,10 @@ public class IqiyiController {
      * @return
      */
     @RequestMapping("/filmData")
-    public String filmData() {
+    public String filmData() throws Exception {
+
+
+
 
 
         return "crawler/notice";

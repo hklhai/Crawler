@@ -50,7 +50,7 @@ public class PersistFilm implements Runnable {
         try {
             for (int i = 0; i < hrefList.size(); i++) {
                 crawlerURL = hrefList.get(i);
-                String html = CrawlerUtils.fetchHTMLContent(crawlerURL.getUrl(), Constants.DEFAULT_SEELP_SECOND);
+                String html = CrawlerUtils.fetchHTMLContentByPhantomJs(crawlerURL.getUrl(), Constants.DEFAULT_SEELP_SECOND);
                 Document doc = Jsoup.parse(html);
                 String source = crawlerURL.getPlatform();
 
