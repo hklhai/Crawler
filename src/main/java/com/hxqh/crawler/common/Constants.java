@@ -66,4 +66,6 @@ public interface Constants {
 
     String MAO_YAN = "maoyan";
 
+    String HIVE_SPLIT_LABEL = "\u0001";
+
 }

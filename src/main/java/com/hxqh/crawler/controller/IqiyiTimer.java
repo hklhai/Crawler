@@ -133,7 +133,6 @@ public class IqiyiTimer {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
 
-
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
 

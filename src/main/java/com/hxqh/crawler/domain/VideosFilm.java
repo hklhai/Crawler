@@ -24,20 +24,6 @@ public class VideosFilm {
     public VideosFilm() {
     }
 
-    public VideosFilm(String source, String filmName, String star, String director, String category, String label, float scoreVal, Integer commentNum, Integer up, String addTime, Integer playNum) {
-        this.source = source;
-        this.filmName = filmName;
-        this.star = star;
-        this.director = director;
-        this.category = category;
-        this.label = label;
-        this.scoreVal = scoreVal;
-        this.commentNum = commentNum;
-        this.up = up;
-        this.addTime = addTime;
-        this.playNum = playNum;
-    }
-
     public String getSource() {
         return source;
     }

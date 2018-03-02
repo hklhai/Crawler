@@ -46,7 +46,7 @@ public class PersistTencentFilm implements Runnable {
         for (int i = 0; i < hrefList.size(); i++) {
             CrawlerURL crawlerURL = hrefList.get(i);
 
-            String htmls = CrawlerUtils.fetchHTMLAndIframeContent(crawlerURL.getUrl(),  Constants.DEFAULT_SEELP_SECOND);
+            String htmls = CrawlerUtils.fetchHTMLAndIframeContent(crawlerURL.getUrl(), Constants.DEFAULT_SEELP_SECOND);
             String[] html = htmls.split("hxqh");
             Document doc = Jsoup.parse(html[0]);
             Document commentdoc = Jsoup.parse(html[1]);
@@ -55,12 +55,12 @@ public class PersistTencentFilm implements Runnable {
             String filmName = new String();//电影名字
             String star = new String();//演员
             String director = new String();//导演
-            String label ;//类型
-            String score ;//评分
-            String commentNum ;//评分人数！！
-            String up ;//顶
+            String label;//类型
+            String score;//评分
+            String commentNum;//评分人数！！
+            String up;//顶
             String addTime = DateUtils.getTodayDate();//添加时间
-            String playNum ;//播放量
+            String playNum;//播放量
             String category = crawlerURL.getCategory();//电影种类
             try {
                 Elements filmNameElement = doc.getElementsByClass("video_title _video_title");
@@ -115,7 +115,7 @@ public class PersistTencentFilm implements Runnable {
                         append(addTime.trim()).append("^").
                         append(playNum.trim()).append("\n");
                 String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT +
-                        DateUtils.getTodayDate() + "-"+crawlerURL.getPlatform();
+                        DateUtils.getTodayDate() + "-" + crawlerURL.getPlatform();
                 FileUtils.writeStrToFile(stringBuilder.toString(), fileName);
                 stringBuilder.setLength(0);
                 System.out.println(filmName.trim() + " Persist Success!");
@@ -124,17 +124,32 @@ public class PersistTencentFilm implements Runnable {
                  * 持久化至ES
                  */
                 if (!score.trim().equals("评论人数不足")) {
-                    VideosFilm videosFilm=new VideosFilm(source.trim(), filmName.trim(), star.trim(), director.trim(),
-                            category.trim(), label.trim(), Float.valueOf(score.trim()), Integer.valueOf(commentNum.trim()),
-                            Integer.valueOf(up.trim()), addTime.trim(), Integer.valueOf(playNum.trim()));
+                    VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, label, score, commentNum, up, addTime, playNum, category);
+
                     systemService.addVideos(videosFilm);
-                }else{
+                } else {
                     continue;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                CrawlerUtils.persistProblemURL(crawlerProblemRepository,crawlerURL);
+                CrawlerUtils.persistProblemURL(crawlerProblemRepository, crawlerURL);
             }
         }
+    }
+
+    private static VideosFilm setVideosFilm(String source, String filmName, String star, String director, String label, String score, String commentNum, String up, String addTime, String playNum, String category) {
+        VideosFilm videosFilm = new VideosFilm();
+        videosFilm.setSource(source.trim());
+        videosFilm.setFilmName(filmName.trim());
+        videosFilm.setStar(star.trim());
+        videosFilm.setDirector(director.trim());
+        videosFilm.setCategory(category.trim());
+        videosFilm.setLabel(label.trim());
+        videosFilm.setScoreVal(Float.valueOf(score.trim()));
+        videosFilm.setCommentNum(Integer.valueOf(commentNum.trim()));
+        videosFilm.setUp(Integer.valueOf(up.trim()));
+        videosFilm.setAddTime(addTime.trim());
+        videosFilm.setPlayNum(Integer.valueOf(playNum.trim()));
+        return videosFilm;
     }
 }

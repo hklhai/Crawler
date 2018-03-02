@@ -3,4 +3,4 @@ target/
 *.iml
 crawl/
 #*.properties
-phantomjsdriver.log
+*.log

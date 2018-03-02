@@ -92,6 +92,7 @@ public class CrawlerUtils {
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         //打开页面
         driver.get(url);
+
         Thread.sleep(sleepTime);
 
         //查找元素
@@ -100,6 +101,9 @@ public class CrawlerUtils {
         if (driver != null) {
             html = webElement.getAttribute("outerHTML");
         }
+        driver.close();
+        // 关闭 ChromeDriver 接口
+        driver.quit();
 
         return html;
     }

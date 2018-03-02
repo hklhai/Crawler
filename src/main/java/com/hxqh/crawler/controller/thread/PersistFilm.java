@@ -64,25 +64,43 @@ public class PersistFilm implements Runnable {
                     filmName = filmNameElement.text();
                 }
 
-                Elements starElement = doc.getElementsByClass("progInfo_txt").
-                        select("p").get(2).select("span").get(1).select("a");
-                if (starElement != null) {
-                    star = starElement.text();
+
+                // 演员
+                Elements starEle = doc.getElementsByClass("progInfo_txt").select("p");
+                if (starEle.size() < 3) {
+                    System.out.println(crawlerURL.getUrl());
+                    star = "";
+                } else {
+                    Elements starElement = doc.getElementsByClass("progInfo_txt").
+                            select("p").get(2).select("span").get(1).select("a");
+                    if (starElement != null) {
+                        star = starElement.text();
+                    }
                 }
 
 
-                Elements directorElement = doc.getElementsByClass("progInfo_txt").
-                        select("p").get(1).select("span").get(1).select("a");
-                if (directorElement != null) {
-                    director = directorElement.text();
+                // 导演
+                Elements directorEle = doc.getElementsByClass("progInfo_txt").select("p");
+                if (directorEle.size() < 2) {
+                    System.out.println(crawlerURL.getUrl());
+                    director = "";
+                } else {
+                    Elements directorElement = doc.getElementsByClass("progInfo_txt").
+                            select("p").get(1).select("span").get(1).select("a");
+                    if (directorElement != null) {
+                        director = directorElement.text();
+                    }
                 }
+
 
                 String category = crawlerURL.getCategory();
 
                 Elements labelElement = doc.getElementById("datainfo-taglist").select("a");
                 String label = labelElement.text();
-                String score = doc.select("span[class=score-new]").get(0).attr("snsscore");
-
+                String score = doc.getElementById("playerAreaScore").attr("snsscore");
+                if ("".equals(score)) {
+                    score = "0.0";
+                }
 
                 String commentNum = doc.getElementsByClass("score-user-num").text();
                 if (commentNum.endsWith("万人评分")) {
@@ -92,14 +110,28 @@ public class PersistFilm implements Runnable {
                 }
                 if (commentNum.endsWith("人评分")) {
                     commentNum = commentNum.substring(0, commentNum.length() - 4);
-                    commentNum = String.valueOf(Long.valueOf(commentNum));
+                    if ("".equals(commentNum)) {
+                        commentNum = "0";
+                    } else {
+                        commentNum = String.valueOf(Long.valueOf(commentNum));
+                    }
+                }
+                if ("".equals(commentNum)) {
+                    commentNum = "0";
                 }
 
                 String up = doc.getElementById("widget-voteupcount").text();
                 if (up.endsWith("万")) {
                     up = up.substring(0, up.length() - 1);
-                    Double v = Double.valueOf(up) * Constants.TEN_THOUSAND;
-                    up = String.valueOf(v.longValue());
+                    if ("".equals(up)) {
+                        up = "0";
+                    } else {
+                        Double v = Double.valueOf(up) * Constants.TEN_THOUSAND;
+                        up = String.valueOf(v.longValue());
+                    }
+                }
+                if ("".equals(up)) {
+                    up = "0";
                 }
 
                 String addTime = DateUtils.getTodayDate();
@@ -114,6 +146,9 @@ public class PersistFilm implements Runnable {
                     playNum = playNum.substring(0, playNum.length() - 1);
                     Double v = Double.valueOf(playNum) * Constants.BILLION;
                     playNum = String.valueOf(v.longValue());
+                }
+                if ("".equals(playNum)) {
+                    playNum = "0";
                 }
 
 
@@ -141,9 +176,9 @@ public class PersistFilm implements Runnable {
                  * 持久化至ES
                  */
                 if (!score.trim().equals("评分人数不足")) {
-                    VideosFilm videosFilm = new VideosFilm(source.trim(), filmName.trim(), star.trim(), director.trim(),
-                            category.trim(), label.trim(), Float.valueOf(score.trim()), Integer.valueOf(commentNum.trim()),
-                            Integer.valueOf(up.trim()), addTime.trim(), Integer.valueOf(playNum.trim()));
+                    VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, category, label, score, commentNum, up, addTime, playNum);
+                    videosFilm.setPlayNum(Integer.valueOf(playNum.trim()));
+
                     systemService.addVideos(videosFilm);
                 } else {
                     continue;
@@ -156,6 +191,22 @@ public class PersistFilm implements Runnable {
             CrawlerUtils.persistProblemURL(crawlerProblemRepository, crawlerURL);
 
         }
+    }
+
+    public static VideosFilm setVideosFilm(String source, String filmName, String star, String director, String category, String label, String score, String commentNum, String up, String addTime, String playNum) {
+        VideosFilm videosFilm = new VideosFilm();
+        videosFilm.setSource(source.trim());
+        videosFilm.setFilmName(filmName.trim());
+        videosFilm.setStar(star.trim());
+        videosFilm.setDirector(director.trim());
+        videosFilm.setCategory(category.trim());
+        videosFilm.setLabel(label.trim());
+        videosFilm.setScoreVal(Float.valueOf(score.trim()));
+        videosFilm.setCommentNum(Integer.valueOf(commentNum.trim()));
+        videosFilm.setUp(Integer.valueOf(up.trim()));
+        videosFilm.setAddTime(addTime.trim());
+        videosFilm.setPlayNum(Integer.valueOf(playNum));
+        return videosFilm;
     }
 
 }
