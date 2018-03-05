@@ -104,22 +104,55 @@ public class CrawlerUtils {
         driver.close();
         // 关闭 ChromeDriver 接口
         driver.quit();
-
         return html;
     }
 
+
+    public static String fetchHTMLContentAndIframeByPhantomJs(String url, Integer second) throws Exception {
+        //设置必要参数
+        DesiredCapabilities dcaps = new DesiredCapabilities();
+        //ssl证书支持
+        dcaps.setCapability("acceptSslCerts", true);
+        //截屏支持
+        dcaps.setCapability("takesScreenshot", true);
+        //css搜索支持
+        dcaps.setCapability("cssSelectorsEnabled", true);
+        //js支持
+        dcaps.setJavascriptEnabled(true);
+        //驱动支持（第二参数表明的是你的phantomjs引擎所在的路径）
+        dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, Constants.PHANTOMJS_PATH);
+        //创建无界面浏览器对象
+        PhantomJSDriver driver = new PhantomJSDriver(dcaps);
+
+        Integer sleepTime = second * 1000;
+        //设置隐性等待（作用于全局）
+        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        //打开页面
+        driver.get(url);
+
+        Thread.sleep(sleepTime);
+
+        //查找元素
+        WebElement webElement = driver.findElement(By.xpath("/html"));
+        String html = new String();
+        if (driver != null) {
+            html = webElement.getAttribute("outerHTML");
+        }
+
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0,1600)");
+        Thread.sleep(sleepTime);
+        WebDriver commentIframe = driver.switchTo().frame("commentIframe");
+        WebElement element = commentIframe.findElement(By.xpath("/html"));
+        String outerHTML = element.getAttribute("outerHTML");
+
+        driver.close();
+        // 关闭 ChromeDriver 接口
+        driver.quit();
+        return html + "hxqh" + outerHTML;
+    }
+
+
     public static String fetchHTMLContent(String url, Integer second) throws Exception {
-//        Integer sleepTime = second * 1000;
-//        System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
-//        WebDriver webDriver = new ChromeDriver();
-//        webDriver.get(url);
-//        Thread.sleep(sleepTime);
-//        WebElement webElement = webDriver.findElement(By.xpath("/html"));
-//        String html = new String();
-//        if (webElement != null) {
-//            html = webElement.getAttribute("outerHTML");
-//        }
-//        webDriver.quit();
 
         Integer sleepTime = second * 1000;
         System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);

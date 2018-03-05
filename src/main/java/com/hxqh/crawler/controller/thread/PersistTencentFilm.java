@@ -41,12 +41,12 @@ public class PersistTencentFilm implements Runnable {
         }
     }
 
-    private static void parseAndPersist(List<CrawlerURL> hrefList, CrawlerProblemRepository crawlerProblemRepository, SystemService systemService) throws InterruptedException {
+    private static void parseAndPersist(List<CrawlerURL> hrefList, CrawlerProblemRepository crawlerProblemRepository, SystemService systemService) throws Exception {
         StringBuilder stringBuilder = new StringBuilder(STRINGBUILDER_SIZE);
         for (int i = 0; i < hrefList.size(); i++) {
             CrawlerURL crawlerURL = hrefList.get(i);
 
-            String htmls = CrawlerUtils.fetchHTMLAndIframeContent(crawlerURL.getUrl(), Constants.DEFAULT_SEELP_SECOND);
+            String htmls = CrawlerUtils.fetchHTMLContentAndIframeByPhantomJs(crawlerURL.getUrl(), Constants.DEFAULT_SEELP_SECOND);
             String[] html = htmls.split("hxqh");
             Document doc = Jsoup.parse(html[0]);
             Document commentdoc = Jsoup.parse(html[1]);
@@ -132,7 +132,7 @@ public class PersistTencentFilm implements Runnable {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                CrawlerUtils.persistProblemURL(crawlerProblemRepository, crawlerURL);
+                // CrawlerUtils.persistProblemURL(crawlerProblemRepository, crawlerURL);
             }
         }
     }
