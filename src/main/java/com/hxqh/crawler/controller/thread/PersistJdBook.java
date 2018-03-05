@@ -49,7 +49,7 @@ public class PersistJdBook implements Runnable {
 
         for (int i = 0; i < hrefList.size(); i++) {
             CrawlerBookURL crawlerBookURL = hrefList.get(i);
-            String html = CrawlerUtils.fetchHTMLContent(crawlerBookURL.getUrl(), Constants.DEFAULT_SEELP_SECOND_JD_BOOK);
+            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(crawlerBookURL.getUrl(), Constants.DEFAULT_SEELP_SECOND_JD_BOOK);
             Document doc = Jsoup.parse(html);
 
             String bookName = new String();
@@ -138,10 +138,10 @@ public class PersistJdBook implements Runnable {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                CrawlerURL crawlerURL = new CrawlerURL(bookName, crawlerBookURL.getUrl(), DateUtils.getTodayDate(),
-                        crawlerBookURL.getCategory(), crawlerBookURL.getPlatform(), null);
-                // 持久化无法爬取URL
-                CrawlerUtils.persistProblemURL(crawlerProblemRepository, crawlerURL);
+//                CrawlerURL crawlerURL = new CrawlerURL(bookName, crawlerBookURL.getUrl(), DateUtils.getTodayDate(),
+//                        crawlerBookURL.getCategory(), crawlerBookURL.getPlatform(), null);
+//                // 持久化无法爬取URL
+//                CrawlerUtils.persistProblemURL(crawlerProblemRepository, crawlerURL);
             }
 
         }

@@ -167,7 +167,9 @@ public class JdTimer {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findAll();
-                List<List<CrawlerBookURL>> lists = ListUtils.partition(crawlerBookURLList, Constants.JD_PARTITION_NUM);
+
+                Integer partitionNUm = crawlerBookURLList.size() / Constants.JD_THREAD_NUM + 1;
+                List<List<CrawlerBookURL>> lists = ListUtils.partition(crawlerBookURLList, partitionNUm);
 
                 ExecutorService service = Executors.newFixedThreadPool(Constants.JD_THREAD_NUM);
                 for (List<CrawlerBookURL> list : lists) {
@@ -192,6 +194,5 @@ public class JdTimer {
             e.printStackTrace();
         }
     }
-
 
 }
