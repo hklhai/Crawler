@@ -127,11 +127,11 @@ public class IqiyiTimer {
     }
 
 
-    //每天19点0分触发
-    @Scheduled(cron = "0 0 3 * * ?")
+    @Scheduled(cron = "0 0 4 * * ?")
     public void iqiyi() {
+
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
 
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();

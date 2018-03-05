@@ -187,9 +187,8 @@ public class PersistFilm implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // 持久化无法爬取URL
-            CrawlerUtils.persistProblemURL(crawlerProblemRepository, crawlerURL);
-
+            // 持久化无法爬取URL 关闭持久化无法爬取URL
+            // CrawlerUtils.persistProblemURL(crawlerProblemRepository, crawlerURL);
         }
     }
 
