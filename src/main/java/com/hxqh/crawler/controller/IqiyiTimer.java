@@ -134,28 +134,7 @@ public class IqiyiTimer {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
 
-                // 1. 从数据库获取待爬取链接
-                List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
-                Integer partitionNUm = crawlerURLS.size() / Constants.IQIYI_THREAD_NUM + 1;
-                List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, partitionNUm);
 
-                ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
-
-                for (List<CrawlerURL> l : lists) {
-                    service.execute(new PersistFilm(l, crawlerProblemRepository, systemService));
-                }
-                service.shutdown();
-                while (!service.isTerminated()) {
-                }
-
-                // 2. 上传至HDFS
-                try {
-                    HdfsUtils.persistToHDFS("-iqiyi", Constants.FILE_LOC);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
 
             }

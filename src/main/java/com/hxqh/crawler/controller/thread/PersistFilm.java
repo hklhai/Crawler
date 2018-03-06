@@ -50,27 +50,30 @@ public class PersistFilm implements Runnable {
         try {
             for (int i = 0; i < hrefList.size(); i++) {
                 crawlerURL = hrefList.get(i);
-                if (!"http://www.iqiyi.com/v_19rrlakqbc.html#vfrm=2-4-0-1".equals(crawlerURL)) {
-                    String html = CrawlerUtils.fetchHTMLContentByPhantomJs(crawlerURL.getUrl(), Constants.DEFAULT_SEELP_SECOND);
-                    Document doc = Jsoup.parse(html);
-                    String source = crawlerURL.getPlatform();
+                String html = CrawlerUtils.fetchHTMLContentByPhantomJs(crawlerURL.getUrl(), Constants.DEFAULT_SEELP_SECOND);
+                Document doc = Jsoup.parse(html);
+                String source = crawlerURL.getPlatform();
 
-                    String filmName = new String();
-                    String star = new String();
-                    String director = new String();
+                String filmName = new String();
+                String star = new String();
+                String director = new String();
+                String label = new String();
+                String score = new String();
 
+                Element filmNameElement = doc.getElementById("widget-videotitle");
+                Elements progInfo = doc.getElementsByClass("progInfo_txt");
 
-                    Element filmNameElement = doc.getElementById("widget-videotitle");
+                if (filmNameElement != null && progInfo != null) {
+
                     if (filmNameElement != null) {
                         filmName = filmNameElement.text();
                     }
 
-
                     // 演员
-                    Elements starEle = doc.getElementsByClass("progInfo_txt").select("p");
+                    Elements starEle = progInfo.select("p");
                     if (starEle.size() < 3) {
                         System.out.println(crawlerURL.getUrl());
-                        star = "";
+                        star = " ";
                     } else {
                         Elements starElement = doc.getElementsByClass("progInfo_txt").
                                 select("p").get(2).select("span").get(1).select("a");
@@ -84,7 +87,7 @@ public class PersistFilm implements Runnable {
                     Elements directorEle = doc.getElementsByClass("progInfo_txt").select("p");
                     if (directorEle.size() < 2) {
                         System.out.println(crawlerURL.getUrl());
-                        director = "";
+                        director = " ";
                     } else {
                         Elements directorElement = doc.getElementsByClass("progInfo_txt").
                                 select("p").get(1).select("span").get(1).select("a");
@@ -93,15 +96,26 @@ public class PersistFilm implements Runnable {
                         }
                     }
 
-
                     String category = crawlerURL.getCategory();
 
-                    Elements labelElement = doc.getElementById("datainfo-taglist").select("a");
-                    String label = labelElement.text();
-                    String score = doc.getElementById("playerAreaScore").attr("snsscore");
-                    if ("".equals(score)) {
+                    Element dataInfoElement = doc.getElementById("datainfo-taglist");
+                    if (dataInfoElement != null) {
+                        Elements labelElement = dataInfoElement.select("a");
+                        label = labelElement.text();
+                    } else {
+                        label = " ";
+                    }
+
+                    Element playerAreaScore = doc.getElementById("playerAreaScore");
+                    if (null != playerAreaScore) {
+                        score = playerAreaScore.attr("snsscore");
+                        if ("".equals(score)) {
+                            score = "0.0";
+                        }
+                    } else {
                         score = "0.0";
                     }
+
 
                     String commentNum = doc.getElementsByClass("score-user-num").text();
                     if (commentNum.endsWith("万人评分")) {
@@ -184,6 +198,8 @@ public class PersistFilm implements Runnable {
                     } else {
                         continue;
                     }
+                } else {
+                    continue;
                 }
             }
         } catch (Exception e) {
@@ -202,7 +218,13 @@ public class PersistFilm implements Runnable {
         videosFilm.setCategory(category.trim());
         videosFilm.setLabel(label.trim());
         videosFilm.setScoreVal(Float.valueOf(score.trim()));
-        videosFilm.setCommentNum(Integer.valueOf(commentNum.trim()));
+        commentNum = commentNum.trim();
+        if ("评分人数不足".equals(commentNum)) {
+            commentNum = "0";
+            videosFilm.setCommentNum(Integer.valueOf(commentNum));
+        } else {
+            videosFilm.setCommentNum(Integer.valueOf(commentNum));
+        }
         videosFilm.setUp(Integer.valueOf(up.trim()));
         videosFilm.setAddTime(addTime.trim());
         videosFilm.setPlayNum(Integer.valueOf(playNum));
