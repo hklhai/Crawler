@@ -16,11 +16,11 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  * @author Lin
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
 public class BaiduNuoMiCrawlerTest {
 
-    @Test
+//    @Test
     public void baiduNouMi() {
         String url = "http://piaofang.baidu.com/";
         try {
