@@ -1,15 +1,26 @@
 package com.hxqh.crawler.controller;
 
+import com.hxqh.crawler.common.Constants;
+import com.hxqh.crawler.controller.thread.PersistJdBook;
+import com.hxqh.crawler.model.CrawlerBookURL;
 import com.hxqh.crawler.repository.CrawlerBookURLRepository;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
+import com.hxqh.crawler.util.HdfsUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by Ocean lin on 2018/1/29.
@@ -48,6 +59,30 @@ public class JdController {
      */
     @RequestMapping("/jdBookData")
     public String jdBookData() {
+
+
+        // 1. 从数据库获取待爬取链接
+        List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findAll();
+
+        Integer partitionNUm = crawlerBookURLList.size() / Constants.JD_THREAD_NUM + 1;
+        List<List<CrawlerBookURL>> lists = ListUtils.partition(crawlerBookURLList, partitionNUm);
+
+        ExecutorService service = Executors.newFixedThreadPool(Constants.JD_THREAD_NUM);
+        for (List<CrawlerBookURL> list : lists) {
+            service.execute(new PersistJdBook(list, crawlerProblemRepository, systemService));
+        }
+        service.shutdown();
+        while (!service.isTerminated()) {
+        }
+
+        // 2. 上传至HDFS
+        try {
+            HdfsUtils.persistToHDFS("-jd", Constants.BOOK_JD_FILE_LOC);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         return "crawler/notice";

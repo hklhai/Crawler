@@ -3,6 +3,7 @@ package com.hxqh.crawler.controller;
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.controller.thread.PersistFilm;
 import com.hxqh.crawler.domain.URLInfo;
+import com.hxqh.crawler.model.CrawlerBookURL;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
@@ -135,8 +136,8 @@ public class IqiyiTimer {
 
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
-
-                List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, Constants.IQIYI_PARTITION_NUM);
+                Integer partitionNUm = crawlerURLS.size() / Constants.IQIYI_THREAD_NUM + 1;
+                List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, partitionNUm);
 
                 ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
 

@@ -67,12 +67,10 @@ public class TencentTimer {
 
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerURL> crawlerURLS = crawlerURLRepository.findTencentFilm();
-
-
-                List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, Constants.TENCENT_PARTITION_NUM);
+                Integer partitionNUm = crawlerURLS.size() / Constants.TENCENT_THREAD_NUM + 1;
+                List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, partitionNUm);
 
                 ExecutorService service = Executors.newFixedThreadPool(Constants.TENCENT_THREAD_NUM);
-
                 for (List<CrawlerURL> l : lists) {
                     service.execute(new PersistTencentFilm(l, crawlerProblemRepository, systemService));
                 }
