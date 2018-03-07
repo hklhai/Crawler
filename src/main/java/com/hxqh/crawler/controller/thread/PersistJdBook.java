@@ -3,7 +3,6 @@ package com.hxqh.crawler.controller.thread;
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.domain.Book;
 import com.hxqh.crawler.model.CrawlerBookURL;
-import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
@@ -37,7 +36,7 @@ public class PersistJdBook implements Runnable {
     @Override
     public void run() {
         try {
-            parseAndPersist(list, crawlerProblemRepository, systemService);
+            parseAndPersist(list, crawlerProblemRepository, systemService) ;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,8 +86,12 @@ public class PersistJdBook implements Runnable {
                         commnetNum = commnetNum.substring(0, commnetNum.length() - 1);
                         if (commnetNum.endsWith("万")) {
                             commnetNum = commnetNum.substring(0, commnetNum.length() - 2);
-                            Double v = Double.valueOf(commnetNum) * Constants.TEN_THOUSAND;
-                            commnetNum = String.valueOf(v.longValue());
+                            if (!commnetNum.equals("")) {
+                                Double v = Double.valueOf(commnetNum) * Constants.TEN_THOUSAND;
+                                commnetNum = String.valueOf(v.longValue());
+                            }else {
+                                commnetNum = String.valueOf(0);
+                            }
                         }
                         if (commnetNum.endsWith("亿")) {
                             commnetNum = commnetNum.substring(0, commnetNum.length() - 2);

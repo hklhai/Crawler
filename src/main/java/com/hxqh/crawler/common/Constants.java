@@ -35,7 +35,7 @@ public interface Constants {
      */
     Integer IQIYI_THREAD_NUM = 10;
     Integer TENCENT_THREAD_NUM = 10;
-    Integer JD_THREAD_NUM = 10;
+    Integer JD_THREAD_NUM = 30;
 
 
     // 起始页数
