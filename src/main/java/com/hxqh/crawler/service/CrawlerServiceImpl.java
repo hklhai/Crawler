@@ -1,5 +1,6 @@
 package com.hxqh.crawler.service;
 
+import com.hxqh.crawler.model.BaiduInfo;
 import com.hxqh.crawler.repository.BaiduInfoRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,4 +31,12 @@ public class CrawlerServiceImpl implements CrawlerService {
     public void delTencentFilm() {
         crawlerURLRepository.delTencentFilm();
     }
+
+    @Transactional
+    @Override
+    public void save(BaiduInfo baiduInfo) {
+        baiduInfoRepository.save(baiduInfo);
+    }
+
+
 }

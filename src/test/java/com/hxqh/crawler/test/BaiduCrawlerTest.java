@@ -1,10 +1,14 @@
 package com.hxqh.crawler.test;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.hxqh.crawler.util.CrawlerUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -24,7 +28,7 @@ public class BaiduCrawlerTest {
 
     Integer NUM = 6;
 
-    //    @Test
+//    @Test
     public void test() {
         // <电影名称，Url>
         Map<String, String> detailMap = new HashMap<>();
@@ -34,7 +38,7 @@ public class BaiduCrawlerTest {
         for (int i = 0; i < urlList.size(); i++) {
             String string = urlList.get(i);
             try {
-                String html = CrawlerUtils.fetchHTMLContent(string, 2);
+                String html = CrawlerUtils.fetchHTMLContentByPhantomJs(string, 2);
                 Document doc = Jsoup.parse(html);
                 for (int j = 1; j <= NUM; j++) {
                     Element element = doc.getElementById(String.valueOf(j));
@@ -42,10 +46,8 @@ public class BaiduCrawlerTest {
                     Element a = element1.select("a").get(0);
                     String title = a.text();
                     if (title.contains("_百度百科")) {
-                        System.out.println(title);
                         String href = element.select("h3")
                                 .get(0).select("a").get(0).attr("href");
-                        System.out.println(href);
                         detailMap.put(title, href);
                     }
                 }
@@ -59,11 +61,23 @@ public class BaiduCrawlerTest {
             String name = entry.getKey();
             String url = entry.getValue();
             try {
-                String html = CrawlerUtils.fetchHTMLContent(url, 2);
+                String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, 2);
                 Document doc = Jsoup.parse(html);
-                String keys = doc.getElementsByClass("basicInfo-item name").text();
-                String values = doc.getElementsByClass("basicInfo-item value").text();
-                System.out.println(keys + " " + values);
+                Elements keys = doc.getElementsByClass("basicInfo-item name");
+                Elements values = doc.getElementsByClass("basicInfo-item value");
+
+                Map<String, String> map = new HashMap<>();
+                for (int i = 0; i < keys.size(); i++) {
+                    Element keyEle = keys.get(i);
+                    Element valuesEle = values.get(i);
+                    map.put(keyEle.text(), valuesEle.text());
+                }
+                for (Map.Entry<String, String> e : map.entrySet()) {
+                    System.out.println(e.getKey() + ":" + e.getValue());
+                }
+                JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(map));
+                String result = jsonObject.toString();
+                System.out.println(result);
             } catch (Exception e) {
                 e.printStackTrace();
             }

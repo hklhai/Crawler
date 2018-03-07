@@ -63,4 +63,7 @@ public interface Constants {
 
     String HIVE_SPLIT_LABEL = "\u0001";
 
+    Integer BAIDU_LIMIT_NUM = 6;
+
+    String  BAIDU_SEARCH= "https://www.baidu.com/s?wd=";
 }

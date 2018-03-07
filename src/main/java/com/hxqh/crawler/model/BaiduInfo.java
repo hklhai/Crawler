@@ -1,6 +1,7 @@
 package com.hxqh.crawler.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -14,10 +15,16 @@ import javax.persistence.Table;
 public class BaiduInfo {
 
     @Id
+    @GeneratedValue
     private Integer bid;
-    private String title;
-    private String platform;
+    private String name;
+    private String source;
+    private String company;
     private String otherInfo;
+    private String issue;
+
+    public BaiduInfo() {
+    }
 
     public Integer getBid() {
         return bid;
@@ -27,20 +34,28 @@ public class BaiduInfo {
         this.bid = bid;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getPlatform() {
-        return platform;
+    public String getSource() {
+        return source;
     }
 
-    public void setPlatform(String platform) {
-        this.platform = platform;
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
     }
 
     public String getOtherInfo() {
@@ -49,5 +64,13 @@ public class BaiduInfo {
 
     public void setOtherInfo(String otherInfo) {
         this.otherInfo = otherInfo;
+    }
+
+    public String getIssue() {
+        return issue;
+    }
+
+    public void setIssue(String issue) {
+        this.issue = issue;
     }
 }
