@@ -2,6 +2,7 @@ package com.hxqh.crawler.test;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.hxqh.crawler.util.BaiduCompanyUtils;
 import com.hxqh.crawler.util.CrawlerUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,7 +29,7 @@ public class BaiduCrawlerTest {
 
     Integer NUM = 6;
 
-//    @Test
+    //    @Test
     public void test() {
         // <电影名称，Url>
         Map<String, String> detailMap = new HashMap<>();
@@ -105,9 +106,13 @@ public class BaiduCrawlerTest {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
-
     }
 
-
+    @Test
+    public void getCompany() {
+        List<String> list = Arrays.asList("芳华", "变形金刚", "捉妖记");
+        for (String s : list) {
+            BaiduCompanyUtils.getCompany(s);
+        }
+    }
 }
