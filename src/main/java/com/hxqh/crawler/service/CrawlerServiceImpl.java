@@ -1,5 +1,6 @@
 package com.hxqh.crawler.service;
 
+import com.hxqh.crawler.repository.BaiduInfoRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class CrawlerServiceImpl implements CrawlerService {
     @Autowired
     private CrawlerURLRepository crawlerURLRepository;
+    @Autowired
+    private BaiduInfoRepository baiduInfoRepository;
+
 
     @Transactional
     @Override
