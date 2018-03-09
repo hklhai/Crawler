@@ -1,6 +1,7 @@
 package com.hxqh.crawler.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -8,8 +9,10 @@ import javax.persistence.Table;
 @Table(name = "crawler_douban_score")
 public class CrawlerDoubanScore {
 
-    private String category;
     @Id
+    @GeneratedValue
+    private Integer did;
+    private String category;
     private String title;
     private String scorevalue;
     private String scorenum;
@@ -30,6 +33,14 @@ public class CrawlerDoubanScore {
         this.title = title;
         this.scorevalue = scorevalue;
         this.scorenum = scorenum;
+    }
+
+    public Integer getDid() {
+        return did;
+    }
+
+    public void setDid(Integer did) {
+        this.did = did;
     }
 
     public String getCategory() {

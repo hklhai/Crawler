@@ -36,6 +36,7 @@ public interface Constants {
     Integer IQIYI_THREAD_NUM = 10;
     Integer TENCENT_THREAD_NUM = 10;
     Integer JD_THREAD_NUM = 30;
+    Integer DOUBAN_THREAD_NUM = 40;
 
 
     // 起始页数
@@ -65,5 +66,5 @@ public interface Constants {
 
     Integer BAIDU_LIMIT_NUM = 6;
 
-    String  BAIDU_SEARCH= "http://www.baidu.com/s?wd=";
+    String BAIDU_SEARCH = "http://www.baidu.com/s?wd=";
 }
