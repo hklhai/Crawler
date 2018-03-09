@@ -166,6 +166,28 @@ public class JdTimer {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
 
 
+                // 1. 从数据库获取待爬取链接
+                List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findAll();
+
+                Integer partitionNUm = crawlerBookURLList.size() / Constants.JD_THREAD_NUM + 1;
+                List<List<CrawlerBookURL>> lists = ListUtils.partition(crawlerBookURLList, partitionNUm);
+
+                ExecutorService service = Executors.newFixedThreadPool(Constants.JD_THREAD_NUM);
+                for (List<CrawlerBookURL> list : lists) {
+                    service.execute(new PersistJdBook(list, crawlerProblemRepository, systemService));
+                }
+                service.shutdown();
+                while (!service.isTerminated()) {
+                }
+
+                // 2. 上传至HDFS
+                try {
+                    HdfsUtils.persistToHDFS("-jd", Constants.BOOK_JD_FILE_LOC);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
 
             }

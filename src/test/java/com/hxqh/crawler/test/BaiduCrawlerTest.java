@@ -2,6 +2,8 @@ package com.hxqh.crawler.test;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.hxqh.crawler.domain.CompanyDto;
+import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.util.BaiduCompanyUtils;
 import com.hxqh.crawler.util.CrawlerUtils;
 import org.jsoup.Jsoup;
@@ -9,7 +11,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.Assert;
-import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -108,11 +109,17 @@ public class BaiduCrawlerTest {
         }
     }
 
-    @Test
+    //    @Test
     public void getCompany() {
-        List<String> list = Arrays.asList("芳华", "变形金刚", "捉妖记");
+        List<String> list = Arrays.asList("芳华");
+//        List<String> list = Arrays.asList("芳华", "捉妖记");
         for (String s : list) {
-            BaiduCompanyUtils.getCompany(s);
+            CrawlerURL crawlerURL = new CrawlerURL();
+            crawlerURL.setTitle(s);
+            String s1 = BaiduCompanyUtils.encodeString(crawlerURL);
+            CompanyDto company = BaiduCompanyUtils.getCompany(s1);
+            System.out.println(company.getProductCompany() + "=============================" + company.getIssueCompany());
+
         }
     }
 }
