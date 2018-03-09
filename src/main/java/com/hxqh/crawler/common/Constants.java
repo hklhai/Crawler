@@ -65,5 +65,5 @@ public interface Constants {
 
     Integer BAIDU_LIMIT_NUM = 6;
 
-    String  BAIDU_SEARCH= "https://www.baidu.com/s?wd=";
+    String  BAIDU_SEARCH= "http://www.baidu.com/s?wd=";
 }
