@@ -2,25 +2,20 @@ package com.hxqh.crawler.test;
 
 
 import com.hxqh.crawler.common.Constants;
-import com.hxqh.crawler.controller.thread.PersistFilm;
-import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
-import com.hxqh.crawler.util.HdfsUtils;
-import org.apache.commons.collections4.ListUtils;
+import com.hxqh.crawler.util.CrawlerUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 //import org.apache.commons.collections4.ListUtils;
 
@@ -29,8 +24,8 @@ import java.util.concurrent.Executors;
  *
  * @author Lin
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
 public class IqiyiCrawlerTest {
 
     @Resource
@@ -41,11 +36,11 @@ public class IqiyiCrawlerTest {
     private SystemService systemService;
 
     @Test
-    public void persist() throws IOException, InterruptedException {
-
-        System.out.println();
+    public void persist() {
 
 
     }
+
+
 }
 
