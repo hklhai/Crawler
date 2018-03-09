@@ -109,10 +109,9 @@ public class BaiduCrawlerTest {
         }
     }
 
-    //    @Test
+    //        @Test
     public void getCompany() {
-        List<String> list = Arrays.asList("芳华");
-//        List<String> list = Arrays.asList("芳华", "捉妖记");
+        List<String> list = Arrays.asList("芳华", "捉妖记");
         for (String s : list) {
             CrawlerURL crawlerURL = new CrawlerURL();
             crawlerURL.setTitle(s);

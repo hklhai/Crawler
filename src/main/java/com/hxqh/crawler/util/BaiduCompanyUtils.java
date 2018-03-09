@@ -11,6 +11,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,8 +66,7 @@ public class BaiduCompanyUtils {
         for (Map.Entry<String, String> entry : detailMap.entrySet()) {
             String url = entry.getValue();
             try {
-                String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, 2);
-                Document doc = Jsoup.parse(html);
+                Document doc = Jsoup.parse(new URL(url),2000);
                 Elements keys = doc.getElementsByClass("basicInfo-item name");
                 Elements values = doc.getElementsByClass("basicInfo-item value");
 
