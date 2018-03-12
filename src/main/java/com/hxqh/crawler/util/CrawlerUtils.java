@@ -4,10 +4,13 @@ import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.domain.URLInfo;
 import com.hxqh.crawler.model.CrawlerProblem;
 import com.hxqh.crawler.model.CrawlerURL;
+import com.hxqh.crawler.model.CrawlerVarietyURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -71,39 +74,114 @@ public class CrawlerUtils {
     }
 
 
-    public static String fetchHTMLContentByPhantomJs(String url, Integer second) throws Exception {
-        //设置必要参数
-        DesiredCapabilities dcaps = new DesiredCapabilities();
-        //ssl证书支持
-        dcaps.setCapability("acceptSslCerts", true);
-        //截屏支持
-        dcaps.setCapability("takesScreenshot", true);
-        //css搜索支持
-        dcaps.setCapability("cssSelectorsEnabled", true);
-        //js支持
-        dcaps.setJavascriptEnabled(true);
-        //驱动支持（第二参数表明的是你的phantomjs引擎所在的路径）
-        dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, Constants.PHANTOMJS_PATH);
-        //创建无界面浏览器对象
-        PhantomJSDriver driver = new PhantomJSDriver(dcaps);
+    public CrawlerUtils() {
+        super();
+    }
 
-        Integer sleepTime = second * 1000;
-        //设置隐性等待（作用于全局）
-        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-        //打开页面
-        driver.get(url);
+    public static String fetchHTMLContentByPhantomJs(String url, Integer second) {
 
-        Thread.sleep(sleepTime);
-
-        //查找元素
-        WebElement webElement = driver.findElement(By.xpath("/html"));
         String html = new String();
-        if (driver != null) {
+        PhantomJSDriver driver = null;
+
+        try {
+            //设置必要参数
+            DesiredCapabilities dcaps = new DesiredCapabilities();
+            //ssl证书支持
+            dcaps.setCapability("acceptSslCerts", true);
+            //截屏支持
+            dcaps.setCapability("takesScreenshot", true);
+            //css搜索支持
+            dcaps.setCapability("cssSelectorsEnabled", true);
+            //js支持
+            dcaps.setJavascriptEnabled(true);
+            //驱动支持（第二参数表明的是你的phantomjs引擎所在的路径）
+            dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, Constants.PHANTOMJS_PATH);
+            //创建无界面浏览器对象
+            driver = new PhantomJSDriver(dcaps);
+
+            Integer sleepTime = second * 1000;
+            //设置隐性等待（作用于全局）
+            driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+            //打开页面
+            driver.get(url);
+
+            Thread.sleep(sleepTime);
+
+            //查找元素
+            html = getHtmlString(html, driver);
+            driver.close();
+            // 关闭 ChromeDriver 接口
+            driver.quit();
+        } catch (Exception e) {
+
+        } finally {
+            if (driver != null) {
+                driver.quit();
+            }
+        }
+        return html;
+    }
+
+
+    public static List<CrawlerVarietyURL> fetchHTMLContentByPhantomJs(String url, Integer second, String a1) {
+        String html = new String();
+        PhantomJSDriver webDriver = null;
+        List<CrawlerVarietyURL> soapURLList = new ArrayList<>();
+        try {
+            //设置必要参数
+            DesiredCapabilities dcaps = new DesiredCapabilities();
+            //ssl证书支持
+            dcaps.setCapability("acceptSslCerts", true);
+            //截屏支持
+            dcaps.setCapability("takesScreenshot", true);
+            //css搜索支持
+            dcaps.setCapability("cssSelectorsEnabled", true);
+            //js支持
+            dcaps.setJavascriptEnabled(true);
+            //驱动支持（第二参数表明的是你的phantomjs引擎所在的路径）
+            dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, Constants.PHANTOMJS_PATH);
+            //创建无界面浏览器对象
+            webDriver = new PhantomJSDriver(dcaps);
+
+            Integer sleepTime = second * 1000;
+            //设置隐性等待（作用于全局）
+            webDriver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+            //打开页面
+            webDriver.get(url);
+            Thread.sleep(sleepTime);
+
+
+            webDriver.close();
+            // 关闭 ChromeDriver 接口
+        } catch (Exception e) {
+
+        } finally {
+            if (webDriver != null) {
+                webDriver.quit();
+            }
+        }
+        return soapURLList;
+    }
+
+    private static void getVarietyList(List<CrawlerVarietyURL> soapURLList, Document document) {
+        Element contentElement = document.getElementById("albumpic-showall-wrap");
+        Elements li = contentElement.select("li");
+        for (Element e : li) {
+            Element element = e.select("div").get(0).select("a").get(0);
+            CrawlerVarietyURL crawlerVarietyURL = new CrawlerVarietyURL(
+                    element.select("img").attr("alt"),
+                    element.attr("href"));
+
+            soapURLList.add(crawlerVarietyURL);
+        }
+    }
+
+    private static String getHtmlString(String html, WebDriver webDriver) {
+        //查找元素
+        WebElement webElement = webDriver.findElement(By.xpath("/html"));
+        if (webDriver != null) {
             html = webElement.getAttribute("outerHTML");
         }
-        driver.close();
-        // 关闭 ChromeDriver 接口
-        driver.quit();
         return html;
     }
 
@@ -152,7 +230,8 @@ public class CrawlerUtils {
     }
 
 
-    public static String fetchHTMLContent(String url, Integer second) throws Exception {
+    public static List<CrawlerVarietyURL> fetchHTMLContent(String url, Integer second,String a) throws Exception {
+        List<CrawlerVarietyURL> soapURLList = new ArrayList<>();
 
         Integer sleepTime = second * 1000;
         System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
@@ -167,6 +246,59 @@ public class CrawlerUtils {
         if (webElement != null) {
             html = webElement.getAttribute("outerHTML");
         }
+
+
+        html = getHtmlString(html, webDriver);
+        // 先获取内容
+        Document document = Jsoup.parse(html);
+        getVarietyList(soapURLList, document);
+        int i = 0;
+
+        for (; ; ) {
+            WebElement a11 = null;
+            WebElement div = webDriver.findElement(By.id("album_pic_paging"));
+            if (i == 0) {
+                a11 = div.findElement(By.className("a1"));
+            } else {
+                List<WebElement> x = div.findElements(By.className("a1"));
+                if (x.size() == 2) {
+                    a11 = x.get(1);
+                } else {
+                    break;
+                }
+            }
+            i++;
+            ((JavascriptExecutor) webDriver).executeScript("arguments[0].click();", a11);
+            html = getHtmlString(html, webDriver);
+            document = Jsoup.parse(html);
+            getVarietyList(soapURLList, document);
+        }
+
+        // 关闭 ChromeDriver 接口
+        webDriver.quit();
+        service.stop();
+        return soapURLList;
+    }
+
+
+    public static String fetchHTMLContent(String url, Integer second) throws Exception {
+        List<CrawlerVarietyURL> soapURLList = new ArrayList<>();
+
+        Integer sleepTime = second * 1000;
+        System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
+        ChromeDriverService service = new ChromeDriverService
+                .Builder().usingDriverExecutable(new File(Constants.CHROMEDRIVER)).usingAnyFreePort().build();
+        service.start();
+        WebDriver webDriver = new ChromeDriver();
+        webDriver.get(url);
+        Thread.sleep(sleepTime);
+        WebElement webElement = webDriver.findElement(By.xpath("/html"));
+        String html = new String();
+        if (webElement != null) {
+            html = webElement.getAttribute("outerHTML");
+        }
+
+
         // 关闭 ChromeDriver 接口
         webDriver.quit();
         service.stop();

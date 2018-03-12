@@ -2,9 +2,11 @@ package com.hxqh.crawler.controller;
 
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.model.CrawlerSoapURL;
+import com.hxqh.crawler.model.CrawlerVarietyURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerSoapURLRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
+import com.hxqh.crawler.repository.CrawlerVarietyURLRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
@@ -37,6 +39,8 @@ public class IqiyiController {
     private CrawlerProblemRepository crawlerProblemRepository;
     @Autowired
     private CrawlerSoapURLRepository crawlerSoapURLRepository;
+    @Autowired
+    private CrawlerVarietyURLRepository crawlerVarietyURLRepository;
 
     @RequestMapping("/filmUrl")
     public String filmUrl() {
@@ -102,6 +106,7 @@ public class IqiyiController {
                 String eachHtml = CrawlerUtils.fetchHTMLContentByPhantomJs(eachUrl, 2);
                 Document eachDocument = Jsoup.parse(eachHtml);
                 Elements piclist = eachDocument.getElementsByClass("site-piclist_pic_link");
+                // 电视剧所有播放量信息均相同，任意取一集即可
                 String href = piclist.get(0).attr("href");
 
                 CrawlerSoapURL soapURL = new CrawlerSoapURL(
@@ -115,6 +120,61 @@ public class IqiyiController {
                 soapURLList.add(soapURL);
             }
             crawlerSoapURLRepository.save(soapURLList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @RequestMapping("/varietyUrl")
+    public String varietyUrl() throws Exception {
+
+        List<String> hotList = new ArrayList<>();
+        List<String> newList = new ArrayList<>();
+
+//        --综艺 热门
+//        http://list.iqiyi.com/www/6/-------------11-1-1-iqiyi--.html
+//        http://list.iqiyi.com/www/6/-------------11-2-1-iqiyi--.html
+//        http://list.iqiyi.com/www/6/-------------11-3-1-iqiyi--.html
+        for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
+            hotList.add("http://list.iqiyi.com/www/6/-------------11-" + i + "-1-iqiyi--.html");
+        }
+//        --更新时间
+//        http://list.iqiyi.com/www/6/-------------4-1-1-iqiyi--.html
+//        http://list.iqiyi.com/www/6/-------------4-2-1-iqiyi--.html
+//        http://list.iqiyi.com/www/6/-------------4-3-1-iqiyi--.html
+        for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
+            newList.add("http://list.iqiyi.com/www/6/-------------4-" + i + "-1-iqiyi--.html");
+        }
+
+
+        for (String s : hotList) {
+            persistVarietyUrlList(s, "hot");
+        }
+        for (String s : newList) {
+            persistVarietyUrlList(s, "new");
+        }
+
+
+        return "crawler/notice";
+    }
+
+    private void persistVarietyUrlList(String url, String type) {
+        List<CrawlerVarietyURL> soapURLList = new ArrayList<>();
+        try {
+            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, 3);
+            Document document = Jsoup.parse(html);
+
+
+            Elements page = document.getElementsByClass("mod-page");
+            if (page == null) {
+                System.out.println("1");
+            } else {
+                System.out.println(page.size() - 2);
+            }
+
+
+            crawlerVarietyURLRepository.save(soapURLList);
         } catch (Exception e) {
             e.printStackTrace();
         }

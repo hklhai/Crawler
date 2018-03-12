@@ -93,8 +93,6 @@ public class PersistDouBan implements Runnable {
                     }
                 }
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }

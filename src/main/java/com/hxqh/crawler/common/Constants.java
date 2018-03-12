@@ -9,7 +9,7 @@ public interface Constants {
     String os = System.getProperty("os.name");
 
 
-    String CHROMEDRIVER = os.toLowerCase().startsWith("win") == true ? "E:\\Program\\ hromedriver.exe" : "/usr/bin/chromedriver";
+    String CHROMEDRIVER = os.toLowerCase().startsWith("win") == true ? "E:\\Program\\chromedriver.exe" : "/usr/bin/chromedriver";
     String SAVE_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler" : "/home/hadoop/crawler";
     String FILE_SPLIT = os.toLowerCase().startsWith("win") == true ? "\\" : "/";
     String FILE_LOC = os.toLowerCase().startsWith("win") == true ? "\\videos" : "/videos";
