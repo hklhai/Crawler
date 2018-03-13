@@ -80,17 +80,20 @@ public class TestHive {
     //添加数据
     @Test
     public void insert() throws SQLException {
-        String sql = "load data inpath '/goods.txt' into table goods";
-        //记得先在文件系统中上传goods.txt
-        ps = connection.prepareStatement(sql);
-        ps.execute();
+        String filepath = "/videos/2018/03/2018-03-07-iqiyi";
+        String tableName = "TEST_LOAD_2";
+        String sql = "load data inpath '" + filepath + "' into table " + tableName;
+        Statement stmt = connection.createStatement();
+        stmt.execute(sql);
         close();
     }
 
     //查询
     @Test
     public void find() throws SQLException {
-        String sql = "select * from students ";
+//        String sql = "select * from students ";
+        String sql = "select * from test_load_2 limit 10 ";
+
         ps = connection.prepareStatement(sql);
         rs = ps.executeQuery();
         while (rs.next()) {
