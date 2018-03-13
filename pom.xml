@@ -170,7 +170,7 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
-            <version>2.3.2</version>
+            <version>0.13.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hive</groupId>
@@ -185,18 +185,18 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
-            <version>2.3.2</version>
+            <version>0.13.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-exec</artifactId>
-            <version>2.3.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+            <version>0.13.1</version>
         </dependency>
 
     </dependencies>
