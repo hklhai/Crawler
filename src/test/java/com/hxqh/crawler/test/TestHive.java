@@ -6,6 +6,7 @@ package com.hxqh.crawler.test;
  * @author Ocean lin
  */
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,9 +22,8 @@ public class TestHive {
     @Before
     public void getConnection() {
         try {
-
-            Class.forName("org.apache.hive.jdbc.HiveDriver");
-            connection = DriverManager.getConnection("jdbc:hive2://192.168.1.167:10000/", "hadoop", "");
+            Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver");
+            connection = DriverManager.getConnection("jdbc:hive://192.168.1.167:10000/hive", "", "");
             System.out.println(connection);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -33,6 +33,7 @@ public class TestHive {
     }
 
     //关闭连接
+    @After
     public void close() {
         try {
             if (rs != null) {
@@ -52,7 +53,8 @@ public class TestHive {
     // 创建表
     @Test
     public void createTable() {
-        String sql = "create table goods2(id int,name string) row format delimited fields terminated by '\t' ";
+//        String sql = "create table goods2(id int,name string) ";
+        String sql = "desc students";
         try {
             ps = connection.prepareStatement(sql);
             ps.execute(sql);
@@ -88,7 +90,7 @@ public class TestHive {
     //查询
     @Test
     public void find() throws SQLException {
-        String sql = "select * from goods ";
+        String sql = "select * from students ";
         ps = connection.prepareStatement(sql);
         rs = ps.executeQuery();
         while (rs.next()) {
