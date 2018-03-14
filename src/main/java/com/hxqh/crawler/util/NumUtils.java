@@ -1,5 +1,7 @@
 package com.hxqh.crawler.util;
 
+import java.util.regex.Pattern;
+
 /**
  * Created by Ocean lin on 2018/2/6.
  *
@@ -30,5 +32,34 @@ public class NumUtils {
             integer = Integer.valueOf(s);
         }
         return integer;
+    }
+
+    /**
+     * 判断整数（int）
+     *
+     * @param str 输入字符串
+     * @return 是否整数
+     */
+    public static boolean isInteger(String str) {
+        if (null == str || "".equals(str)) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+        return pattern.matcher(str).matches();
+    }
+
+
+    /**
+     * 判断浮点数（double和float）
+     *
+     * @param str 输入字符串
+     * @return 是否浮点数
+     */
+    public static boolean isDouble(String str) {
+        if (null == str || "".equals(str)) {
+            return false;
+        }
+        Pattern pattern = Pattern.compile("^[-\\+]?[.\\d]*$");
+        return pattern.matcher(str).matches();
     }
 }

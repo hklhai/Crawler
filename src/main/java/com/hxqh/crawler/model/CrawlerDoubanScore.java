@@ -14,21 +14,13 @@ public class CrawlerDoubanScore {
     private Integer did;
     private String category;
     private String title;
-    private String scorevalue;
-    private String scorenum;
+    private Float scorevalue;
+    private Integer scorenum;
 
     public CrawlerDoubanScore() {
     }
 
-    public String getScorevalue() {
-        return scorevalue;
-    }
-
-    public void setScorevalue(String scorevalue) {
-        this.scorevalue = scorevalue;
-    }
-
-    public CrawlerDoubanScore(String category, String title, String scorevalue, String scorenum) {
+    public CrawlerDoubanScore(String category, String title, Float scorevalue, Integer scorenum) {
         this.category = category;
         this.title = title;
         this.scorevalue = scorevalue;
@@ -59,14 +51,19 @@ public class CrawlerDoubanScore {
         this.title = title;
     }
 
+    public Float getScorevalue() {
+        return scorevalue;
+    }
 
-    public String getScorenum() {
+    public void setScorevalue(Float scorevalue) {
+        this.scorevalue = scorevalue;
+    }
+
+    public Integer getScorenum() {
         return scorenum;
     }
 
-    public void setScorenum(String scorenum) {
+    public void setScorenum(Integer scorenum) {
         this.scorenum = scorenum;
     }
-
-
 }

@@ -4,6 +4,7 @@ import com.hxqh.crawler.model.CrawlerDoubanScore;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerDoubanSocreRepository;
 import com.hxqh.crawler.util.CrawlerUtils;
+import com.hxqh.crawler.util.NumUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -77,14 +78,26 @@ public class PersistDouBan implements Runnable {
                         searchFilmName = searchFilmName.substring(1, searchFilmName.length());
 
                         if (searchCategory.equals(category) && searchFilmName.equals(filmName)) {
+                            Float aFloat = null;
+                            Integer integer = null;
                             Element ratingElement = ratingElements.get(j);
                             String rating = ratingElement.select("span").text();
                             String scoreValue = rating.split(" ")[0];
                             String scoreValuePersonNum = rating.split(" ")[1];
                             scoreValuePersonNum = scoreValuePersonNum.substring(1, scoreValuePersonNum.length() - 4);
+                            if (NumUtils.isDouble(scoreValue)) {
+                                aFloat = Float.valueOf(scoreValue);
+                            } else {
+                                continue;
+                            }
+                            if (NumUtils.isInteger(scoreValuePersonNum)) {
+                                integer = Integer.valueOf(scoreValuePersonNum);
+                            } else {
+                                continue;
+                            }
 
-                            System.out.println("分类：" + category + " 电影名称:" + filmName + " 评分：" + scoreValue + " 评分人数：" + scoreValuePersonNum);
-                            CrawlerDoubanScore crawlerDoubanScore = new CrawlerDoubanScore(category, filmName, scoreValue, scoreValuePersonNum);
+                            System.out.println("分类：" + category + " 电影名称:" + filmName + " 评分：" + aFloat + " 评分人数：" + integer);
+                            CrawlerDoubanScore crawlerDoubanScore = new CrawlerDoubanScore(category, filmName, aFloat, integer);
                             crawlerDoubanSocreRepository.save(crawlerDoubanScore);
                             break;
                         }
