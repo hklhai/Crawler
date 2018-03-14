@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.net.InetAddress;
-import java.rmi.UnknownHostException;
 
 /**
  * Created by Ocean lin on 2017/10/10.
@@ -19,7 +18,7 @@ import java.rmi.UnknownHostException;
 @Configuration
 public class ESConfig {
     @Bean
-    public TransportClient client() throws UnknownHostException {
+    public TransportClient client() {
 
         /**
          * v5.x

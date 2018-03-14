@@ -1,13 +1,17 @@
 package com.hxqh.crawler.model;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by Ocean lin on 2018/3/12.
  *
  * @author Ocean lin
  */
+@Entity
+@Table(name = "crawler_url_variety")
 public class CrawlerVarietyURL {
 
     @Id
