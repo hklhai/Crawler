@@ -2,11 +2,13 @@ package com.hxqh.crawler.controller;
 
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.model.CrawlerSoapURL;
+import com.hxqh.crawler.model.CrawlerVariety;
 import com.hxqh.crawler.model.CrawlerVarietyURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerSoapURLRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.repository.CrawlerVarietyURLRepository;
+import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
@@ -41,6 +43,7 @@ public class IqiyiController {
     private CrawlerSoapURLRepository crawlerSoapURLRepository;
     @Autowired
     private CrawlerVarietyURLRepository crawlerVarietyURLRepository;
+    private CrawlerService crawlerService;
 
     @RequestMapping("/filmUrl")
     public String filmUrl() {
@@ -64,6 +67,11 @@ public class IqiyiController {
     }
 
 
+    /**
+     * 持久化 一集
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("/soapUrl")
     public String soapUrl() throws Exception {
         List<String> hotList = new ArrayList<>();
@@ -129,8 +137,16 @@ public class IqiyiController {
     @RequestMapping("/varietyUrl")
     public String varietyUrl() throws Exception {
 
+
+
         List<String> hotList = new ArrayList<>();
         List<String> newList = new ArrayList<>();
+
+        List<String> hotUrlList = new ArrayList<>();
+        List<String> newUrlList = new ArrayList<>();
+
+        List<CrawlerVariety> hotVarietyUrlList = new ArrayList<>();
+        List<CrawlerVariety> newVarietyUrlList = new ArrayList<>();
 
 //        --综艺 热门
 //        http://list.iqiyi.com/www/6/-------------11-1-1-iqiyi--.html
@@ -147,37 +163,57 @@ public class IqiyiController {
             newList.add("http://list.iqiyi.com/www/6/-------------4-" + i + "-1-iqiyi--.html");
         }
 
-
+        /**
+         * 获取每部综艺作品链接
+         */
         for (String s : hotList) {
-            persistVarietyUrlList(s, "hot");
+            List<String> list = eachVarietyUrlList(s);
+            hotUrlList.addAll(list);
         }
         for (String s : newList) {
-            persistVarietyUrlList(s, "new");
+            List<String> list = eachVarietyUrlList(s);
+            newUrlList.addAll(list);
         }
+
+        /**
+         * 持久化每部综艺链接
+         */
+        for (String s : hotUrlList) {
+            CrawlerVariety crawlerVariety = new CrawlerVariety(s, DateUtils.getTodayDate(), "hot");
+            hotVarietyUrlList.add(crawlerVariety);
+        }
+        crawlerService.persistEachVarietyUrlList(hotVarietyUrlList);
+        for (String s : newUrlList) {
+            CrawlerVariety crawlerVariety = new CrawlerVariety(s, DateUtils.getTodayDate(), "new");
+            newVarietyUrlList.add(crawlerVariety);
+        }
+        crawlerService.persistEachVarietyUrlList(newVarietyUrlList);
+
+
 
 
         return "crawler/notice";
     }
 
-    private void persistVarietyUrlList(String url, String type) {
-        List<CrawlerVarietyURL> soapURLList = new ArrayList<>();
+
+    private List<String> eachVarietyUrlList(String url) {
+        List<String> eachVarietyList = new ArrayList<>();
         try {
             String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, 4);
             Document document = Jsoup.parse(html);
-
-            Elements page = document.getElementsByClass("mod-page");
-            if (page == null) {
-                System.out.println("1");
-            } else {
-                System.out.println(page.size() - 2);
+            Elements elements = document.getElementsByClass("site-piclist_pic");
+            Elements as = elements.select("a");
+            for (Element e : as) {
+                System.out.println(e.attr("href"));
+                eachVarietyList.add(e.attr("href"));
             }
 
-            crawlerVarietyURLRepository.save(soapURLList);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        return eachVarietyList;
     }
+
 
 }
 

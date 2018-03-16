@@ -108,6 +108,7 @@ public class CrawlerVarietyURL {
         sb.append(", category='").append(category).append('\'');
         sb.append(", platform='").append(platform).append('\'');
         sb.append(", sorted='").append(sorted).append('\'');
+        sb.append(", varietyName='").append(varietyName).append('\'');
         sb.append('}');
         return sb.toString();
     }

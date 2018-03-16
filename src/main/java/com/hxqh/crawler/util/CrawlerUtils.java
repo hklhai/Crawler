@@ -183,16 +183,6 @@ public class CrawlerUtils {
         }
     }
 
-    private static String getHtmlString(String html, WebDriver webDriver) {
-        //查找元素
-        WebElement webElement = webDriver.findElement(By.xpath("/html"));
-        if (webDriver != null) {
-            html = webElement.getAttribute("outerHTML");
-        }
-        return html;
-    }
-
-
     public static String fetchHTMLContentAndIframeByPhantomJs(String url, Integer second) throws Exception {
         //设置必要参数
         DesiredCapabilities dcaps = new DesiredCapabilities();
@@ -381,6 +371,16 @@ public class CrawlerUtils {
                 hrefList.add(rs);
             }
         }
+    }
+
+
+    private static String getHtmlString(String html, WebDriver webDriver) {
+        //查找元素
+        WebElement webElement = webDriver.findElement(By.xpath("/html"));
+        if (webDriver != null) {
+            html = webElement.getAttribute("outerHTML");
+        }
+        return html;
     }
 
     /**

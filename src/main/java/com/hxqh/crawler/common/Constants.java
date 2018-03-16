@@ -62,9 +62,10 @@ public interface Constants {
 
     String MAO_YAN = "maoyan";
 
-    String HIVE_SPLIT_LABEL = "\u0001";
 
     Integer BAIDU_LIMIT_NUM = 6;
-
     String BAIDU_SEARCH = "http://www.baidu.com/s?wd=";
+
+
+    Integer IQIYI_VARIETY_WAIT_TIME = 4;
 }
