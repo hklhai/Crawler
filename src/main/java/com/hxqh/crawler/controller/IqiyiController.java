@@ -4,10 +4,7 @@ import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.model.CrawlerSoapURL;
 import com.hxqh.crawler.model.CrawlerVariety;
 import com.hxqh.crawler.model.CrawlerVarietyURL;
-import com.hxqh.crawler.repository.CrawlerProblemRepository;
-import com.hxqh.crawler.repository.CrawlerSoapURLRepository;
-import com.hxqh.crawler.repository.CrawlerURLRepository;
-import com.hxqh.crawler.repository.CrawlerVarietyURLRepository;
+import com.hxqh.crawler.repository.*;
 import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
@@ -43,7 +40,11 @@ public class IqiyiController {
     private CrawlerSoapURLRepository crawlerSoapURLRepository;
     @Autowired
     private CrawlerVarietyURLRepository crawlerVarietyURLRepository;
+    @Autowired
     private CrawlerService crawlerService;
+    @Autowired
+    private CrawlerVarietyRepository crawlerVarietyRepository;
+
 
     @RequestMapping("/filmUrl")
     public String filmUrl() {
@@ -69,6 +70,7 @@ public class IqiyiController {
 
     /**
      * 持久化 一集
+     *
      * @return
      * @throws Exception
      */
@@ -134,31 +136,16 @@ public class IqiyiController {
     }
 
 
-    @RequestMapping("/varietyUrl")
-    public String varietyUrl() throws Exception {
-
-
+    @RequestMapping("/eachVarietyUrl")
+    public String eachVarietyUrl() throws Exception {
 
         List<String> hotList = new ArrayList<>();
         List<String> newList = new ArrayList<>();
 
-        List<String> hotUrlList = new ArrayList<>();
-        List<String> newUrlList = new ArrayList<>();
 
-        List<CrawlerVariety> hotVarietyUrlList = new ArrayList<>();
-        List<CrawlerVariety> newVarietyUrlList = new ArrayList<>();
-
-//        --综艺 热门
-//        http://list.iqiyi.com/www/6/-------------11-1-1-iqiyi--.html
-//        http://list.iqiyi.com/www/6/-------------11-2-1-iqiyi--.html
-//        http://list.iqiyi.com/www/6/-------------11-3-1-iqiyi--.html
         for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
             hotList.add("http://list.iqiyi.com/www/6/-------------11-" + i + "-1-iqiyi--.html");
         }
-//        --更新时间
-//        http://list.iqiyi.com/www/6/-------------4-1-1-iqiyi--.html
-//        http://list.iqiyi.com/www/6/-------------4-2-1-iqiyi--.html
-//        http://list.iqiyi.com/www/6/-------------4-3-1-iqiyi--.html
         for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
             newList.add("http://list.iqiyi.com/www/6/-------------4-" + i + "-1-iqiyi--.html");
         }
@@ -167,53 +154,76 @@ public class IqiyiController {
          * 获取每部综艺作品链接
          */
         for (String s : hotList) {
-            List<String> list = eachVarietyUrlList(s);
-            hotUrlList.addAll(list);
+            List<CrawlerVariety> list = eachVarietyUrlList(s, "hot");
+            crawlerService.persistEachVarietyUrlList(list);
         }
         for (String s : newList) {
-            List<String> list = eachVarietyUrlList(s);
-            newUrlList.addAll(list);
+            List<CrawlerVariety> list = eachVarietyUrlList(s, "new");
+            crawlerService.persistEachVarietyUrlList(list);
         }
-
-        /**
-         * 持久化每部综艺链接
-         */
-        for (String s : hotUrlList) {
-            CrawlerVariety crawlerVariety = new CrawlerVariety(s, DateUtils.getTodayDate(), "hot");
-            hotVarietyUrlList.add(crawlerVariety);
-        }
-        crawlerService.persistEachVarietyUrlList(hotVarietyUrlList);
-        for (String s : newUrlList) {
-            CrawlerVariety crawlerVariety = new CrawlerVariety(s, DateUtils.getTodayDate(), "new");
-            newVarietyUrlList.add(crawlerVariety);
-        }
-        crawlerService.persistEachVarietyUrlList(newVarietyUrlList);
-
-
 
 
         return "crawler/notice";
     }
 
 
-    private List<String> eachVarietyUrlList(String url) {
-        List<String> eachVarietyList = new ArrayList<>();
+    /**
+     * @param url    每部综艺节目爬取URL
+     * @param sorted 综艺节目类别
+     * @return
+     */
+    private List<CrawlerVariety> eachVarietyUrlList(String url, String sorted) {
+        List<CrawlerVariety> eachVarietyList = new ArrayList<>();
         try {
             String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, 4);
             Document document = Jsoup.parse(html);
             Elements elements = document.getElementsByClass("site-piclist_pic");
             Elements as = elements.select("a");
             for (Element e : as) {
-                System.out.println(e.attr("href"));
-                eachVarietyList.add(e.attr("href"));
+                CrawlerVariety crawlerVariety = new CrawlerVariety(
+                        e.attr("href"),
+                        DateUtils.getTodayDate(),
+                        sorted);
+                eachVarietyList.add(crawlerVariety);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         return eachVarietyList;
     }
 
+
+    @RequestMapping("/varietyUrl")
+    public String varietyUrl() throws Exception {
+
+        List<CrawlerVariety> varietyList = crawlerVarietyRepository.findAll();
+        /**
+         * 持久化每部综艺作品的不同集
+         */
+        for (CrawlerVariety variety : varietyList) {
+            String url = variety.getUrl();
+            String sorted = variety.getSorted();
+            List<CrawlerVarietyURL> urlList = persistVarietyUrlList(url, sorted);
+            crawlerService.persistVarietyUrlList(urlList);
+        }
+
+        return "crawler/notice";
+    }
+
+    /**
+     * @param url    每部综艺节目爬取URL
+     * @param sorted 综艺节目类别
+     * @return
+     */
+    private List<CrawlerVarietyURL> persistVarietyUrlList(String url, String sorted) {
+        List<CrawlerVarietyURL> varietyURLList = new ArrayList<>();
+        try {
+            varietyURLList = CrawlerUtils.fetchVarietyURLByPhantomJs(url, Constants.IQIYI_VARIETY_WAIT_TIME, sorted);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return varietyURLList;
+    }
 
 }
 
