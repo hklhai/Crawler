@@ -24,6 +24,7 @@ public class CrawlerVarietyURL {
     private String category;
     private String platform;
     private String sorted;
+    private String varietyName;
 
     public CrawlerVarietyURL() {
     }
@@ -31,6 +32,14 @@ public class CrawlerVarietyURL {
     public CrawlerVarietyURL(String title, String url) {
         this.title = title;
         this.url = url;
+    }
+
+    public String getVarietyName() {
+        return varietyName;
+    }
+
+    public void setVarietyName(String varietyName) {
+        this.varietyName = varietyName;
     }
 
     public Integer getVid() {

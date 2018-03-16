@@ -162,9 +162,8 @@ public class IqiyiController {
     private void persistVarietyUrlList(String url, String type) {
         List<CrawlerVarietyURL> soapURLList = new ArrayList<>();
         try {
-            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, 3);
+            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, 4);
             Document document = Jsoup.parse(html);
-
 
             Elements page = document.getElementsByClass("mod-page");
             if (page == null) {
@@ -172,7 +171,6 @@ public class IqiyiController {
             } else {
                 System.out.println(page.size() - 2);
             }
-
 
             crawlerVarietyURLRepository.save(soapURLList);
         } catch (Exception e) {

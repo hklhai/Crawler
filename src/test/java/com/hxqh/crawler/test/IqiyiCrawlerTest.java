@@ -7,22 +7,24 @@ import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-//import org.apache.commons.collections4.ListUtils;
 
 /**
  * Created by Ocean lin on 2018/1/18.
  *
  * @author Lin
  */
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class IqiyiCrawlerTest {
 
     @Resource
@@ -32,7 +34,7 @@ public class IqiyiCrawlerTest {
     @Autowired
     private SystemService systemService;
 
-//    @Test
+    @Test
     public void persist() {
 
         List<String> list = Arrays.asList("http://www.iqiyi.com/a_19rrgubthd.html");
@@ -47,7 +49,7 @@ public class IqiyiCrawlerTest {
     private void persistVarietyUrlList(String url, String type) {
         List<CrawlerVarietyURL> soapURLList = new ArrayList<>();
         try {
-            List<CrawlerVarietyURL> varietyURLList = CrawlerUtils.fetchHTMLContent(url, 3, "");
+            List<CrawlerVarietyURL> varietyURLList = CrawlerUtils.fetchVarietyURLByPhantomJs(url, 3, "");
             for (CrawlerVarietyURL varietyURL : varietyURLList) {
                 System.out.println(varietyURL);
             }
