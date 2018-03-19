@@ -4,6 +4,7 @@ package com.hxqh.crawler.test;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.repository.CrawlerVarietyRepository;
+import com.hxqh.crawler.repository.CrawlerVarietyURLRepository;
 import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
 import org.junit.Test;
@@ -35,6 +36,9 @@ public class IqiyiCrawlerTest {
     @Autowired
     private CrawlerVarietyRepository crawlerVarietyRepository;
 
+
+
+
     @Test
     public void persistEachVarietyUrl() {
 
@@ -43,6 +47,7 @@ public class IqiyiCrawlerTest {
 
     @Test
     public void persist() {
+
 
 
     }

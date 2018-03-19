@@ -11,6 +11,7 @@ public interface Constants {
 
     String CHROMEDRIVER = os.toLowerCase().startsWith("win") == true ? "E:\\Program\\chromedriver.exe" : "/usr/bin/chromedriver";
     String SAVE_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler" : "/home/hadoop/crawler";
+    String SAVE_VARIETY_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler\\variety" : "/home/hadoop/crawler/variety";
     String FILE_SPLIT = os.toLowerCase().startsWith("win") == true ? "\\" : "/";
     String FILE_LOC = os.toLowerCase().startsWith("win") == true ? "\\videos" : "/videos";
     String BOOK_JD_FILE_LOC = os.toLowerCase().startsWith("win") == true ? "\\book" : "/book";

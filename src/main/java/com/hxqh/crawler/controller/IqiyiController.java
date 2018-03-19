@@ -1,6 +1,7 @@
 package com.hxqh.crawler.controller;
 
 import com.hxqh.crawler.common.Constants;
+import com.hxqh.crawler.controller.thread.PersistFilm;
 import com.hxqh.crawler.model.CrawlerSoapURL;
 import com.hxqh.crawler.model.CrawlerVariety;
 import com.hxqh.crawler.model.CrawlerVarietyURL;
@@ -9,6 +10,8 @@ import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
+import com.hxqh.crawler.util.HdfsUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,8 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -69,7 +76,7 @@ public class IqiyiController {
 
 
     /**
-     * 持久化 一集
+     * 持久化每一集电视剧
      *
      * @return
      * @throws Exception
@@ -79,16 +86,10 @@ public class IqiyiController {
         List<String> hotList = new ArrayList<>();
         List<String> newList = new ArrayList<>();
 //        --电视剧 热门
-//        http://list.iqiyi.com/www/2/-------------11-1-1-iqiyi--.html
-//        http://list.iqiyi.com/www/2/-------------11-2-1-iqiyi--.html
-//        http://list.iqiyi.com/www/2/-------------11-3-1-iqiyi--.html
         for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
             hotList.add("http://list.iqiyi.com/www/2/-------------11-" + i + "-1-iqiyi--.html");
         }
 //        --更新时间
-//        http://list.iqiyi.com/www/2/-------------4-1-1-iqiyi--.html
-//        http://list.iqiyi.com/www/2/-------------4-2-1-iqiyi--.html
-//        http://list.iqiyi.com/www/2/-------------4-3-1-iqiyi--.html
         for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
             newList.add("http://list.iqiyi.com/www/2/-------------4-" + i + "-1-iqiyi--.html");
         }
@@ -104,7 +105,12 @@ public class IqiyiController {
     }
 
 
-    private void persistUrlList(String url, String type) {
+    /**
+     * @param url    每部电视剧URL
+     * @param sorted 电视剧类别
+     * @return
+     */
+    private void persistUrlList(String url, String sorted) {
         List<CrawlerSoapURL> soapURLList = new ArrayList<>();
         try {
             String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, 2);
@@ -125,7 +131,7 @@ public class IqiyiController {
                         DateUtils.getTodayDate(),
                         "soap",
                         "iqiyi",
-                        type
+                        sorted
                 );
                 soapURLList.add(soapURL);
             }
@@ -136,6 +142,47 @@ public class IqiyiController {
     }
 
 
+    /**
+     * 持久化综艺内容
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/varietyDataUrl")
+    public String varietyDataUrl() throws Exception {
+        List<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll();
+
+        Integer partitionNUm = varietyURLList.size() / Constants.IQIYI_THREAD_NUM + 1;
+        List<List<CrawlerVarietyURL>> lists = ListUtils.partition(varietyURLList, partitionNUm);
+
+        ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
+
+        for (List<CrawlerVarietyURL> l : lists) {
+            service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
+        }
+        service.shutdown();
+        while (!service.isTerminated()) {
+        }
+
+        // 2. 上传至HDFS
+        try {
+            HdfsUtils.persistToHDFS("-soap-iqiyi", Constants.FILE_LOC);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "crawler/notice";
+    }
+
+
+    /**
+     * 每部综艺节目链接爬取
+     *
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("/eachVarietyUrl")
     public String eachVarietyUrl() throws Exception {
 
@@ -193,6 +240,12 @@ public class IqiyiController {
     }
 
 
+    /**
+     * 每部综艺节目每集爬取
+     *
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("/varietyUrl")
     public String varietyUrl() throws Exception {
 

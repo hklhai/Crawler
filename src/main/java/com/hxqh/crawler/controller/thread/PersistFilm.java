@@ -3,7 +3,9 @@ package com.hxqh.crawler.controller.thread;
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.domain.VideosFilm;
 import com.hxqh.crawler.model.CrawlerURL;
+import com.hxqh.crawler.model.CrawlerVarietyURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
+import com.hxqh.crawler.repository.CrawlerVarietyURLRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
@@ -13,10 +15,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Ocean lin on 2018/1/19.
+ *
+ * @author Lin
  */
 public class PersistFilm implements Runnable {
 
@@ -25,7 +30,9 @@ public class PersistFilm implements Runnable {
 
 
     private List<CrawlerURL> l;
+    private List<CrawlerVarietyURL> varietyURLList;
     private CrawlerProblemRepository crawlerProblemRepository;
+    private CrawlerVarietyURLRepository crawlerVarietyURLRepository;
     private SystemService systemService;
 
 
@@ -35,24 +42,62 @@ public class PersistFilm implements Runnable {
         this.systemService = systemService;
     }
 
+    public PersistFilm(List<CrawlerVarietyURL> varietyURLList, CrawlerVarietyURLRepository crawlerVarietyURLRepository, SystemService systemService) {
+        this.varietyURLList = varietyURLList;
+        this.crawlerVarietyURLRepository = crawlerVarietyURLRepository;
+        this.systemService = systemService;
+    }
+
     @Override
     public void run() {
         try {
-            parseAndPersist(l, crawlerProblemRepository, systemService);
+            parseAndPersist(l, varietyURLList, crawlerProblemRepository, systemService);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void parseAndPersist(List<CrawlerURL> hrefList, CrawlerProblemRepository crawlerProblemRepository, SystemService systemService) {
+    private static void parseAndPersist(List<CrawlerURL> hrefList,
+                                        List<CrawlerVarietyURL> varietyURLList,
+                                        CrawlerProblemRepository crawlerProblemRepository,
+                                        SystemService systemService) {
         StringBuilder stringBuilder = new StringBuilder(STRINGBUILDER_SIZE);
         CrawlerURL crawlerURL = null;
+        CrawlerVarietyURL varietyURL = null;
+        List<Object> objectList = new ArrayList<>();
+        Integer len = null;
+        if (null != hrefList) {
+            len = hrefList.size();
+        }
+        if (null != varietyURLList) {
+            len = varietyURLList.size();
+        }
+
+
         try {
-            for (int i = 0; i < hrefList.size(); i++) {
-                crawlerURL = hrefList.get(i);
-                String html = CrawlerUtils.fetchHTMLContentByPhantomJs(crawlerURL.getUrl(), Constants.DEFAULT_SEELP_SECOND);
+            for (int i = 0; i < len; i++) {
+                String url = new String();
+                String source = new String();
+                String category = new String();
+
+
+                if (null != hrefList) {
+                    crawlerURL = hrefList.get(i);
+                    url = crawlerURL.getUrl();
+                    source = crawlerURL.getPlatform();
+                    category = crawlerURL.getCategory();
+
+                }
+                if (null != varietyURLList) {
+                    CrawlerVarietyURL crawlerVarietyURL = varietyURLList.get(i);
+                    url = crawlerVarietyURL.getUrl();
+                    source = crawlerVarietyURL.getPlatform();
+                    category = crawlerVarietyURL.getCategory();
+                }
+
+
+                String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, Constants.DEFAULT_SEELP_SECOND);
                 Document doc = Jsoup.parse(html);
-                String source = crawlerURL.getPlatform();
 
                 String filmName = new String();
                 String star = new String();
@@ -72,7 +117,7 @@ public class PersistFilm implements Runnable {
                     // 演员
                     Elements starEle = progInfo.select("p");
                     if (starEle.size() < 3) {
-                        System.out.println(crawlerURL.getUrl());
+                        System.out.println(url);
                         star = " ";
                     } else {
                         Elements starElement = doc.getElementsByClass("progInfo_txt").
@@ -86,7 +131,7 @@ public class PersistFilm implements Runnable {
                     // 导演
                     Elements directorEle = doc.getElementsByClass("progInfo_txt").select("p");
                     if (directorEle.size() < 2) {
-                        System.out.println(crawlerURL.getUrl());
+                        System.out.println(url);
                         director = " ";
                     } else {
                         Elements directorElement = doc.getElementsByClass("progInfo_txt").
@@ -96,7 +141,6 @@ public class PersistFilm implements Runnable {
                         }
                     }
 
-                    String category = crawlerURL.getCategory();
 
                     Element dataInfoElement = doc.getElementById("datainfo-taglist");
                     if (dataInfoElement != null) {
@@ -181,22 +225,48 @@ public class PersistFilm implements Runnable {
                             append(up.trim()).append("^").
                             append(addTime.trim()).append("^").
                             append(playNum.trim()).append("\n");
-                    String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT +
-                            DateUtils.getTodayDate() + "-" + crawlerURL.getPlatform();
-                    FileUtils.writeStrToFile(stringBuilder.toString(), fileName);
-                    stringBuilder.setLength(0);
-                    System.out.println(filmName.trim() + " Persist Success!");
 
-                    /**
-                     * 持久化至ES
-                     */
-                    if (!score.trim().equals("评分人数不足")) {
-                        VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, category, label, score, commentNum, up, addTime, playNum);
-                        videosFilm.setPlayNum(Integer.valueOf(playNum.trim()));
 
-                        systemService.addVideos(videosFilm);
-                    } else {
-                        continue;
+                    if (null != hrefList) {
+                        String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT +
+                                DateUtils.getTodayDate() + "-" + source;
+                        String s = stringBuilder.toString();
+                        FileUtils.writeStrToFile(s, fileName);
+                        stringBuilder.setLength(0);
+                        System.out.println(filmName.trim() + " Persist Success!");
+
+                        /**
+                         * 持久化至ES
+                         */
+                        if (!score.trim().equals("评分人数不足")) {
+                            VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, category, label, score, commentNum, up, addTime, playNum);
+                            videosFilm.setPlayNum(Integer.valueOf(playNum.trim()));
+                            systemService.addVideos(videosFilm);
+                        } else {
+                            continue;
+                        }
+
+                    }
+                    if (null != varietyURLList) {
+
+                        String fileName = Constants.SAVE_VARIETY_PATH + Constants.FILE_SPLIT +
+                                DateUtils.getTodayDate() + "-" + source;
+                        String s = stringBuilder.toString();
+                        FileUtils.writeStrToFile(s, fileName);
+                        stringBuilder.setLength(0);
+                        System.out.println(filmName.trim() + " Persist Success!");
+
+                        /**
+                         * 持久化至ES
+                         */
+                        if (!score.trim().equals("评分人数不足")) {
+                            VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, category, label, score, commentNum, up, addTime, playNum);
+                            videosFilm.setPlayNum(Integer.valueOf(playNum.trim()));
+                            systemService.addVideos(videosFilm);
+                        } else {
+                            continue;
+                        }
+
                     }
                 } else {
                     continue;
