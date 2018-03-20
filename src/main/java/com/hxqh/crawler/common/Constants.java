@@ -69,4 +69,6 @@ public interface Constants {
 
 
     Integer IQIYI_VARIETY_WAIT_TIME = 4;
+
+    String IQIYI_VARIETY_COLON = "：";
 }

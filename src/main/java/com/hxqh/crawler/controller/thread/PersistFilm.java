@@ -112,7 +112,11 @@ public class PersistFilm implements Runnable {
 
                     if (filmNameElement != null) {
                         filmName = filmNameElement.text();
+                        if (filmName.startsWith(Constants.IQIYI_VARIETY_COLON)) {
+                            filmName = filmName.replace(Constants.IQIYI_VARIETY_COLON, "");
+                        }
                     }
+
 
                     // 电影
                     if (null != hrefList) {
@@ -135,7 +139,6 @@ public class PersistFilm implements Runnable {
                         Elements elements = doc.getElementById("datainfo-cast-list").select("a");
                         star = elements.text();
                     }
-
 
                     // 导演
                     Elements directorEle = doc.getElementsByClass("progInfo_txt").select("p");
@@ -242,18 +245,6 @@ public class PersistFilm implements Runnable {
                         FileUtils.writeStrToFile(s, fileName);
                         stringBuilder.setLength(0);
                         System.out.println(filmName.trim() + " Persist Success!");
-
-                        /**
-                         * 持久化至ES
-                         */
-                        if (!score.trim().equals("评分人数不足")) {
-                            VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, category, label, score, commentNum, up, addTime, playNum);
-                            videosFilm.setPlayNum(Integer.valueOf(playNum.trim()));
-                            systemService.addVideos(videosFilm);
-                        } else {
-                            continue;
-                        }
-
                     }
                     if (null != varietyURLList) {
 
@@ -263,18 +254,19 @@ public class PersistFilm implements Runnable {
                         FileUtils.writeStrToFile(s, fileName);
                         stringBuilder.setLength(0);
                         System.out.println(filmName.trim() + " Persist Success!");
-
-                        /**
-                         * 持久化至ES
-                         */
-                        if (!score.trim().equals("评分人数不足")) {
-                            VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, category, label, score, commentNum, up, addTime, playNum);
-                            videosFilm.setPlayNum(Integer.valueOf(playNum.trim()));
-                            systemService.addVideos(videosFilm);
-                        } else {
-                            continue;
-                        }
                     }
+
+//                    /**
+//                     * 持久化至ES
+//                     */
+//                    if (!score.trim().equals("评分人数不足")) {
+//                        VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, category, label, score, commentNum, up, addTime, playNum);
+//                        videosFilm.setPlayNum(Integer.valueOf(playNum.trim()));
+//                        systemService.addVideos(videosFilm);
+//                    } else {
+//                        continue;
+//                    }
+
                 } else {
                     continue;
                 }
