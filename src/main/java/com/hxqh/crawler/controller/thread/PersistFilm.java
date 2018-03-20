@@ -114,17 +114,26 @@ public class PersistFilm implements Runnable {
                         filmName = filmNameElement.text();
                     }
 
-                    // 演员
-                    Elements starEle = progInfo.select("p");
-                    if (starEle.size() < 3) {
-                        System.out.println(url);
-                        star = " ";
-                    } else {
-                        Elements starElement = doc.getElementsByClass("progInfo_txt").
-                                select("p").get(2).select("span").get(1).select("a");
-                        if (starElement != null) {
-                            star = starElement.text();
+                    // 电影
+                    if (null != hrefList) {
+                        // 演员
+                        Elements starEle = progInfo.select("p");
+                        if (starEle.size() < 3) {
+                            System.out.println(url);
+                            star = " ";
+                        } else {
+                            Elements starElement = doc.getElementsByClass("progInfo_txt").
+                                    select("p").get(2).select("span").get(1).select("a");
+                            if (starElement != null) {
+                                star = starElement.text();
+                            }
                         }
+                    }
+
+                    // 综艺
+                    if (null != varietyURLList) {
+                        Elements elements = doc.getElementById("datainfo-cast-list").select("a");
+                        star = elements.text();
                     }
 
 
@@ -140,7 +149,6 @@ public class PersistFilm implements Runnable {
                             director = directorElement.text();
                         }
                     }
-
 
                     Element dataInfoElement = doc.getElementById("datainfo-taglist");
                     if (dataInfoElement != null) {
@@ -266,7 +274,6 @@ public class PersistFilm implements Runnable {
                         } else {
                             continue;
                         }
-
                     }
                 } else {
                     continue;

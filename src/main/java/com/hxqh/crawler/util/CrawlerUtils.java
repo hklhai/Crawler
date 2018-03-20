@@ -85,17 +85,7 @@ public class CrawlerUtils {
 
         try {
             //设置必要参数
-            DesiredCapabilities dcaps = new DesiredCapabilities();
-            //ssl证书支持
-            dcaps.setCapability("acceptSslCerts", true);
-            //截屏支持
-            dcaps.setCapability("takesScreenshot", true);
-            //css搜索支持
-            dcaps.setCapability("cssSelectorsEnabled", true);
-            //js支持
-            dcaps.setJavascriptEnabled(true);
-            //驱动支持（第二参数表明的是你的phantomjs引擎所在的路径）
-            dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, Constants.PHANTOMJS_PATH);
+            DesiredCapabilities dcaps = getDesiredCapabilities();
             //创建无界面浏览器对象
             driver = new PhantomJSDriver(dcaps);
 
@@ -128,18 +118,8 @@ public class CrawlerUtils {
         PhantomJSDriver webDriver = null;
         List<CrawlerVarietyURL> soapURLList = new ArrayList<>();
         try {
-            //设置必要参数
-            DesiredCapabilities dcaps = new DesiredCapabilities();
-            //ssl证书支持
-            dcaps.setCapability("acceptSslCerts", true);
-            //截屏支持
-            dcaps.setCapability("takesScreenshot", true);
-            //css搜索支持
-            dcaps.setCapability("cssSelectorsEnabled", true);
-            //js支持
-            dcaps.setJavascriptEnabled(true);
-            //驱动支持（第二参数表明的是你的phantomjs引擎所在的路径）
-            dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, Constants.PHANTOMJS_PATH);
+            DesiredCapabilities dcaps = getDesiredCapabilities();
+
             //创建无界面浏览器对象
             webDriver = new PhantomJSDriver(dcaps);
 
@@ -161,6 +141,22 @@ public class CrawlerUtils {
             }
         }
         return soapURLList;
+    }
+
+    private static DesiredCapabilities getDesiredCapabilities() {
+        //设置必要参数
+        DesiredCapabilities dcaps = new DesiredCapabilities();
+        //ssl证书支持
+        dcaps.setCapability("acceptSslCerts", true);
+        //截屏支持
+        dcaps.setCapability("takesScreenshot", true);
+        //css搜索支持
+        dcaps.setCapability("cssSelectorsEnabled", true);
+        //js支持
+        dcaps.setJavascriptEnabled(true);
+        //驱动支持（第二参数表明的是你的phantomjs引擎所在的路径）
+        dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, Constants.PHANTOMJS_PATH);
+        return dcaps;
     }
 
     private static void getVarietyList(List<CrawlerVarietyURL> soapURLList, Document document, String sorted, String varietyName) {
@@ -185,17 +181,7 @@ public class CrawlerUtils {
 
     public static String fetchHTMLContentAndIframeByPhantomJs(String url, Integer second) throws Exception {
         //设置必要参数
-        DesiredCapabilities dcaps = new DesiredCapabilities();
-        //ssl证书支持
-        dcaps.setCapability("acceptSslCerts", true);
-        //截屏支持
-        dcaps.setCapability("takesScreenshot", true);
-        //css搜索支持
-        dcaps.setCapability("cssSelectorsEnabled", true);
-        //js支持
-        dcaps.setJavascriptEnabled(true);
-        //驱动支持（第二参数表明的是你的phantomjs引擎所在的路径）
-        dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, Constants.PHANTOMJS_PATH);
+        DesiredCapabilities dcaps = getDesiredCapabilities();
         //创建无界面浏览器对象
         PhantomJSDriver driver = new PhantomJSDriver(dcaps);
 
@@ -234,17 +220,7 @@ public class CrawlerUtils {
 
         try {
             //设置必要参数
-            DesiredCapabilities dcaps = new DesiredCapabilities();
-            //ssl证书支持
-            dcaps.setCapability("acceptSslCerts", true);
-            //截屏支持
-            dcaps.setCapability("takesScreenshot", true);
-            //css搜索支持
-            dcaps.setCapability("cssSelectorsEnabled", true);
-            //js支持
-            dcaps.setJavascriptEnabled(true);
-            //驱动支持（第二参数表明的是你的phantomjs引擎所在的路径）
-            dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, Constants.PHANTOMJS_PATH);
+            DesiredCapabilities dcaps = getDesiredCapabilities();
             //创建无界面浏览器对象
             webDriver = new PhantomJSDriver(dcaps);
 
