@@ -12,6 +12,7 @@ public interface Constants {
     String CHROMEDRIVER = os.toLowerCase().startsWith("win") == true ? "E:\\Program\\chromedriver.exe" : "/usr/bin/chromedriver";
     String SAVE_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler" : "/home/hadoop/crawler";
     String SAVE_VARIETY_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler\\variety" : "/home/hadoop/crawler/variety";
+    String SAVE_SOAP_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler\\soap" : "/home/hadoop/crawler/soap";
     String FILE_SPLIT = os.toLowerCase().startsWith("win") == true ? "\\" : "/";
     String FILE_LOC = os.toLowerCase().startsWith("win") == true ? "\\videos" : "/videos";
     String BOOK_JD_FILE_LOC = os.toLowerCase().startsWith("win") == true ? "\\book" : "/book";
@@ -55,6 +56,7 @@ public interface Constants {
      */
     String HDFS_URL = "hdfs://spark1:9000";
     Integer DEFAULT_SEELP_SECOND = 15;
+    Integer DEFAULT_SEELP_SECOND_IQIYI = 20;
     Integer DEFAULT_SEELP_SECOND_JD_BOOK = 6;
 
     Integer TEN_THOUSAND = 10000;

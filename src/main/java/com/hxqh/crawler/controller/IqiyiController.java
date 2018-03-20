@@ -51,6 +51,8 @@ public class IqiyiController {
     private CrawlerService crawlerService;
     @Autowired
     private CrawlerVarietyRepository crawlerVarietyRepository;
+    @Autowired
+    private CrawlerSoapURLRepository soapURLRepository;
 
 
     @RequestMapping("/filmUrl")
@@ -143,22 +145,22 @@ public class IqiyiController {
 
 
     /**
-     * 持久化综艺内容
+     * 持久化电视剧内容
      *
      * @return
      * @throws Exception
      */
-    @RequestMapping("/varietyDataUrl")
-    public String varietyDataUrl() throws Exception {
-        List<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll();
+    @RequestMapping("/soapDataUrl")
+    public String soapDataUrl() throws Exception {
+        List<CrawlerSoapURL> soapURLList = soapURLRepository.findAll();
 
-        Integer partitionNUm = varietyURLList.size() / Constants.IQIYI_THREAD_NUM + 1;
-        List<List<CrawlerVarietyURL>> lists = ListUtils.partition(varietyURLList, partitionNUm);
+        Integer partitionNUm = soapURLList.size() / Constants.IQIYI_THREAD_NUM + 1;
+        List<List<CrawlerSoapURL>> lists = ListUtils.partition(soapURLList, partitionNUm);
 
         ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
 
-        for (List<CrawlerVarietyURL> l : lists) {
-            service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
+        for (List<CrawlerSoapURL> l : lists) {
+            service.execute(new PersistFilm(l, systemService));
         }
         service.shutdown();
         while (!service.isTerminated()) {
@@ -276,6 +278,41 @@ public class IqiyiController {
             e.printStackTrace();
         }
         return varietyURLList;
+    }
+
+
+    /**
+     * 持久化综艺内容
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/varietyDataUrl")
+    public String varietyDataUrl() throws Exception {
+        List<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll();
+
+        Integer partitionNUm = varietyURLList.size() / Constants.IQIYI_THREAD_NUM + 1;
+        List<List<CrawlerVarietyURL>> lists = ListUtils.partition(varietyURLList, partitionNUm);
+
+        ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
+
+        for (List<CrawlerVarietyURL> l : lists) {
+            service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
+        }
+        service.shutdown();
+        while (!service.isTerminated()) {
+        }
+
+        // 2. 上传至HDFS
+        try {
+            HdfsUtils.persistToHDFS("-variety-iqiyi", Constants.FILE_LOC);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "crawler/notice";
     }
 
 }

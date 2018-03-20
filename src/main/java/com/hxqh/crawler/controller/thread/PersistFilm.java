@@ -2,6 +2,7 @@ package com.hxqh.crawler.controller.thread;
 
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.domain.VideosFilm;
+import com.hxqh.crawler.model.CrawlerSoapURL;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.CrawlerVarietyURL;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
@@ -15,7 +16,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +31,7 @@ public class PersistFilm implements Runnable {
 
     private List<CrawlerURL> l;
     private List<CrawlerVarietyURL> varietyURLList;
+    private List<CrawlerSoapURL> soapURLList;
     private CrawlerProblemRepository crawlerProblemRepository;
     private CrawlerVarietyURLRepository crawlerVarietyURLRepository;
     private SystemService systemService;
@@ -48,10 +49,15 @@ public class PersistFilm implements Runnable {
         this.systemService = systemService;
     }
 
+    public PersistFilm(List<CrawlerSoapURL> soapURLList, SystemService systemService) {
+        this.soapURLList = soapURLList;
+        this.systemService = systemService;
+    }
+
     @Override
     public void run() {
         try {
-            parseAndPersist(l, varietyURLList, crawlerProblemRepository, systemService);
+            parseAndPersist(l, varietyURLList, soapURLList, crawlerProblemRepository, systemService);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,18 +65,20 @@ public class PersistFilm implements Runnable {
 
     private static void parseAndPersist(List<CrawlerURL> hrefList,
                                         List<CrawlerVarietyURL> varietyURLList,
+                                        List<CrawlerSoapURL> soapURLList,
                                         CrawlerProblemRepository crawlerProblemRepository,
                                         SystemService systemService) {
         StringBuilder stringBuilder = new StringBuilder(STRINGBUILDER_SIZE);
         CrawlerURL crawlerURL = null;
-        CrawlerVarietyURL varietyURL = null;
-        List<Object> objectList = new ArrayList<>();
         Integer len = null;
         if (null != hrefList) {
             len = hrefList.size();
         }
         if (null != varietyURLList) {
             len = varietyURLList.size();
+        }
+        if (null != soapURLList) {
+            len = soapURLList.size();
         }
 
 
@@ -94,9 +102,15 @@ public class PersistFilm implements Runnable {
                     source = crawlerVarietyURL.getPlatform();
                     category = crawlerVarietyURL.getCategory();
                 }
+                if (null != soapURLList) {
+                    CrawlerSoapURL crawlerSoapURL = soapURLList.get(i);
+                    url = crawlerSoapURL.getUrl();
+                    source = crawlerSoapURL.getPlatform();
+                    category = crawlerSoapURL.getCategory();
+                }
 
 
-                String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, Constants.DEFAULT_SEELP_SECOND);
+                String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, Constants.DEFAULT_SEELP_SECOND_IQIYI);
                 Document doc = Jsoup.parse(html);
 
                 String filmName = new String();
@@ -119,7 +133,7 @@ public class PersistFilm implements Runnable {
 
 
                     // 电影
-                    if (null != hrefList) {
+                    if (null != hrefList || null != soapURLList) {
                         // 演员
                         Elements starEle = progInfo.select("p");
                         if (starEle.size() < 3) {
@@ -139,6 +153,7 @@ public class PersistFilm implements Runnable {
                         Elements elements = doc.getElementById("datainfo-cast-list").select("a");
                         star = elements.text();
                     }
+
 
                     // 导演
                     Elements directorEle = doc.getElementsByClass("progInfo_txt").select("p");
@@ -255,6 +270,15 @@ public class PersistFilm implements Runnable {
                         stringBuilder.setLength(0);
                         System.out.println(filmName.trim() + " Persist Success!");
                     }
+                    if (null != soapURLList) {
+                        String fileName = Constants.SAVE_SOAP_PATH + Constants.FILE_SPLIT +
+                                DateUtils.getTodayDate() + "-" + source;
+                        String s = stringBuilder.toString();
+                        FileUtils.writeStrToFile(s, fileName);
+                        stringBuilder.setLength(0);
+                        System.out.println(filmName.trim() + " Persist Success!");
+                    }
+
 
 //                    /**
 //                     * 持久化至ES
