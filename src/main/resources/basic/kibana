@@ -183,3 +183,43 @@ GET /market_analysis_book/book/_search
 
 
 
+
+
+PUT market_literature
+PUT /market_literature/_mapping/literature
+{
+  "properties":{
+               "platform": {
+                    "type": "text"
+                },
+                "name": {
+                    "type": "text"
+                },
+                "author": {
+                    "type": "text"
+                },
+                "mainclass": {
+                    "type": "text"
+                },
+                "subclass": {
+                    "type": "text"
+                },
+                "label": {
+                    "type": "text"
+                },
+                "scorenum": {
+                    "type": "float"
+                },
+                "commentnum": {
+                    "type": "integer"
+                },
+                "clicknum": {
+                    "type": "long"
+                },
+                "addtime": {
+                    "type": "date",
+                    "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+                }
+         }
+}
+

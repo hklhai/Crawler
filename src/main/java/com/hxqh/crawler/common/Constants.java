@@ -15,6 +15,8 @@ public interface Constants {
     String SAVE_SOAP_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler\\soap" : "/home/hadoop/crawler/soap";
     String FILE_SPLIT = os.toLowerCase().startsWith("win") == true ? "\\" : "/";
     String FILE_LOC = os.toLowerCase().startsWith("win") == true ? "\\videos" : "/videos";
+    String FILE_LOC_SOAP = os.toLowerCase().startsWith("win") == true ? "\\videos\\soap" : "/videos/soap";
+    String FILE_LOC_VARIETY = os.toLowerCase().startsWith("win") == true ? "\\videos\\variety " : "/videos/variety";
     String BOOK_JD_FILE_LOC = os.toLowerCase().startsWith("win") == true ? "\\book" : "/book";
     String HOST_SPARK1 = "spark1";
     String HOST_SPARK2 = "spark2";
@@ -39,6 +41,7 @@ public interface Constants {
     Integer TENCENT_THREAD_NUM = 10;
     Integer JD_THREAD_NUM = 30;
     Integer DOUBAN_THREAD_NUM = 40;
+    Integer QIDIAN_THREAD_NUM = 10;
 
 
     // 起始页数
@@ -71,6 +74,9 @@ public interface Constants {
 
 
     Integer IQIYI_VARIETY_WAIT_TIME = 4;
-
     String IQIYI_VARIETY_COLON = "：";
+
+    String LITERATURE_INDEX = "market_literature";
+    String LITERATURE_TYPE = "literature";
+
 }

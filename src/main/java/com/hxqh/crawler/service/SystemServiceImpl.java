@@ -1,6 +1,8 @@
 package com.hxqh.crawler.service;
 
+import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.domain.Book;
+import com.hxqh.crawler.domain.Literature;
 import com.hxqh.crawler.domain.RealTimeMovie;
 import com.hxqh.crawler.domain.VideosFilm;
 import com.hxqh.crawler.model.CrawlerBookURL;
@@ -279,6 +281,32 @@ public class SystemServiceImpl implements SystemService {
             e.printStackTrace();
         }
         return new ResponseEntity(length, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity addLiterature(Literature literature) {
+        String todayTime = DateUtils.getTodayTime();
+
+        try {
+            XContentBuilder content = XContentFactory.jsonBuilder().startObject().
+                    field("platform", literature.getPlatform()).
+                    field("name", literature.getName()).
+                    field("author", literature.getAuthor()).
+                    field("mainclass", literature.getMainclass()).
+                    field("subclass", literature.getSubclass()).
+                    field("label", literature.getLabel()).
+                    field("scorenum", literature.getScorenum()).
+                    field("commentnum", literature.getCommentnum()).
+                    field("clicknum", literature.getClicknum()).
+                    field("addtime", todayTime).endObject();
+
+            IndexResponse result = this.client.prepareIndex(Constants.LITERATURE_INDEX, Constants.LITERATURE_TYPE).setSource(content).get();
+            System.out.println(literature.getName() + " Persist to ES Success!");
+            return new ResponseEntity(result.getId(), HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

@@ -168,7 +168,7 @@ public class IqiyiController {
 
         // 2. 上传至HDFS
         try {
-            HdfsUtils.persistToHDFS("-soap-iqiyi", Constants.FILE_LOC);
+            HdfsUtils.persistToHDFS("-soap-iqiyi", Constants.FILE_LOC_SOAP);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -305,7 +305,7 @@ public class IqiyiController {
 
         // 2. 上传至HDFS
         try {
-            HdfsUtils.persistToHDFS("-variety-iqiyi", Constants.FILE_LOC);
+            HdfsUtils.persistToHDFS("-variety-iqiyi", Constants.FILE_LOC_VARIETY);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         } catch (IOException e) {

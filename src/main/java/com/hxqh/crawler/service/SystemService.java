@@ -1,6 +1,7 @@
 package com.hxqh.crawler.service;
 
 import com.hxqh.crawler.domain.Book;
+import com.hxqh.crawler.domain.Literature;
 import com.hxqh.crawler.domain.RealTimeMovie;
 import com.hxqh.crawler.domain.VideosFilm;
 import com.hxqh.crawler.model.CrawlerBookURL;
@@ -35,5 +36,5 @@ public interface SystemService {
 
     ResponseEntity addMaoYanList(List<RealTimeMovie> movieArrayList);
 
-
+    ResponseEntity addLiterature(Literature literature);
 }
