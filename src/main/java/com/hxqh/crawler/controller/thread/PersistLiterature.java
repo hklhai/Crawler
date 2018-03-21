@@ -74,6 +74,9 @@ public class PersistLiterature implements Runnable {
                         } else {
                             clicknum = Float.valueOf(0).longValue();
                         }
+                        if (clicknum == null) {
+                            clicknum = 0l;
+                        }
                     }
                     if (num.endsWith("亿总点击")) {
                         num = num.substring(0, num.length() - 5);
@@ -100,6 +103,9 @@ public class PersistLiterature implements Runnable {
                 if (score1 != null && score2 != null) {
                     String s = score1.text() + "." + score2.text();
                     scorenum = Float.valueOf(s);
+                    if (scorenum == null) {
+                        scorenum = 0.0f;
+                    }
                 }
 
                 Element commentnumElement = doc.getElementById("J-discusCount");

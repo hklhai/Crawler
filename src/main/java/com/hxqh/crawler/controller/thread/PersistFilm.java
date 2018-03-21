@@ -280,16 +280,16 @@ public class PersistFilm implements Runnable {
                     }
 
 
-//                    /**
-//                     * 持久化至ES
-//                     */
-//                    if (!score.trim().equals("评分人数不足")) {
-//                        VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, category, label, score, commentNum, up, addTime, playNum);
-//                        videosFilm.setPlayNum(Integer.valueOf(playNum.trim()));
-//                        systemService.addVideos(videosFilm);
-//                    } else {
-//                        continue;
-//                    }
+                    /**
+                     * 持久化至ES
+                     */
+                    if (!score.trim().equals("评分人数不足")) {
+                        VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, category, label, score, commentNum, up, addTime, playNum);
+                        videosFilm.setPlayNum(Integer.valueOf(playNum.trim()));
+                        systemService.addVideos(videosFilm);
+                    } else {
+                        continue;
+                    }
 
                 } else {
                     continue;
