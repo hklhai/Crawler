@@ -6,8 +6,8 @@ package com.hxqh.crawler.common;
  * @author Lin
  */
 public interface Constants {
-    String os = System.getProperty("os.name");
 
+    String os = System.getProperty("os.name");
 
     String CHROMEDRIVER = os.toLowerCase().startsWith("win") == true ? "E:\\Program\\chromedriver.exe" : "/usr/bin/chromedriver";
     String SAVE_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler" : "/home/hadoop/crawler";
@@ -38,6 +38,8 @@ public interface Constants {
      * Linux 爬虫线程数据与各分区的数量
      */
     Integer IQIYI_THREAD_NUM = 10;
+    Integer IQIYI_VARIETY_THREAD_NUM = 40;
+
     Integer TENCENT_THREAD_NUM = 10;
     Integer JD_THREAD_NUM = 30;
     Integer DOUBAN_THREAD_NUM = 40;
@@ -59,7 +61,7 @@ public interface Constants {
      */
     String HDFS_URL = "hdfs://spark1:9000";
     Integer DEFAULT_SEELP_SECOND = 15;
-    Integer DEFAULT_SEELP_SECOND_IQIYI = 20;
+    Integer DEFAULT_SEELP_SECOND_IQIYI = 15;
     Integer DEFAULT_SEELP_SECOND_JD_BOOK = 6;
 
     Integer TEN_THOUSAND = 10000;
