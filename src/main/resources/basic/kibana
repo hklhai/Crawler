@@ -3,7 +3,7 @@ GET _cat/indices?v
 GET _cat/health?v
 
 
-
+=========================================film============================================================
 PUT market_analysis_film
 PUT /market_analysis_film/_mapping/film
 {
@@ -34,45 +34,52 @@ PUT /market_analysis_film/_mapping/film
 }
 
 GET /market_analysis_film/film/_search
+=========================================film============================================================
 
 
+=========================================book============================================================
 PUT /market_book
 DELETE  /market
-PUT /market_book/_mapping/book
+
+
+PUT /market_book2/
+PUT /market_book2/_mapping/book
 {
   "properties":{
-               "来源": {
+               "source": {
                     "type": "text"
                 },
-                "书名": {
+                "bookName": {
                     "type": "text"
                 },
-                "分类": {
+                "category": {
                     "type": "text"
                 },
-                "分类标签": {
+                "categoryLable": {
                     "type": "text",
                     "fielddata": true
                 },
-                "价格": {
+                "price": {
                     "type": "float"
                 },
-                "评论量": {
+                "commnetNum": {
                     "type": "long"
                 },
-                "作者": {
+                "author": {
                     "type": "text"
                 },
-                "出版社": {
+                "publish": {
                     "type": "text"
                 },
-                "添加时间": {
+                "addTime": {
                     "type": "date",
                     "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
                 }
 
         }
 }
+
+=========================================book============================================================
 
 PUT /film_data
 PUT /film_data/_mapping/film

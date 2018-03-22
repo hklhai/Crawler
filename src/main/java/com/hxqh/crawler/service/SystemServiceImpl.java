@@ -84,31 +84,18 @@ public class SystemServiceImpl implements SystemService {
         try {
             String todayTime = DateUtils.getTodayTime();
 
-//            XContentBuilder content = XContentFactory.jsonBuilder().startObject().
-//                    field("source", book.getSource()).
-//                    field("bookName", book.getBookName()).
-//                    field("category", book.getCategory()).
-//                    field("categoryLable", book.getCategoryLable()).
-//                    field("price", book.getPrice()).
-//                    field("commnetNum", book.getCommnetNum()).
-//                    field("author", book.getAuthor()).
-//                    field("publish", book.getPrice()).
-//                    field("addTime", todayTime).endObject();
-            /**
-             * 中文版
-             */
             XContentBuilder content = XContentFactory.jsonBuilder().startObject().
-                    field("来源", book.getSource()).
-                    field("书名", book.getBookName()).
-                    field("分类", book.getCategory()).
-                    field("分类标签", book.getCategoryLable()).
-                    field("价格", book.getPrice()).
-                    field("评论量", book.getCommnetNum()).
-                    field("作者", book.getAuthor()).
-                    field("出版社", book.getPublish()).
-                    field("添加时间", todayTime).endObject();
+                    field("source", book.getSource()).
+                    field("bookName", book.getBookName()).
+                    field("category", book.getCategory()).
+                    field("categoryLable", book.getCategoryLable()).
+                    field("price", book.getPrice()).
+                    field("commnetNum", book.getCommnetNum()).
+                    field("author", book.getAuthor()).
+                    field("publish", book.getPrice()).
+                    field("addTime", todayTime).endObject();
 
-            IndexResponse result = this.client.prepareIndex("market_book", "book").setSource(content).get();
+            IndexResponse result = this.client.prepareIndex("market_book2", "book").setSource(content).get();
             System.out.println(book.getBookName() + " Persist to ES Success!");
             return new ResponseEntity(result.getId(), HttpStatus.OK);
         } catch (IOException e) {
@@ -152,25 +139,28 @@ public class SystemServiceImpl implements SystemService {
 
     /**
      * curl -H "Content-Type: application/x-ndjson" -XPOST "spark3:9200/film_data/film/_bulk?pretty" --data-binary @film_data.json
+     *
+     * 如果提示 Result window is too large
+     *
      */
     @Override
     public void export() {
-        SearchResponse response = client.prepareSearch("market_analysis")
-                .setTypes("videos").setQuery(QueryBuilders.matchAllQuery())
+        SearchResponse response = client.prepareSearch("market_book")
+                .setTypes("book").setQuery(QueryBuilders.matchAllQuery())
                 .execute().actionGet();
         SearchHits resultHits = response.getHits();
 
         Long totalHits = resultHits.totalHits;
-        response = client.prepareSearch("market_analysis")
-                .setTypes("videos").setQuery(QueryBuilders.matchAllQuery()).setFrom(0).setSize(totalHits.intValue())
+        response = client.prepareSearch("market_book")
+                .setTypes("book").setQuery(QueryBuilders.matchAllQuery()).setFrom(0).setSize(totalHits.intValue())
                 .execute().actionGet();
         resultHits = response.getHits();
 
-        StringBuilder stringBuilder = new StringBuilder(5000);
+        StringBuilder stringBuilder = new StringBuilder(128214);
         for (int i = 0; i < resultHits.getHits().length; i++) {
             String jsonStr = resultHits.getHits()[i].getSourceAsString();
 
-            String index = "{\"index\":{\"_index\":\"film_data\",\"_id\":" + i + "}}\n";
+            String index = "{\"index\":{\"_index\":\"market_book2\",\"_id\":" + i + "}}\n";
             stringBuilder.append(index);
             stringBuilder.append(jsonStr).append("\n");
         }
