@@ -32,7 +32,6 @@ import java.util.concurrent.Executors;
 
 
 /**
- * spark4 执行
  * <p>
  * Created by Ocean lin on 2018/1/30.
  *
@@ -159,7 +158,7 @@ public class JdTimer {
     }
 
 
-    //每天23点0分触发
+    //每天18点0分触发
     @Scheduled(cron = "0 0 18 * * ?")
     public void jdData() {
         try {
