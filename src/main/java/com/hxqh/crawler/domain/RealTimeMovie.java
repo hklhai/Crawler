@@ -113,4 +113,20 @@ public class RealTimeMovie {
     public void setShowInfo(Integer showInfo) {
         this.showInfo = showInfo;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("RealTimeMovie{");
+        sb.append("platform='").append(platform).append('\'');
+        sb.append(", filmName='").append(filmName).append('\'');
+        sb.append(", boxInfo=").append(boxInfo);
+        sb.append(", sumBoxInfo=").append(sumBoxInfo);
+        sb.append(", splitBoxInfo=").append(splitBoxInfo);
+        sb.append(", splitSumBoxInfo=").append(splitSumBoxInfo);
+        sb.append(", releaseInfo='").append(releaseInfo).append('\'');
+        sb.append(", addTime=").append(addTime);
+        sb.append(", showInfo=").append(showInfo);
+        sb.append('}');
+        return sb.toString();
+    }
 }
