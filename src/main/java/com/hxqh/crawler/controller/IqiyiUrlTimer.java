@@ -120,6 +120,7 @@ public class IqiyiUrlTimer {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    // todo 持久化至ElasticSearch
                 }
 
                 CrawlerUtils.persistCrawlerURL(hrefMap, crawlerURLRepository);

@@ -31,7 +31,7 @@ public class MaoYanTimer {
                 try {
                     String url = "https://box.maoyan.com/promovie/api/box/second.json";
                     JsonObject xpath = ReadUrlUtils.getXpath(url);
-                    FileUtils.writeStrToFile(xpath.toString(),
+                    FileUtils.writeStrToFile(xpath.toString() + "\n",
                             Constants.MAOYAN_PATH + Constants.FILE_SPLIT + dateString);
                 } catch (Exception e) {
                     e.printStackTrace();
