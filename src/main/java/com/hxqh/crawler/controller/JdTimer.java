@@ -5,7 +5,6 @@ import com.hxqh.crawler.controller.thread.PersistJdBook;
 import com.hxqh.crawler.model.CrawlerBookURL;
 import com.hxqh.crawler.repository.CrawlerBookURLRepository;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
-import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
@@ -47,8 +46,6 @@ public class JdTimer {
     @Autowired
     private SystemService systemService;
     @Autowired
-    private CrawlerURLRepository crawlerURLRepository;
-    @Autowired
     private CrawlerProblemRepository crawlerProblemRepository;
 
     /**
@@ -56,8 +53,8 @@ public class JdTimer {
      * 2. 清除所有mysql数据
      * 3. 进行爬取
      */
-    // 每个星期日12点0分
-    @Scheduled(cron = "0 0 12 ? * SUN")
+    // 每月最后一日的上午10:15触发
+    @Scheduled(cron = "0 15 10 15 * ?")
     public void jdUrlList() {
 
         try {

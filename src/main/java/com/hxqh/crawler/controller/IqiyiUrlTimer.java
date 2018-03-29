@@ -53,8 +53,8 @@ public class IqiyiUrlTimer {
      * 2. 清除所有mysql数据
      * 3. 进行爬取
      */
-    // 每个星期日7点00分
-    @Scheduled(cron = "0 0 7 ? * SUN")
+    // 每月最后一日的上午10:15触发
+    @Scheduled(cron = "0 15 10 15 * ?")
     public void iqiyiFilmUrlList() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
@@ -131,18 +131,17 @@ public class IqiyiUrlTimer {
     }
 
 
-//
-//    // 每个星期日7点00分
-//    @Scheduled(cron = "0 0 10 ? * SUN")
-//    public void iqiyiSoapUrlList() {
-//
-//    }
-//
-//
-//    // 每个星期日7点00分
-//    @Scheduled(cron = "0 0 12 ? * SUN")
-//    public void iqiyiVarietyUrlList() {
-//
-//    }
+    // 每月最后一日的上午10:15触发
+    @Scheduled(cron = "0 15 10 15 * ?")
+    public void iqiyiSoapUrlList() {
+
+    }
+
+
+    // 每月最后一日的上午10:15触发
+    @Scheduled(cron = "0 15 10 15 * ?")
+    public void iqiyiVarietyUrlList() {
+
+    }
 
 }

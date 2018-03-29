@@ -11,14 +11,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.BufferedReader;
@@ -84,10 +82,18 @@ public class CrawlerUtils {
         PhantomJSDriver driver = null;
 
         try {
+//            Proxy proxy = new Proxy();
+//            proxy.setHttpProxy("166.111.80.162:3128");
+//            proxy.setProxyType(Proxy.ProxyType.MANUAL);
+//            proxy.setAutodetect(false);
+//            DesiredCapabilities dcaps = getDesiredCapabilitiesProxy(proxy);
+
             //设置必要参数
             DesiredCapabilities dcaps = getDesiredCapabilities();
+
             //创建无界面浏览器对象
             driver = new PhantomJSDriver(dcaps);
+
 
             Integer sleepTime = second * 1000;
             //设置隐性等待（作用于全局）
@@ -143,6 +149,7 @@ public class CrawlerUtils {
         return soapURLList;
     }
 
+
     private static DesiredCapabilities getDesiredCapabilities() {
         //设置必要参数
         DesiredCapabilities dcaps = new DesiredCapabilities();
@@ -156,6 +163,24 @@ public class CrawlerUtils {
         dcaps.setJavascriptEnabled(true);
         //驱动支持（第二参数表明的是你的phantomjs引擎所在的路径）
         dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, Constants.PHANTOMJS_PATH);
+        return dcaps;
+    }
+
+
+    private static DesiredCapabilities getDesiredCapabilitiesProxy(Proxy proxy) {
+        //设置必要参数
+        DesiredCapabilities dcaps = new DesiredCapabilities();
+        //ssl证书支持
+        dcaps.setCapability("acceptSslCerts", true);
+        //截屏支持
+        dcaps.setCapability("takesScreenshot", true);
+        //css搜索支持
+        dcaps.setCapability("cssSelectorsEnabled", true);
+        //js支持
+        dcaps.setJavascriptEnabled(true);
+        //驱动支持（第二参数表明的是你的phantomjs引擎所在的路径）
+        dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY, Constants.PHANTOMJS_PATH);
+        dcaps.setCapability(CapabilityType.PROXY, proxy);
         return dcaps;
     }
 
