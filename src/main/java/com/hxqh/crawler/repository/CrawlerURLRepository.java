@@ -14,6 +14,9 @@ import java.util.List;
 @Repository
 public interface CrawlerURLRepository extends JpaRepository<CrawlerURL, String> {
 
+    /**
+     * 删除爱奇艺电影数据
+     */
     @Query("select o from CrawlerURL o where o.category ='film' and o.platform ='iqiyi' ")
     List<CrawlerURL> findFilm();
 
@@ -30,5 +33,12 @@ public interface CrawlerURLRepository extends JpaRepository<CrawlerURL, String> 
     @Modifying
     @Query("delete from CrawlerURL o where o.category ='film' and o.platform ='iqiyi' ")
     void deleteIqiyiFilm();
+
+    /**
+     * 删除爱奇艺电视剧数据
+     */
+    @Modifying
+    @Query("delete from CrawlerURL o where o.category ='soap' and o.platform ='iqiyi' ")
+    void deleteIqiyiSoap();
 
 }

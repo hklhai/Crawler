@@ -1,10 +1,7 @@
 package com.hxqh.crawler.service;
 
 import com.hxqh.crawler.common.Constants;
-import com.hxqh.crawler.domain.Book;
-import com.hxqh.crawler.domain.Literature;
-import com.hxqh.crawler.domain.RealTimeMovie;
-import com.hxqh.crawler.domain.VideosFilm;
+import com.hxqh.crawler.domain.*;
 import com.hxqh.crawler.model.CrawlerBookURL;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.User;
@@ -23,6 +20,8 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -139,9 +138,8 @@ public class SystemServiceImpl implements SystemService {
 
     /**
      * curl -H "Content-Type: application/x-ndjson" -XPOST "spark3:9200/film_data/film/_bulk?pretty" --data-binary @film_data.json
-     *
+     * <p>
      * 如果提示 Result window is too large
-     *
      */
     @Override
     public void export() {
@@ -297,6 +295,39 @@ public class SystemServiceImpl implements SystemService {
             e.printStackTrace();
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * 持久化爱奇艺电影URL
+     *
+     * @param href    url连接
+     * @param urlInfo url信息
+     */
+    @Override
+    public void addFilmOrSoapUrl(String href, URLInfo urlInfo) {
+        Document doc = Jsoup.parse(href);
+        String title = doc.select("a").get(0).attr("title").toString();
+        String url = doc.select("a").get(0).attr("href").toString();
+        String addTime = DateUtils.getTodayDate();
+        CrawlerURL crawlerURL = new CrawlerURL(title, url, addTime, urlInfo.getCategory(), urlInfo.getPlatform(), urlInfo.getSorted());
+        try {
+            String todayTime = DateUtils.getTodayTime();
+            XContentBuilder content = XContentFactory.jsonBuilder().startObject().
+                    field("addTime", crawlerURL.getAddTime()).
+                    field("category", crawlerURL.getCategory()).
+                    field("sorted", crawlerURL.getSorted()).
+                    field("title", crawlerURL.getTitle()).
+                    field("url", crawlerURL.getUrl()).
+                    field("platform", crawlerURL.getPlatform()).
+                    field("createTime", todayTime).endObject();
+
+            this.client.prepareIndex("history_url_film_soap", "film_soap").setSource(content).get();
+            System.out.println(crawlerURL.getTitle() + " Persist to ES Success!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 

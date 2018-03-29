@@ -55,7 +55,7 @@ public class PersistLiterature implements Runnable {
             String mainclass = new String();
             String subclass = new String();
             String label = new String();
-            Float scorenum = null;
+            Float scorenum = 0.0f;
             Integer commentnum = null;
             Long clicknum = null;
 
@@ -67,6 +67,17 @@ public class PersistLiterature implements Runnable {
                     Element element = clicknumElement.select("em").get(1);
                     Element element1 = clicknumElement.select("cite").get(1);
                     String num = element.text() + element1.text().split("·")[0];
+                    if (num.endsWith("总点击")) {
+                        num = num.substring(0, num.length() - 4);
+                        if (!num.equals("")) {
+                            clicknum = Float.valueOf(num).longValue();
+                        } else {
+                            clicknum = Float.valueOf(0).longValue();
+                        }
+                        if (clicknum == null) {
+                            clicknum = 0l;
+                        }
+                    }
                     if (num.endsWith("万总点击")) {
                         num = num.substring(0, num.length() - 5);
                         if (!num.equals("")) {

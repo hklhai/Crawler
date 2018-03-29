@@ -1,17 +1,18 @@
 package com.hxqh.crawler.service;
 
+import com.hxqh.crawler.domain.URLInfo;
 import com.hxqh.crawler.model.BaiduInfo;
+import com.hxqh.crawler.model.CrawlerSoapURL;
 import com.hxqh.crawler.model.CrawlerVariety;
 import com.hxqh.crawler.model.CrawlerVarietyURL;
-import com.hxqh.crawler.repository.BaiduInfoRepository;
-import com.hxqh.crawler.repository.CrawlerURLRepository;
-import com.hxqh.crawler.repository.CrawlerVarietyRepository;
-import com.hxqh.crawler.repository.CrawlerVarietyURLRepository;
+import com.hxqh.crawler.repository.*;
+import com.hxqh.crawler.util.CrawlerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Ocean lin on 2018/2/6.
@@ -29,12 +30,21 @@ public class CrawlerServiceImpl implements CrawlerService {
     private CrawlerVarietyURLRepository crawlerVarietyURLRepository;
     @Autowired
     private CrawlerVarietyRepository crawlerVarietyRepository;
+    @Autowired
+    private CrawlerSoapURLRepository crawlerSoapURLRepository;
 
     @Transactional
     @Override
     public void deleteIqiyiFilm() {
         crawlerURLRepository.deleteIqiyiFilm();
     }
+
+    @Transactional
+    @Override
+    public void deleteIqiyiSoap() {
+        crawlerURLRepository.deleteIqiyiSoap();
+    }
+
 
     @Transactional
     @Override
@@ -58,6 +68,23 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public void persistEachVarietyUrlList(List<CrawlerVariety> urlList) {
         crawlerVarietyRepository.save(urlList);
+    }
+
+
+    @Transactional
+    @Override
+    public void persistFilmUrl(Map<String, URLInfo> hrefMap) {
+        // 清除所有mysql数据
+        deleteIqiyiFilm();
+        CrawlerUtils.persistCrawlerURL(hrefMap, crawlerURLRepository);
+    }
+
+    @Transactional
+    @Override
+    public void saveSoap(List<CrawlerSoapURL> soapURLList) {
+        // 清除所有mysql数据
+        deleteIqiyiSoap();
+        crawlerSoapURLRepository.save(soapURLList);
     }
 
 

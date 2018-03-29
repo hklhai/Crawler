@@ -85,63 +85,12 @@ public class IqiyiController {
      */
     @RequestMapping("/soapUrl")
     public String soapUrl() throws Exception {
-        List<String> hotList = new ArrayList<>();
-        List<String> newList = new ArrayList<>();
-//        --电视剧 热门
-        for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
-            hotList.add("http://list.iqiyi.com/www/2/-------------11-" + i + "-1-iqiyi--.html");
-        }
-//        --更新时间
-        for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
-            newList.add("http://list.iqiyi.com/www/2/-------------4-" + i + "-1-iqiyi--.html");
-        }
 
-        for (String s : hotList) {
-            persistUrlList(s, "hot");
-        }
-        for (String s : newList) {
-            persistUrlList(s, "new");
-        }
 
         return "crawler/notice";
     }
 
 
-    /**
-     * @param url    每部电视剧URL
-     * @param sorted 电视剧类别
-     * @return
-     */
-    private void persistUrlList(String url, String sorted) {
-        List<CrawlerSoapURL> soapURLList = new ArrayList<>();
-        try {
-            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, 2);
-            Document document = Jsoup.parse(html);
-            Elements select = document.getElementsByClass("site-piclist_pic");
-            for (Element e : select) {
-                String eachUrl = e.select("a").attr("href");
-                String title = e.select("a").attr("title");
-                String eachHtml = CrawlerUtils.fetchHTMLContentByPhantomJs(eachUrl, 2);
-                Document eachDocument = Jsoup.parse(eachHtml);
-                Elements piclist = eachDocument.getElementsByClass("site-piclist_pic_link");
-                // 电视剧所有播放量信息均相同，任意取一集即可
-                String href = piclist.get(0).attr("href");
-
-                CrawlerSoapURL soapURL = new CrawlerSoapURL(
-                        title,
-                        href,
-                        DateUtils.getTodayDate(),
-                        "soap",
-                        "iqiyi",
-                        sorted
-                );
-                soapURLList.add(soapURL);
-            }
-            crawlerSoapURLRepository.save(soapURLList);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
 
