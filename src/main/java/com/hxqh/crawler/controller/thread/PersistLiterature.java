@@ -9,7 +9,6 @@ import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.List;
@@ -55,77 +54,33 @@ public class PersistLiterature implements Runnable {
             String mainclass = new String();
             String subclass = new String();
             String label = new String();
-            Float scorenum = 0.0f;
+            Long fans = 0l;
             Integer commentnum = null;
             Long clicknum = null;
 
             try {
-                Elements authorElement = doc.getElementsByClass("book-info");
-                if (authorElement != null) {
-                    author = authorElement.get(0).select("h1").select("span").select("a").text();
-                    Element clicknumElement = authorElement.select("p").get(2);
-                    Element element = clicknumElement.select("em").get(1);
-                    Element element1 = clicknumElement.select("cite").get(1);
-                    String num = element.text() + element1.text().split("·")[0];
-                    if (num.endsWith("总点击")) {
-                        num = num.substring(0, num.length() - 4);
-                        if (!num.equals("")) {
-                            clicknum = Float.valueOf(num).longValue();
-                        } else {
-                            clicknum = Float.valueOf(0).longValue();
-                        }
-                        if (clicknum == null) {
-                            clicknum = 0l;
-                        }
-                    }
-                    if (num.endsWith("万总点击")) {
-                        num = num.substring(0, num.length() - 5);
-                        if (!num.equals("")) {
-                            clicknum = Float.valueOf(num).longValue() * Constants.TEN_THOUSAND;
-                        } else {
-                            clicknum = Float.valueOf(0).longValue();
-                        }
-                        if (clicknum == null) {
-                            clicknum = 0l;
-                        }
-                    }
-                    if (num.endsWith("亿总点击")) {
-                        num = num.substring(0, num.length() - 5);
-                        clicknum = Long.valueOf(num) * Constants.BILLION;
-                    }
-                }
 
+                Elements infoPath = doc.getElementsByClass("infoPath");
+                name = infoPath.select("a").get(3).text();
+                mainclass = infoPath.select("a").get(1).text();
+                subclass = infoPath.select("a").get(2).text();
 
-                Element mainClassElement = doc.getElementsByClass("crumbs-nav center990  top-op").get(0);
-                if (mainClassElement != null) {
-                    Elements select = mainClassElement.select("span").select("a");
-                    mainclass = select.get(1).text();
-                    subclass = select.get(2).text();
-                }
-
-                Element labelElement = doc.getElementsByClass("tag").get(0);
-                if (labelElement != null) {
-                    label = labelElement.select("span").text();
-                    label = label + " " + labelElement.select("a").text();
-                }
-
-                Element score1 = doc.getElementById("score1");
-                Element score2 = doc.getElementById("score2");
-                if (score1 != null && score2 != null) {
-                    String s = score1.text() + "." + score2.text();
-                    scorenum = Float.valueOf(s);
-                    if (scorenum == null) {
-                        scorenum = 0.0f;
-                    }
-                }
-
-                Element commentnumElement = doc.getElementById("J-discusCount");
-                if (commentnumElement != null) {
-                    String text = commentnumElement.text();
-                    text = text.substring(1, text.length() - 2);
-                    commentnum = Integer.valueOf(text);
-                }
+                author = doc.getElementsByClass("AuthorInfo").select("div").get(0).select("a").get(1).text();
+                label = doc.getElementsByClass("label").select("td").select("a").select("span").text();
+                commentnum = Integer.valueOf(doc.getElementById("topicCount").text());
+                clicknum = Long.valueOf(doc.getElementById("howmuchreadBook").text());
                 String addTime = DateUtils.getTodayDate();
+
+
+                // 粉丝值
+                String fansScore = doc.getElementById("fansScore").text();
+                if (fansScore.endsWith("万")) {
+                    Float v = Float.valueOf(fansScore.substring(0, fansScore.length() - 2)) * Constants.TEN_THOUSAND;
+                    fans = v.longValue();
+                } else {
+                    fans = Long.valueOf(fansScore);
+                }
+
 
                 /**
                  * 3.解析并持久化至本地文件系统
@@ -136,8 +91,8 @@ public class PersistLiterature implements Runnable {
                         append(mainclass.trim()).append("^").
                         append(subclass.trim()).append("^").
                         append(label.trim()).append("^").
-                        append(scorenum).append("^").
                         append(commentnum).append("^").
+                        append(fans).append("^").
                         append(clicknum).append("^").
                         append(addTime).append("\n");
                 String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT +
@@ -150,7 +105,7 @@ public class PersistLiterature implements Runnable {
                  * 持久化至ES
                  */
                 Literature literature = new Literature(platform, name, author,
-                        mainclass, subclass, label, scorenum, commentnum, clicknum);
+                        mainclass, subclass, label, fans, commentnum, clicknum);
                 systemService.addLiterature(literature);
 
             } catch (Exception e) {

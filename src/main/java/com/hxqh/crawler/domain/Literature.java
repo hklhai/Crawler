@@ -13,18 +13,18 @@ public class Literature {
     private String mainclass;
     private String subclass;
     private String label;
-    private Float scorenum;
+    private Long fans;
     private Integer commentnum;
     private Long clicknum;
 
-    public Literature(String platform, String name, String author, String mainclass, String subclass, String label, Float scorenum, Integer commentnum, Long clicknum) {
+    public Literature(String platform, String name, String author, String mainclass, String subclass, String label, Long fans, Integer commentnum, Long clicknum) {
         this.platform = platform;
         this.name = name;
         this.author = author;
         this.mainclass = mainclass;
         this.subclass = subclass;
         this.label = label;
-        this.scorenum = scorenum;
+        this.fans = fans;
         this.commentnum = commentnum;
         this.clicknum = clicknum;
     }
@@ -77,12 +77,12 @@ public class Literature {
         this.label = label;
     }
 
-    public Float getScorenum() {
-        return scorenum;
+    public Long getFans() {
+        return fans;
     }
 
-    public void setScorenum(Float scorenum) {
-        this.scorenum = scorenum;
+    public void setFans(Long fans) {
+        this.fans = fans;
     }
 
     public Integer getCommentnum() {
