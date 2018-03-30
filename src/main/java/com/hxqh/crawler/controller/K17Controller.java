@@ -30,8 +30,8 @@ import java.util.concurrent.Executors;
  * @author Ocean lin
  */
 @Controller
-@RequestMapping("/qidian")
-public class QiDianController {
+@RequestMapping("/17k")
+public class K17Controller {
 
     @Autowired
     private SystemService systemService;
@@ -46,23 +46,36 @@ public class QiDianController {
      */
     @RequestMapping("/literatureUrl")
     public String literatureUrl() {
+        List<String> list = new ArrayList<>();
 
-        List<String> hotList = new ArrayList<>();
-        List<String> newList = new ArrayList<>();
-
-        String hotUrl = "https://www.qidian.com/all?orderId=&style=1&pageSize=20&siteid=1&pubflag=0&hiddenField=0&page=";
-        String newUrl = "https://www.qidian.com/all?orderId=5&style=1&pageSize=20&siteid=1&pubflag=0&hiddenField=0&page=";
-
-        for (int i = 1; i <= 20; i++) {
-            hotList.add(hotUrl + String.valueOf(i));
-        }
-        for (int i = 1; i <= 20; i++) {
-            newList.add(newUrl + String.valueOf(i));
+        // 爬取10页
+        for (int i = 1; i <= 10; i++) {
+            String s = "http://all.17k.com/lib/book/2_0_0_0_0_0_0_0_";
+            list.add(s + i + ".html");
         }
 
-        persistList(hotList, "hot");
-        persistList(newList, "new");
+        for (int i = 0; i < list.size(); i++) {
+            List<CrawlerLiteratureURL> crawlerLiteratureURLList = new ArrayList<>();
+            String url = list.get(i);
+            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, 5);
+            Document doc = Jsoup.parse(html);
+            Elements jts = doc.getElementsByClass("jt");
+            for (int j = 1; j < jts.size(); j++) {
+                System.out.println(jts.get(j).attr("href") + " " + jts.get(j).text());
 
+                CrawlerLiteratureURL literatureURL = new CrawlerLiteratureURL(jts.get(j).text(),
+                        jts.get(j).attr("href"),
+                        DateUtils.getTodayDate(),
+                        "17k",
+                        ""
+                );
+                crawlerLiteratureURLList.add(literatureURL);
+                // 持久化值ElasticSearch
+                systemService.saveLiterature(literatureURL);
+            }
+            // 持久化至MYSQL
+            crawlerLiteratureURLRepository.save(crawlerLiteratureURLList);
+        }
 
         return "crawler/notice";
     }

@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
  * @author Ocean lin
  */
 @Component
-public class QiDianTimer {
+public class K17DianTimer {
 
 
     @Autowired

@@ -3,6 +3,7 @@ package com.hxqh.crawler.service;
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.domain.*;
 import com.hxqh.crawler.model.CrawlerBookURL;
+import com.hxqh.crawler.model.CrawlerLiteratureURL;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.User;
 import com.hxqh.crawler.repository.UserRepository;
@@ -306,8 +307,8 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public void addFilmOrSoapUrl(String href, URLInfo urlInfo) {
         Document doc = Jsoup.parse(href);
-        String title = doc.select("a").get(0).attr("title").toString();
-        String url = doc.select("a").get(0).attr("href").toString();
+        String title = doc.select("a").get(0).attr("title");
+        String url = doc.select("a").get(0).attr("href");
         String addTime = DateUtils.getTodayDate();
         CrawlerURL crawlerURL = new CrawlerURL(title, url, addTime, urlInfo.getCategory(), urlInfo.getPlatform(), urlInfo.getSorted());
         try {
@@ -328,6 +329,25 @@ public class SystemServiceImpl implements SystemService {
         }
 
 
+    }
+
+    @Override
+    public void saveLiterature(CrawlerLiteratureURL literature) {
+        String todayTime = DateUtils.getTodayTime();
+        try {
+            XContentBuilder content = XContentFactory.jsonBuilder().startObject().
+                    field("url", literature.getUrl()).
+                    field("title", literature.getTitle()).
+                    field("sorted", "").
+                    field("platform", literature.getPlatform()).
+                    field("addTime", literature.getAddTime()).
+                    field("createTime", todayTime).endObject();
+
+            this.client.prepareIndex(Constants.LITERATURE_URL_INDEX, Constants.LITERATURE_URL_TYPE).setSource(content).get();
+            System.out.println(literature.getTitle() + " Persist to ES Success!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
