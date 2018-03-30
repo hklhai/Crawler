@@ -62,55 +62,7 @@ public class IqiyiUrlTimer {
     public void iqiyiFilmUrlList() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
-                /**
-                 * 爬取数据
-                 */
-                // 1.所有待爬取URLList
-                Map<String, URLInfo> allStartURLMap = new HashMap<>();
-                Map<String, String> prefixSuffixMap = new HashMap<>();
-                Map<String, URLInfo> hrefMap = new HashMap<>();
 
-                // 2.获取全部页面Url
-                prefixSuffixMap.put("http://list.iqiyi.com/www/1/-------------11-", "-1-iqiyi--.html|iqiyi|film|hot");
-                prefixSuffixMap.put("http://list.iqiyi.com/www/1/-------------4-", "-1-iqiyi--.html|iqiyi|film|new");
-                prefixSuffixMap.put("http://list.iqiyi.com/www/1/-------------8-", "-1-iqiyi--.html|iqiyi|film|score");
-
-                for (Map.Entry<String, String> entry : prefixSuffixMap.entrySet()) {
-                    String prefix = entry.getKey();
-                    String[] split = entry.getValue().split("\\|");
-                    String suffix = split[0];
-                    String platform = split[1];
-                    String category = split[2];
-                    String sorted = split[3];
-
-                    URLInfo urlInfo = new URLInfo(platform, category, sorted);
-
-                    for (int i = Constants.PAGE_START_NUM; i <= Constants.PAGE_END_NUM; i++) {
-                        String url = prefix + i + suffix;
-                        allStartURLMap.put(url, urlInfo);
-                    }
-                }
-
-                for (Map.Entry<String, URLInfo> entry : allStartURLMap.entrySet()) {
-                    String url = entry.getKey();
-                    URLInfo urlInfo = entry.getValue();
-                    try {
-                        String outerHTML = CrawlerUtils.fetchHTMLContent(url, Constants.DEFAULT_SEELP_SECOND);
-
-                        String[] split = outerHTML.split("\n");
-                        for (int i = 0; i < split.length; i++) {
-                            String href = CrawlerUtils.getHref(split[i]);
-                            if (href != null && href.contains("vfrm=2-4-0-1")) {
-                                // 写入ElasticSerach
-                                systemService.addFilmOrSoapUrl(href, urlInfo);
-                                hrefMap.put(href, urlInfo);
-                            }
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                crawlerService.persistFilmUrl(hrefMap);
             }
         } catch (Exception e) {
             e.printStackTrace();
