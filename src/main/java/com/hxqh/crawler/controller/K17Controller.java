@@ -80,38 +80,6 @@ public class K17Controller {
         return "crawler/notice";
     }
 
-    /**
-     * 持久化爬取结果
-     *
-     * @param hotList url列表
-     * @param sorted  排序规则
-     */
-    private void persistList(List<String> hotList, String sorted) {
-        // 获取当前页面所有链接地址
-        for (int i = 0; i < hotList.size(); i++) {
-            List<CrawlerLiteratureURL> crawlerLiteratureURLList = new ArrayList<>();
-            String s = hotList.get(i);
-            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(s, 3);
-            Document doc = Jsoup.parse(html);
-            Elements elements = doc.getElementsByClass("book-mid-info");
-            for (int j = 0; j < elements.size(); j++) {
-
-                Element element = elements.get(j);
-                String href = element.select("h4").get(0).select("a").get(0).attr("href");
-                String title = element.select("h4").get(0).select("a").get(0).text();
-                CrawlerLiteratureURL literatureURL = new CrawlerLiteratureURL();
-
-                literatureURL.setUrl("http:" + href);
-                literatureURL.setAddTime(DateUtils.getTodayDate());
-                literatureURL.setPlatform("qidian");
-                literatureURL.setTitle(title);
-                literatureURL.setSorted(sorted);
-                crawlerLiteratureURLList.add(literatureURL);
-            }
-            crawlerLiteratureURLRepository.save(crawlerLiteratureURLList);
-        }
-    }
-
 
     /**
      * 爬取起点网络文学数据
