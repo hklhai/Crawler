@@ -11,9 +11,9 @@ import javax.persistence.Table;
 @Table(name = "crawler_url")
 public class CrawlerURL {
 
-
-    private String title;
     @Id
+    private Integer cid;
+    private String title;
     private String url;
     private String addTime;
     private String category;
@@ -30,6 +30,14 @@ public class CrawlerURL {
         this.category = category;
         this.platform = platform;
         this.sorted = sorted;
+    }
+
+    public Integer getCid() {
+        return cid;
+    }
+
+    public void setCid(Integer cid) {
+        this.cid = cid;
     }
 
     public String getCategory() {
