@@ -58,7 +58,7 @@ public class JdTimer {
     public void jdUrlList() {
 
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
                 /**
                  * 取爬取列表前先将数据写入ES
                  */
@@ -155,12 +155,11 @@ public class JdTimer {
     }
 
 
-    //每天18点0分触发
-    @Scheduled(cron = "0 0 18 * * ?")
+    //每天0点10分触发
+    @Scheduled(cron = "0 10 0 * * ?")
     public void jdData() {
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
-
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
 
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findAll();

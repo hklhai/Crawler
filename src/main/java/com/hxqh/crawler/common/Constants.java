@@ -41,7 +41,7 @@ public interface Constants {
     Integer IQIYI_VARIETY_THREAD_NUM = 20;
 
     Integer TENCENT_THREAD_NUM = 10;
-    Integer JD_THREAD_NUM = 30;
+    Integer JD_THREAD_NUM = 15;
     Integer DOUBAN_THREAD_NUM = 40;
     Integer QIDIAN_THREAD_NUM = 10;
 

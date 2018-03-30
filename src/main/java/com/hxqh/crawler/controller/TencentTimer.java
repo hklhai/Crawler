@@ -35,67 +35,67 @@ public class TencentTimer {
     @Autowired
     private CrawlerService crawlerService;
 
+//
+//    /**
+//     * 1. 获取爬取列表前先将数据写入ES
+//     * 2. 清除所有mysql数据
+//     * 3. 进行爬取
+//     */
+//    // 每个星期日16点00分
+//    @Scheduled(cron = "0 0 16 ? * SUN")
+//    public void tencentUrlList() {
+//        try {
+//            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
+//
+//
+//            }
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
 
-    /**
-     * 1. 获取爬取列表前先将数据写入ES
-     * 2. 清除所有mysql数据
-     * 3. 进行爬取
-     */
-    // 每个星期日16点00分
-    @Scheduled(cron = "0 0 16 ? * SUN")
-    public void tencentUrlList() {
-        try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
-
-
-            }
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-    //每天2点0分触发
-    @Scheduled(cron = "0 0 2 * * ?")
-    public void tencent() {
-
-        try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
-
-                // 1. 从数据库获取待爬取链接
-                List<CrawlerURL> crawlerURLS = crawlerURLRepository.findTencentFilm();
-                Integer partitionNUm = crawlerURLS.size() / Constants.TENCENT_THREAD_NUM + 1;
-                List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, partitionNUm);
-
-                ExecutorService service = Executors.newFixedThreadPool(Constants.TENCENT_THREAD_NUM);
-                for (List<CrawlerURL> l : lists) {
-                    service.execute(new PersistTencentFilm(l, crawlerProblemRepository, systemService));
-                }
-                service.shutdown();
-                while (!service.isTerminated()) {
-                }
-
-                // 2. 上传至HDFS
-                try {
-                    HdfsUtils.persistToHDFS("-tencent", Constants.FILE_LOC);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-    }
+//    //每天2点0分触发
+//    @Scheduled(cron = "0 0 2 * * ?")
+//    public void tencent() {
+//
+//        try {
+//            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
+//
+//                // 1. 从数据库获取待爬取链接
+//                List<CrawlerURL> crawlerURLS = crawlerURLRepository.findTencentFilm();
+//                Integer partitionNUm = crawlerURLS.size() / Constants.TENCENT_THREAD_NUM + 1;
+//                List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, partitionNUm);
+//
+//                ExecutorService service = Executors.newFixedThreadPool(Constants.TENCENT_THREAD_NUM);
+//                for (List<CrawlerURL> l : lists) {
+//                    service.execute(new PersistTencentFilm(l, crawlerProblemRepository, systemService));
+//                }
+//                service.shutdown();
+//                while (!service.isTerminated()) {
+//                }
+//
+//                // 2. 上传至HDFS
+//                try {
+//                    HdfsUtils.persistToHDFS("-tencent", Constants.FILE_LOC);
+//                } catch (URISyntaxException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
 
 
 }
