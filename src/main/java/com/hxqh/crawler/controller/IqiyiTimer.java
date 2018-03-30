@@ -47,7 +47,7 @@ public class IqiyiTimer {
      * 爬取爱奇艺电影数据
      */
 //    @Scheduled(cron = "0 0 1 * * ?")
-    @Scheduled(cron = "0 16 13 * * ?")
+    @Scheduled(cron = "0 35 13 * * ?")
     public void iqiyiFilm() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
