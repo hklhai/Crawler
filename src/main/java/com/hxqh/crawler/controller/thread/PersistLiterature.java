@@ -7,6 +7,7 @@ import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.FileUtils;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -45,8 +46,10 @@ public class PersistLiterature implements Runnable {
 
         for (int i = 0; i < list.size(); i++) {
             CrawlerLiteratureURL literatureURL = list.get(i);
-            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(literatureURL.getUrl(), Constants.DEFAULT_SEELP_SECOND_JD_BOOK);
-            Document doc = Jsoup.parse(html);
+            Document doc = Jsoup.connect(literatureURL.getUrl()).get();
+
+            String html = CrawlerUtils.fetchHTMLContent(literatureURL.getUrl(), Constants.DEFAULT_SEELP_SECOND_JD_BOOK);
+            Document document = Jsoup.parse(html);
 
             String platform = literatureURL.getPlatform();
             String name = literatureURL.getTitle();
@@ -67,8 +70,8 @@ public class PersistLiterature implements Runnable {
 
                 author = doc.getElementsByClass("AuthorInfo").select("div").get(0).select("a").get(1).text();
                 label = doc.getElementsByClass("label").select("td").select("a").select("span").text();
-                commentnum = Integer.valueOf(doc.getElementById("topicCount").text());
-                clicknum = Long.valueOf(doc.getElementById("howmuchreadBook").text());
+                commentnum = Integer.valueOf(document.getElementById("topicCount").text());
+                clicknum = Long.valueOf(document.getElementById("howmuchreadBook").text());
                 String addTime = DateUtils.getTodayDate();
 
 

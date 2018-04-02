@@ -90,7 +90,9 @@ public class CrawlerUtils {
 
             //设置必要参数
             DesiredCapabilities dcaps = getDesiredCapabilities();
-
+//            String[] phantomJsArgs = {"--ignore-ssl-errors=true","--web-security=false","--ssl-protocol=any"};
+//            dcaps.setCapability(PhantomJSDriverService.PHANTOMJS_GHOSTDRIVER_CLI_ARGS,
+//                    phantomJsArgs);
             //创建无界面浏览器对象
             driver = new PhantomJSDriver(dcaps);
 
@@ -303,25 +305,33 @@ public class CrawlerUtils {
 
     public static String fetchHTMLContent(String url, Integer second) throws Exception {
         List<CrawlerVarietyURL> soapURLList = new ArrayList<>();
-
-        Integer sleepTime = second * 1000;
-        System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
-        ChromeDriverService service = new ChromeDriverService
-                .Builder().usingDriverExecutable(new File(Constants.CHROMEDRIVER)).usingAnyFreePort().build();
-        service.start();
-        WebDriver webDriver = new ChromeDriver();
-        webDriver.get(url);
-        Thread.sleep(sleepTime);
-        WebElement webElement = webDriver.findElement(By.xpath("/html"));
         String html = new String();
-        if (webElement != null) {
-            html = webElement.getAttribute("outerHTML");
+        WebDriver webDriver = null;
+
+        try {
+            Integer sleepTime = second * 1000;
+            System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
+            ChromeDriverService service = new ChromeDriverService
+                    .Builder().usingDriverExecutable(new File(Constants.CHROMEDRIVER)).usingAnyFreePort().build();
+            service.start();
+            webDriver = new ChromeDriver();
+            webDriver.get(url);
+            Thread.sleep(sleepTime);
+            WebElement webElement = webDriver.findElement(By.xpath("/html"));
+            html = new String();
+            if (webElement != null) {
+                html = webElement.getAttribute("outerHTML");
+            }
+            webDriver.close();
+            // 关闭 ChromeDriver 接口
+            webDriver.quit();
+        } catch (Exception e) {
+
+        } finally {
+            if (webDriver != null) {
+                webDriver.quit();
+            }
         }
-
-
-        // 关闭 ChromeDriver 接口
-        webDriver.quit();
-        service.stop();
         return html;
     }
 

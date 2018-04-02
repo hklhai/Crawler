@@ -90,27 +90,7 @@ public class K17Timer {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
 
-                List<CrawlerLiteratureURL> varietyURLList = crawlerLiteratureURLRepository.findAll();
-                Integer partitionNUm = varietyURLList.size() / Constants.QIDIAN_THREAD_NUM + 1;
-                List<List<CrawlerLiteratureURL>> lists = ListUtils.partition(varietyURLList, partitionNUm);
 
-                ExecutorService service = Executors.newFixedThreadPool(Constants.QIDIAN_THREAD_NUM);
-
-                for (List<CrawlerLiteratureURL> list : lists) {
-                    service.execute(new PersistLiterature(systemService, list));
-                }
-                service.shutdown();
-                while (!service.isTerminated()) {
-                }
-
-                // 2. 上传至HDFS
-                try {
-                    HdfsUtils.persistToHDFS("-literature-17k", Constants.FILE_LOC);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
             }
         } catch (URISyntaxException e) {
