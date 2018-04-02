@@ -11,6 +11,8 @@ public interface Constants {
 
     String CHROMEDRIVER = os.toLowerCase().startsWith("win") == true ? "E:\\Program\\chromedriver.exe" : "/usr/bin/chromedriver";
     String SAVE_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler" : "/home/hadoop/crawler";
+    String SAVE_LITERATURE_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler\\literature" : "/home/hadoop/crawler/literature";
+
     String SAVE_VARIETY_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler\\variety" : "/home/hadoop/crawler/variety";
     String SAVE_SOAP_PATH = os.toLowerCase().startsWith("win") == true ? "E:\\crawler\\soap" : "/home/hadoop/crawler/soap";
     String FILE_SPLIT = os.toLowerCase().startsWith("win") == true ? "\\" : "/";
@@ -38,12 +40,11 @@ public interface Constants {
      * Linux 爬虫线程数据与各分区的数量
      */
     Integer IQIYI_THREAD_NUM = 10;
-    Integer IQIYI_VARIETY_THREAD_NUM = 20;
+    Integer IQIYI_VARIETY_THREAD_NUM = 21;
 
     Integer TENCENT_THREAD_NUM = 10;
     Integer JD_THREAD_NUM = 15;
     Integer DOUBAN_THREAD_NUM = 40;
-    Integer QIDIAN_THREAD_NUM = 10;
 
 
     // 起始页数
@@ -79,11 +80,12 @@ public interface Constants {
     String IQIYI_VARIETY_COLON = "：";
 
 
-
-
     /**
      * 网络文学URL index
      */
+    Integer THREAD_NUM_17K = 3;
+    Integer DEFAULT_SEELP_SECOND_17K = 12;
+
     String LITERATURE_INDEX = "market_literature";
     String LITERATURE_TYPE = "literature";
 

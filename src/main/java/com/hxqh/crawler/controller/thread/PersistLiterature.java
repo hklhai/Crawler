@@ -48,7 +48,7 @@ public class PersistLiterature implements Runnable {
             CrawlerLiteratureURL literatureURL = list.get(i);
             Document doc = Jsoup.connect(literatureURL.getUrl()).get();
 
-            String html = CrawlerUtils.fetchHTMLContent(literatureURL.getUrl(), Constants.DEFAULT_SEELP_SECOND_JD_BOOK);
+            String html = CrawlerUtils.fetchHTMLContent(literatureURL.getUrl(), Constants.DEFAULT_SEELP_SECOND_17K);
             Document document = Jsoup.parse(html);
 
             String platform = literatureURL.getPlatform();
@@ -75,14 +75,14 @@ public class PersistLiterature implements Runnable {
                 String addTime = DateUtils.getTodayDate();
 
 
-                // 粉丝值
-                String fansScore = doc.getElementById("fansScore").text();
-                if (fansScore.endsWith("万")) {
-                    Float v = Float.valueOf(fansScore.substring(0, fansScore.length() - 2)) * Constants.TEN_THOUSAND;
-                    fans = v.longValue();
-                } else {
-                    fans = Long.valueOf(fansScore);
-                }
+//                // 粉丝值
+//                String fansScore = doc.getElementById("fansScore").text();
+//                if (fansScore.endsWith("万")) {
+//                    Float v = Float.valueOf(fansScore.substring(0, fansScore.length() - 2)) * Constants.TEN_THOUSAND;
+//                    fans = v.longValue();
+//                } else {
+//                    fans = Long.valueOf(fansScore);
+//                }
 
 
                 /**
@@ -95,10 +95,10 @@ public class PersistLiterature implements Runnable {
                         append(subclass.trim()).append("^").
                         append(label.trim()).append("^").
                         append(commentnum).append("^").
-                        append(fans).append("^").
+//                        append(fans).append("^").
                         append(clicknum).append("^").
                         append(addTime).append("\n");
-                String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT +
+                String fileName = Constants.SAVE_LITERATURE_PATH + Constants.FILE_SPLIT +
                         DateUtils.getTodayDate() + "-" + literatureURL.getPlatform();
                 FileUtils.writeStrToFile(stringBuilder.toString(), fileName);
                 stringBuilder.setLength(0);

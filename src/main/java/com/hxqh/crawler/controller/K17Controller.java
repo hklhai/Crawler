@@ -61,10 +61,10 @@ public class K17Controller {
     public String literatureDataUrl() {
 
         List<CrawlerLiteratureURL> varietyURLList = crawlerLiteratureURLRepository.findAll();
-        Integer partitionNUm = varietyURLList.size() / Constants.QIDIAN_THREAD_NUM + 1;
+        Integer partitionNUm = varietyURLList.size() / Constants.THREAD_NUM_17K + 1;
         List<List<CrawlerLiteratureURL>> lists = ListUtils.partition(varietyURLList, partitionNUm);
 
-        ExecutorService service = Executors.newFixedThreadPool(Constants.QIDIAN_THREAD_NUM);
+        ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM_17K);
 
         for (List<CrawlerLiteratureURL> list : lists) {
             service.execute(new PersistLiterature(systemService, list));
