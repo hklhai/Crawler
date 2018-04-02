@@ -7,7 +7,6 @@ import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.FileUtils;
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -70,19 +69,21 @@ public class PersistLiterature implements Runnable {
 
                 author = doc.getElementsByClass("AuthorInfo").select("div").get(0).select("a").get(1).text();
                 label = doc.getElementsByClass("label").select("td").select("a").select("span").text();
-                commentnum = Integer.valueOf(document.getElementById("topicCount").text());
-                clicknum = Long.valueOf(document.getElementById("howmuchreadBook").text());
+
+                String topicCount = document.getElementById("topicCount").text();
+                if (topicCount.endsWith("万")) {
+                    commentnum = Integer.valueOf(topicCount.substring(0, topicCount.length() - 2)) * Constants.TEN_THOUSAND;
+                } else {
+                    commentnum = Integer.valueOf(topicCount);
+                }
+                String howmuchreadBook = document.getElementById("howmuchreadBook").text();
+                if (howmuchreadBook.endsWith("万")) {
+                    clicknum = Long.valueOf(howmuchreadBook.substring(0, howmuchreadBook.length() - 2)) * Constants.TEN_THOUSAND;
+                } else {
+                    clicknum = Long.valueOf(howmuchreadBook);
+                }
+
                 String addTime = DateUtils.getTodayDate();
-
-
-//                // 粉丝值
-//                String fansScore = doc.getElementById("fansScore").text();
-//                if (fansScore.endsWith("万")) {
-//                    Float v = Float.valueOf(fansScore.substring(0, fansScore.length() - 2)) * Constants.TEN_THOUSAND;
-//                    fans = v.longValue();
-//                } else {
-//                    fans = Long.valueOf(fansScore);
-//                }
 
 
                 /**
@@ -96,7 +97,7 @@ public class PersistLiterature implements Runnable {
                         append(label.trim()).append("^").
                         append(commentnum).append("^").
 //                        append(fans).append("^").
-                        append(clicknum).append("^").
+        append(clicknum).append("^").
                         append(addTime).append("\n");
                 String fileName = Constants.SAVE_LITERATURE_PATH + Constants.FILE_SPLIT +
                         DateUtils.getTodayDate() + "-" + literatureURL.getPlatform();

@@ -284,7 +284,6 @@ public class SystemServiceImpl implements SystemService {
                     field("mainclass", literature.getMainclass()).
                     field("subclass", literature.getSubclass()).
                     field("label", literature.getLabel()).
-                    field("fans", literature.getFans()).
                     field("commentnum", literature.getCommentnum()).
                     field("clicknum", literature.getClicknum()).
                     field("addtime", todayTime).endObject();
