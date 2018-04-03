@@ -84,13 +84,33 @@ public class K17Timer {
         }
     }
 
-    // 每天16点30分触发
-    @Scheduled(cron = "0 30 16 * * ?")
+    // 每天10点00分触发
+    @Scheduled(cron = "0 0 10 * * ?")
     public void k17Data() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
 
+                List<CrawlerLiteratureURL> varietyURLList = crawlerLiteratureURLRepository.findAll();
+                Integer partitionNUm = varietyURLList.size() / Constants.THREAD_NUM_17K + 1;
+                List<List<CrawlerLiteratureURL>> lists = ListUtils.partition(varietyURLList, partitionNUm);
 
+                ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM_17K);
+
+                for (List<CrawlerLiteratureURL> list : lists) {
+                    service.execute(new PersistLiterature(systemService, list));
+                }
+                service.shutdown();
+                while (!service.isTerminated()) {
+                }
+
+                // 2. 上传至HDFS
+                try {
+                    HdfsUtils.persistToHDFS("-literature-17k", Constants.FILE_LOC);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             }
         } catch (URISyntaxException e) {
