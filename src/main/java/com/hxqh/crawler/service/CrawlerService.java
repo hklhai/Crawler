@@ -1,10 +1,7 @@
 package com.hxqh.crawler.service;
 
 import com.hxqh.crawler.domain.URLInfo;
-import com.hxqh.crawler.model.BaiduInfo;
-import com.hxqh.crawler.model.CrawlerSoapURL;
-import com.hxqh.crawler.model.CrawlerVariety;
-import com.hxqh.crawler.model.CrawlerVarietyURL;
+import com.hxqh.crawler.model.*;
 
 import java.util.List;
 import java.util.Map;
@@ -33,4 +30,6 @@ public interface CrawlerService {
     void persistFilmUrl(Map<String, URLInfo> hrefMap);
 
     void saveSoap(List<CrawlerSoapURL> soapURLList);
+
+    void persistBookUrl(List<CrawlerBookURL> crawlerURLList);
 }

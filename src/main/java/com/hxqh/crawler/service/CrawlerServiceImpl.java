@@ -1,10 +1,7 @@
 package com.hxqh.crawler.service;
 
 import com.hxqh.crawler.domain.URLInfo;
-import com.hxqh.crawler.model.BaiduInfo;
-import com.hxqh.crawler.model.CrawlerSoapURL;
-import com.hxqh.crawler.model.CrawlerVariety;
-import com.hxqh.crawler.model.CrawlerVarietyURL;
+import com.hxqh.crawler.model.*;
 import com.hxqh.crawler.repository.*;
 import com.hxqh.crawler.util.CrawlerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +19,7 @@ import java.util.Map;
 @Service("crawlerService")
 public class CrawlerServiceImpl implements CrawlerService {
 
+
     @Autowired
     private CrawlerURLRepository crawlerURLRepository;
     @Autowired
@@ -32,6 +30,8 @@ public class CrawlerServiceImpl implements CrawlerService {
     private CrawlerVarietyRepository crawlerVarietyRepository;
     @Autowired
     private CrawlerSoapURLRepository crawlerSoapURLRepository;
+    @Autowired
+    private CrawlerBookURLRepository crawlerBookURLRepository;
 
     @Transactional
     @Override
@@ -85,6 +85,17 @@ public class CrawlerServiceImpl implements CrawlerService {
         // 清除所有mysql数据
         deleteIqiyiSoap();
         crawlerSoapURLRepository.save(soapURLList);
+    }
+
+    @Transactional
+    @Override
+    public void persistBookUrl(List<CrawlerBookURL> crawlerURLList) {
+
+        /**
+         * 清除所有mysql数据
+         */
+        crawlerBookURLRepository.deleteJdBooks();
+        crawlerBookURLRepository.save(crawlerURLList);
     }
 
 

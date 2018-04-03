@@ -39,14 +39,7 @@ public class TencentController {
          * 取爬取列表前先将数据写入ES
          */
         List<CrawlerURL> crawlerURLList = crawlerURLRepository.findTencentFilm();
-//        ResponseEntity responseEntity = systemService.addCrawlerURLList(crawlerURLList);
 
-        /**
-         * 清除所有mysql数据
-         */
-//        if (responseEntity.getStatusCodeValue() > 0) {
-//            crawlerService.delTencentFilm();
-//        }
 
         /**
          * 爬取数据

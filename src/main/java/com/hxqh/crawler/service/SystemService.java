@@ -1,10 +1,7 @@
 package com.hxqh.crawler.service;
 
 import com.hxqh.crawler.domain.*;
-import com.hxqh.crawler.model.CrawlerBookURL;
-import com.hxqh.crawler.model.CrawlerLiteratureURL;
-import com.hxqh.crawler.model.CrawlerURL;
-import com.hxqh.crawler.model.User;
+import com.hxqh.crawler.model.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -39,4 +36,8 @@ public interface SystemService {
     void addFilmOrSoapUrl(String href, URLInfo urlInfo);
 
     void saveLiterature(CrawlerLiteratureURL literatureURL);
+
+    void addVariety(List<CrawlerVarietyURL> urlList);
+
+    void addBookURL(CrawlerBookURL crawlerBookURL);
 }

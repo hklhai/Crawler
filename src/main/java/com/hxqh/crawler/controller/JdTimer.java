@@ -5,6 +5,7 @@ import com.hxqh.crawler.controller.thread.PersistJdBook;
 import com.hxqh.crawler.model.CrawlerBookURL;
 import com.hxqh.crawler.repository.CrawlerBookURLRepository;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
+import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
@@ -16,7 +17,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -38,39 +38,29 @@ import java.util.concurrent.Executors;
  */
 @Component
 public class JdTimer {
-
     private final static Integer JD_PAGE_NUM = 6;
 
     @Autowired
-    private CrawlerBookURLRepository crawlerBookURLRepository;
-    @Autowired
     private SystemService systemService;
     @Autowired
+    private CrawlerService crawlerService;
+    @Autowired
     private CrawlerProblemRepository crawlerProblemRepository;
+    @Autowired
+    private CrawlerBookURLRepository crawlerBookURLRepository;
 
     /**
      * 1. 获取爬取列表前先将数据写入ES
      * 2. 清除所有mysql数据
      * 3. 进行爬取
      */
-    // 每月最后一日的上午10:15触发
-    @Scheduled(cron = "0 15 10 15 * ?")
+    // 每月14日上午10:15触发
+    @Scheduled(cron = "0 15 10 14 * ?")
     public void jdUrlList() {
 
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
-                /**
-                 * 取爬取列表前先将数据写入ES
-                 */
-                List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findBookUrl();
-                ResponseEntity responseEntity = systemService.addJdCrawlerBookURLList(crawlerBookURLList);
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
 
-                /**
-                 * 清除所有mysql数据
-                 */
-                if (responseEntity.getStatusCodeValue() > 0) {
-                    crawlerBookURLRepository.deleteJdBooks();
-                }
                 /**
                  * 爬取数据
                  */
@@ -90,10 +80,10 @@ public class JdTimer {
                     for (Element element : elements) {
                         map.put(element.attr("href"), element.text());
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
 
                 /**
                  * 样式
@@ -134,23 +124,24 @@ public class JdTimer {
                                         a.attr("title"),
                                         DateUtils.getTodayDate(),
                                         category, "jd");
+                                // 持久化至ElasticSearch
+                                systemService.addBookURL(crawlerBookURL);
+
                                 crawlerURLList.add(crawlerBookURL);
                             }
-                            // 完成持久化
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                        // 完成持久化
+                        crawlerService.persistBookUrl(crawlerURLList);
                     }
-                    crawlerBookURLRepository.save(crawlerURLList);
-
                 }
+
+
             }
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
 
     }
 

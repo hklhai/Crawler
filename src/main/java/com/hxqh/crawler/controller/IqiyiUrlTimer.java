@@ -3,6 +3,8 @@ package com.hxqh.crawler.controller;
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.domain.URLInfo;
 import com.hxqh.crawler.model.CrawlerSoapURL;
+import com.hxqh.crawler.model.CrawlerVariety;
+import com.hxqh.crawler.model.CrawlerVarietyURL;
 import com.hxqh.crawler.repository.CrawlerSoapURLRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.repository.CrawlerVarietyRepository;
@@ -57,7 +59,7 @@ public class IqiyiUrlTimer {
      * 2. 清除所有mysql数据
      * 3. 进行爬取
      */
-    // 每月最后一日的上午10:15触发
+    // 每月15日上午10:15触发
     @Scheduled(cron = "0 15 10 15 * ?")
     public void iqiyiFilmUrlList() {
         try {
@@ -113,7 +115,6 @@ public class IqiyiUrlTimer {
                 }
                 crawlerService.persistFilmUrl(hrefMap);
 
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,32 +122,39 @@ public class IqiyiUrlTimer {
     }
 
 
-    // 每月最后一日的上午10:15触发
+    // 每月15日上午10:15触发
     @Scheduled(cron = "0 15 10 15 * ?")
     public void iqiyiSoapUrlList() {
-        List<CrawlerSoapURL> all = new ArrayList<>();
-        List<String> hotList = new ArrayList<>();
-        List<String> newList = new ArrayList<>();
-        // 电视剧 热门
-        for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
-            hotList.add("http://list.iqiyi.com/www/2/-------------11-" + i + "-1-iqiyi--.html");
-        }
-        // 更新时间
-        for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
-            newList.add("http://list.iqiyi.com/www/2/-------------4-" + i + "-1-iqiyi--.html");
-        }
+        try {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
+                List<CrawlerSoapURL> all = new ArrayList<>();
+                List<String> hotList = new ArrayList<>();
+                List<String> newList = new ArrayList<>();
+                // 电视剧 热门
+                for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
+                    hotList.add("http://list.iqiyi.com/www/2/-------------11-" + i + "-1-iqiyi--.html");
+                }
+                // 更新时间
+                for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
+                    newList.add("http://list.iqiyi.com/www/2/-------------4-" + i + "-1-iqiyi--.html");
+                }
 
-        for (String s : hotList) {
-            List<CrawlerSoapURL> soapURLList = persistUrlList(s, "hot");
-            all.addAll(soapURLList);
+                for (String s : hotList) {
+                    List<CrawlerSoapURL> soapURLList = persistUrlList(s, "hot");
+                    all.addAll(soapURLList);
 
-        }
-        for (String s : newList) {
-            List<CrawlerSoapURL> soapURLList = persistUrlList(s, "new");
-            all.addAll(soapURLList);
-        }
-        crawlerService.saveSoap(all);
+                }
+                for (String s : newList) {
+                    List<CrawlerSoapURL> soapURLList = persistUrlList(s, "new");
+                    all.addAll(soapURLList);
+                }
+                crawlerService.saveSoap(all);
 
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -189,10 +197,96 @@ public class IqiyiUrlTimer {
     }
 
 
-    // 每月最后一日的上午10:15触发
+    /**
+     * 1. 先爬取节目链接
+     * 2. 再爬取每个链接对应节目URl
+     */
+    // 每月15日上午10:15触发
     @Scheduled(cron = "0 15 10 15 * ?")
     public void iqiyiVarietyUrlList() {
 
+        /****************************** 爬取链接 ************************************/
+
+        List<String> hotList = new ArrayList<>();
+        List<String> newList = new ArrayList<>();
+
+        for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
+            hotList.add("http://list.iqiyi.com/www/6/-------------11-" + i + "-1-iqiyi--.html");
+        }
+        for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
+            newList.add("http://list.iqiyi.com/www/6/-------------4-" + i + "-1-iqiyi--.html");
+        }
+
+        /**
+         * 获取每部综艺作品链接
+         */
+        for (String s : hotList) {
+            List<CrawlerVariety> list = eachVarietyUrlList(s, "hot");
+            crawlerService.persistEachVarietyUrlList(list);
+        }
+        for (String s : newList) {
+            List<CrawlerVariety> list = eachVarietyUrlList(s, "new");
+            crawlerService.persistEachVarietyUrlList(list);
+        }
+        /****************************** 爬取链接 ************************************/
+
+
+        /****************************  爬取综艺节目 ********************************/
+        List<CrawlerVariety> varietyList = crawlerVarietyRepository.findAll();
+        /**
+         * 持久化每部综艺作品的不同集
+         */
+        for (CrawlerVariety variety : varietyList) {
+            String url = variety.getUrl();
+            String sorted = variety.getSorted();
+            List<CrawlerVarietyURL> urlList = persistVarietyUrlList(url, sorted);
+            crawlerService.persistVarietyUrlList(urlList);
+            // 持久化至ElasticSearch
+            systemService.addVariety(urlList);
+        }
+        /****************************  爬取综艺节目 ********************************/
+
     }
+
+    /**
+     * @param url    每部综艺节目爬取URL
+     * @param sorted 综艺节目类别
+     * @return
+     */
+    private List<CrawlerVariety> eachVarietyUrlList(String url, String sorted) {
+        List<CrawlerVariety> eachVarietyList = new ArrayList<>();
+        try {
+            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, 4);
+            Document document = Jsoup.parse(html);
+            Elements elements = document.getElementsByClass("site-piclist_pic");
+            Elements as = elements.select("a");
+            for (Element e : as) {
+                CrawlerVariety crawlerVariety = new CrawlerVariety(
+                        e.attr("href"),
+                        DateUtils.getTodayDate(),
+                        sorted);
+                eachVarietyList.add(crawlerVariety);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return eachVarietyList;
+    }
+
+    /**
+     * @param url    每部综艺节目爬取URL
+     * @param sorted 综艺节目类别
+     * @return
+     */
+    private List<CrawlerVarietyURL> persistVarietyUrlList(String url, String sorted) {
+        List<CrawlerVarietyURL> varietyURLList = new ArrayList<>();
+        try {
+            varietyURLList = CrawlerUtils.fetchVarietyURLByPhantomJs(url, Constants.IQIYI_VARIETY_WAIT_TIME, sorted);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return varietyURLList;
+    }
+
 
 }

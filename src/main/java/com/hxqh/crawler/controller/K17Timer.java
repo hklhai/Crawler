@@ -32,14 +32,13 @@ import java.util.concurrent.Executors;
 @Component
 public class K17Timer {
 
-
     @Autowired
     private SystemService systemService;
     @Autowired
     private CrawlerLiteratureURLRepository crawlerLiteratureURLRepository;
 
     // 每月最后一日的上午10:15触发
-    @Scheduled(cron = "0 15 10 15 * ?")
+    @Scheduled(cron = "0 15 10 14 * ?")
     public void k17Url() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {

@@ -79,9 +79,28 @@ public interface Constants {
     Integer IQIYI_VARIETY_WAIT_TIME = 4;
     String IQIYI_VARIETY_COLON = "：";
 
+    /**
+     * 图书
+     */
+    String BOOK_INDEX = "market_book2";
+    String BOOK_TYPE = "book";
 
     /**
-     * 网络文学URL index
+     * 猫眼
+     */
+    String MAOYAN_INDEX = "maoyan";
+    String MAOYAN_TYPE = "film";
+
+    /**
+     * 电视剧 & 电影 & 综艺
+     */
+    String FILM_SOAP_VARIETY_INDEX  = "film_data";
+    String FILM_SOAP_VARIETY_TYPE  = "film";
+
+
+
+    /**
+     * 网络文学 URL
      */
     Integer THREAD_NUM_17K = 3;
     Integer DEFAULT_SEELP_SECOND_17K = 12;
@@ -91,5 +110,26 @@ public interface Constants {
 
     String LITERATURE_URL_INDEX = "history_url_literature";
     String LITERATURE_URL_TYPE = "literature";
+
+
+    /**
+     * 电视剧 & 电影 URL
+     */
+    String SOAP_URL_INDEX = "history_url_film_soap";
+    String SOAP_URL_TYPE = "film_soap";
+
+
+    /**
+     * 综艺 URL
+     */
+    String VARIETY_URL_INDEX = "history_url_variety";
+    String VARIETY_URL_TYPE = "variety";
+
+
+    /**
+     * 图书  URL
+     */
+    String BOOK_URL_INDEX = "history_url_book";
+    String BOOK_URL_TYPE = "book";
 
 }

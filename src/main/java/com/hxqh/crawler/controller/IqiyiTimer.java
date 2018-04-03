@@ -9,6 +9,7 @@ import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerSoapURLRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.repository.CrawlerVarietyURLRepository;
+import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.HdfsUtils;
 import com.hxqh.crawler.util.HostUtils;

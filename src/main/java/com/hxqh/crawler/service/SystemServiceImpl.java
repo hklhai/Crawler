@@ -2,10 +2,7 @@ package com.hxqh.crawler.service;
 
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.domain.*;
-import com.hxqh.crawler.model.CrawlerBookURL;
-import com.hxqh.crawler.model.CrawlerLiteratureURL;
-import com.hxqh.crawler.model.CrawlerURL;
-import com.hxqh.crawler.model.User;
+import com.hxqh.crawler.model.*;
 import com.hxqh.crawler.repository.UserRepository;
 import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.FileUtils;
@@ -55,8 +52,7 @@ public class SystemServiceImpl implements SystemService {
     public ResponseEntity addVideos(VideosFilm videosFilm) {
         try {
             String todayTime = DateUtils.getTodayTime();
-            String indexName = "film_data";
-            String typeName = "film";
+
             XContentBuilder content = XContentFactory.jsonBuilder().startObject().
                     field("source", videosFilm.getSource()).
                     field("filmName", videosFilm.getFilmName()).
@@ -70,7 +66,7 @@ public class SystemServiceImpl implements SystemService {
                     field("playNum", videosFilm.getPlayNum()).
                     field("addTime", todayTime).endObject();
 
-            IndexResponse result = this.client.prepareIndex(indexName, typeName).setSource(content).get();
+            IndexResponse result = this.client.prepareIndex(Constants.FILM_SOAP_VARIETY_INDEX, Constants.FILM_SOAP_VARIETY_TYPE).setSource(content).get();
             System.out.println(videosFilm.getFilmName() + " Persist to ES Success!");
             return new ResponseEntity(result.getId(), HttpStatus.OK);
         } catch (IOException e) {
@@ -95,7 +91,7 @@ public class SystemServiceImpl implements SystemService {
                     field("publish", book.getPublish()).
                     field("addTime", todayTime).endObject();
 
-            IndexResponse result = this.client.prepareIndex("market_book2", "book").setSource(content).get();
+            IndexResponse result = this.client.prepareIndex(Constants.BOOK_INDEX, Constants.BOOK_TYPE).setSource(content).get();
             System.out.println(book.getBookName() + " Persist to ES Success!");
             return new ResponseEntity(result.getId(), HttpStatus.OK);
         } catch (IOException e) {
@@ -104,6 +100,7 @@ public class SystemServiceImpl implements SystemService {
         }
     }
 
+    @Deprecated
     @Override
     public ResponseEntity addCrawlerURLList(List<CrawlerURL> crawlerURLList) {
         String todayTime = DateUtils.getTodayTime();
@@ -203,6 +200,7 @@ public class SystemServiceImpl implements SystemService {
         }
     }
 
+    @Deprecated
     @Override
     public ResponseEntity addJdCrawlerBookURLList(List<CrawlerBookURL> crawlerBookURLList) {
         String todayTime = DateUtils.getTodayTime();
@@ -238,11 +236,8 @@ public class SystemServiceImpl implements SystemService {
 
     @Override
     public ResponseEntity addMaoYanList(List<RealTimeMovie> movieArrayList) {
-
         String todayTime = DateUtils.getTodayTime();
         Integer length = null;
-        String index = "maoyan";
-        String type = "film";
 
         try {
             Long count = (long) movieArrayList.size();
@@ -261,7 +256,7 @@ public class SystemServiceImpl implements SystemService {
                         field("releaseInfo", realTimeMovie.getReleaseInfo()).
                         field("addTime", todayTime).
                         field("showInfo", realTimeMovie.getShowInfo()).endObject();
-                bulkRequest.add(client.prepareIndex(index, type).setSource(content));
+                bulkRequest.add(client.prepareIndex(Constants.MAOYAN_INDEX, Constants.MAOYAN_TYPE).setSource(content));
             }
             //插入文档至ES, 完成！
             BulkResponse bulkItemResponses = bulkRequest.execute().actionGet();
@@ -321,12 +316,11 @@ public class SystemServiceImpl implements SystemService {
                     field("platform", crawlerURL.getPlatform()).
                     field("createTime", todayTime).endObject();
 
-            this.client.prepareIndex("history_url_film_soap", "film_soap").setSource(content).get();
+            this.client.prepareIndex(Constants.SOAP_URL_INDEX, Constants.SOAP_URL_TYPE).setSource(content).get();
             System.out.println(crawlerURL.getTitle() + " Persist to ES Success!");
         } catch (IOException e) {
             e.printStackTrace();
         }
-
 
     }
 
@@ -349,5 +343,46 @@ public class SystemServiceImpl implements SystemService {
         }
     }
 
+    @Override
+    public void addVariety(List<CrawlerVarietyURL> urlList) {
+        for (int i = 0; i < urlList.size(); i++) {
+            CrawlerVarietyURL crawlerVariety = urlList.get(i);
+            try {
+                String todayTime = DateUtils.getTodayTime();
+                XContentBuilder content = XContentFactory.jsonBuilder().startObject().
+                        field("addTime", crawlerVariety.getAddTime()).
+                        field("category", crawlerVariety.getCategory()).
+                        field("sorted", crawlerVariety.getSorted()).
+                        field("title", crawlerVariety.getTitle()).
+                        field("url", crawlerVariety.getUrl()).
+                        field("platform", crawlerVariety.getPlatform()).
+                        field("createTime", todayTime).endObject();
+
+                this.client.prepareIndex(Constants.VARIETY_URL_INDEX, Constants.VARIETY_URL_TYPE).setSource(content).get();
+                System.out.println(crawlerVariety.getTitle() + " Persist to ES Success!");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void addBookURL(CrawlerBookURL crawlerBookURL) {
+        String todayTime = DateUtils.getTodayTime();
+        try {
+            XContentBuilder content = XContentFactory.jsonBuilder().startObject().
+                    field("url", crawlerBookURL.getUrl()).
+                    field("title", crawlerBookURL.getTitle()).
+                    field("platform", crawlerBookURL.getPlatform()).
+                    field("category", crawlerBookURL.getCategory()).
+                    field("addTime", crawlerBookURL.getAddTime()).
+                    field("createTime", todayTime).endObject();
+
+            this.client.prepareIndex(Constants.BOOK_URL_INDEX, Constants.BOOK_URL_TYPE).setSource(content).get();
+            System.out.println(crawlerBookURL.getTitle() + " Persist to ES Success!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
