@@ -38,6 +38,8 @@ public class PersistDouBan implements Runnable {
     @Override
     public void run() {
 
+        String cate = category == "film" ? "电影" : "";
+
         String urlString1 = null;
 
         for (int i = 0; i < l.size(); i++) {
@@ -74,12 +76,12 @@ public class PersistDouBan implements Runnable {
 
                     String trim = split[0].trim();
                     String searchCategory = trim.substring(1, trim.length() - 1);
-                    if (trim.equals(category) || split.length >= 2) {
+                    if (trim.equals(cate) || split.length >= 2) {
 
                         String searchFilmName = split[1].trim();
                         searchFilmName = searchFilmName.substring(1, searchFilmName.length());
 
-                        if (searchCategory.equals(category) && searchFilmName.equals(filmName)) {
+                        if (searchCategory.equals(cate) && searchFilmName.equals(filmName)) {
                             Float aFloat = null;
                             Integer integer = null;
                             Element ratingElement = ratingElements.get(j);
@@ -98,7 +100,7 @@ public class PersistDouBan implements Runnable {
                                 continue;
                             }
 
-                            System.out.println("分类：" + category + " 电影名称:" + filmName + " 评分：" + aFloat + " 评分人数：" + integer);
+                            System.out.println("分类：" + cate + " 电影名称:" + filmName + " 评分：" + aFloat + " 评分人数：" + integer);
                             CrawlerDoubanScore crawlerDoubanScore = new CrawlerDoubanScore(category, filmName, aFloat, integer);
                             crawlerDoubanSocreRepository.save(crawlerDoubanScore);
                             break;
