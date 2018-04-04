@@ -44,7 +44,7 @@ public interface Constants {
 
     Integer TENCENT_THREAD_NUM = 10;
     Integer JD_THREAD_NUM = 15;
-    Integer DOUBAN_THREAD_NUM = 40;
+    Integer DOUBAN_THREAD_NUM = 10;
 
 
     // 起始页数

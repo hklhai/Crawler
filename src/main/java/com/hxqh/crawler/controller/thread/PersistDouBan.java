@@ -27,15 +27,17 @@ public class PersistDouBan implements Runnable {
 
     private List<CrawlerURL> l;
     private CrawlerDoubanSocreRepository crawlerDoubanSocreRepository;
+    private String category;
 
-    public PersistDouBan(List<CrawlerURL> l, CrawlerDoubanSocreRepository crawlerDoubanSocreRepository) {
+    public PersistDouBan(List<CrawlerURL> l, CrawlerDoubanSocreRepository crawlerDoubanSocreRepository, String category) {
         this.l = l;
         this.crawlerDoubanSocreRepository = crawlerDoubanSocreRepository;
+        this.category = category;
     }
 
     @Override
     public void run() {
-        String category = "电影";
+
         String urlString1 = null;
 
         for (int i = 0; i < l.size(); i++) {

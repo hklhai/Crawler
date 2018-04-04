@@ -2,6 +2,7 @@ package com.hxqh.crawler.controller;
 
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.controller.thread.PersistDouBan;
+import com.hxqh.crawler.model.CrawlerDoubanScore;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.repository.CrawlerDoubanSocreRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
@@ -37,16 +38,32 @@ public class DouBanController {
     @RequestMapping("/filmDouBan")
     public String filmDouBan() {
 
-
         // 1. 从数据库获取待爬取链接
         List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
+        List<CrawlerDoubanScore> doubanScoreList = crawlerDoubanSocreRepository.findAll();
+
+        for (int i = 0; i < crawlerURLS.size(); i++) {
+            for (int j = 0; j < doubanScoreList.size(); j++) {
+                CrawlerURL crawlerURL = crawlerURLS.get(i);
+                CrawlerDoubanScore doubanScore = doubanScoreList.get(j);
+                // title 和 category
+                if (crawlerURL.getTitle().equals(doubanScore.getTitle())
+                        && crawlerURL.getCategory().equals(doubanScore.getCategory())) {
+                    crawlerURLS.remove(crawlerURL);
+                }
+
+            }
+        }
+
+//        crawlerURLS = crawlerURLS.subList(0, 300);
+
         Integer partitionNUm = crawlerURLS.size() / Constants.DOUBAN_THREAD_NUM + 1;
         List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, partitionNUm);
 
         ExecutorService service = Executors.newFixedThreadPool(Constants.DOUBAN_THREAD_NUM);
 
         for (List<CrawlerURL> l : lists) {
-            service.execute(new PersistDouBan(l, crawlerDoubanSocreRepository));
+            service.execute(new PersistDouBan(l, crawlerDoubanSocreRepository, "film"));
         }
         service.shutdown();
         while (!service.isTerminated()) {

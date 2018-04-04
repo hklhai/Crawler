@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class DouBanTimer {
 
     @Scheduled(cron = "0 0 12 * * ?")
-    public void douBan() {
+    public void douBanForFilm() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
 
