@@ -1,6 +1,5 @@
 package com.hxqh.crawler.controller;
 
-import com.hxqh.crawler.domain.VideosFilm;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;

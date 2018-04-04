@@ -18,6 +18,8 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,7 +37,11 @@ import java.util.regex.Pattern;
 /**
  * Created by Ocean lin on 2018/1/16.
  */
+@Component
 public class CrawlerUtils {
+
+    @Autowired
+    private ProxyUtils proxyUtils;
 
     private static final String ENCODE = "charset=.*";
 
@@ -76,18 +82,52 @@ public class CrawlerUtils {
         super();
     }
 
-    public static String fetchHTMLContentByPhantomJs(String url, Integer second) {
+
+    public String fetchHTMLContentByPhantomJsUseProxy(String url, Integer second) {
 
         String html = new String();
         PhantomJSDriver driver = null;
 
         try {
-//            Proxy proxy = new Proxy();
-//            proxy.setHttpProxy("166.111.80.162:3128");
-//            proxy.setProxyType(Proxy.ProxyType.MANUAL);
-//            proxy.setAutodetect(false);
-//            DesiredCapabilities dcaps = getDesiredCapabilitiesProxy(proxy);
+            Proxy proxy = new Proxy();
+            String ipAndPort = proxyUtils.getProxyIpAndPort();
+            proxy.setHttpProxy(ipAndPort);
+            proxy.setProxyType(Proxy.ProxyType.MANUAL);
+            proxy.setAutodetect(false);
+            DesiredCapabilities dcaps = getDesiredCapabilitiesProxy(proxy);
 
+            //创建无界面浏览器对象
+            driver = new PhantomJSDriver(dcaps);
+
+            Integer sleepTime = second * 1000;
+            //设置隐性等待（作用于全局）
+            driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+            //打开页面
+            driver.get(url);
+
+            Thread.sleep(sleepTime);
+
+            //查找元素
+            html = getHtmlString(html, driver);
+            driver.close();
+            // 关闭 ChromeDriver 接口
+            driver.quit();
+        } catch (Exception e) {
+
+        } finally {
+            if (driver != null) {
+                driver.quit();
+            }
+        }
+        return html;
+    }
+
+
+    public static String fetchHTMLContentByPhantomJs(String url, Integer second) {
+        String html = new String();
+        PhantomJSDriver driver = null;
+
+        try {
             //设置必要参数
             DesiredCapabilities dcaps = getDesiredCapabilities();
 //            String[] phantomJsArgs = {"--ignore-ssl-errors=true","--web-security=false","--ssl-protocol=any"};

@@ -51,8 +51,8 @@ public class BaiduCompanyTimer {
                 }
 
                 // todo IP池配置后可以开放设置
-                // 防止每天爬取400条
-                urlList = urlList.subList(0, 400);
+                // 防止每天爬取500条
+                urlList = urlList.subList(0, 500);
 
                 // 调用百度API，查询后获取company信息存储至，将附属信息同样保留
                 for (int i = 0; i < urlList.size(); i++) {
