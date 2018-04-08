@@ -20,9 +20,12 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * Created by Ocean lin on 2018/3/22.
@@ -88,10 +91,13 @@ public class K17Timer {
     public void k17Data() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
-
                 List<CrawlerLiteratureURL> varietyURLList = crawlerLiteratureURLRepository.findAll();
-                Integer partitionNUm = varietyURLList.size() / Constants.THREAD_NUM_17K + 1;
-                List<List<CrawlerLiteratureURL>> lists = ListUtils.partition(varietyURLList, partitionNUm);
+
+                List<CrawlerLiteratureURL> urlList = varietyURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                        -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+                Integer partitionNUm = urlList.size() / Constants.THREAD_NUM_17K + 1;
+                List<List<CrawlerLiteratureURL>> lists = ListUtils.partition(urlList, partitionNUm);
 
                 ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM_17K);
 

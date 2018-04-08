@@ -9,7 +9,6 @@ import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.repository.CrawlerSoapURLRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.repository.CrawlerVarietyURLRepository;
-import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.HdfsUtils;
 import com.hxqh.crawler.util.HostUtils;
@@ -20,10 +19,13 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+import java.util.stream.Collectors;
 
 /**
  * @author Ocean Lin
@@ -55,9 +57,12 @@ public class IqiyiTimer {
 
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
-                Integer partitionNUm = crawlerURLS.size() / Constants.IQIYI_THREAD_NUM + 1;
-                List<List<CrawlerURL>> lists = ListUtils.partition(crawlerURLS, partitionNUm);
 
+                List<CrawlerURL> urlList = crawlerURLS.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                        -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+                Integer partitionNUm = urlList.size() / Constants.IQIYI_THREAD_NUM + 1;
+                List<List<CrawlerURL>> lists = ListUtils.partition(urlList, partitionNUm);
                 ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
 
                 for (List<CrawlerURL> l : lists) {
@@ -75,6 +80,7 @@ public class IqiyiTimer {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
 
             }
         } catch (URISyntaxException e) {
@@ -94,8 +100,11 @@ public class IqiyiTimer {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
                 List<CrawlerSoapURL> soapURLList = soapURLRepository.findAll();
 
-                Integer partitionNUm = soapURLList.size() / Constants.IQIYI_THREAD_NUM + 1;
-                List<List<CrawlerSoapURL>> lists = ListUtils.partition(soapURLList, partitionNUm);
+                List<CrawlerSoapURL> urlList = soapURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                        -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+                Integer partitionNUm = urlList.size() / Constants.IQIYI_THREAD_NUM + 1;
+                List<List<CrawlerSoapURL>> lists = ListUtils.partition(urlList, partitionNUm);
 
                 ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
 
@@ -129,8 +138,11 @@ public class IqiyiTimer {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
                 List<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll();
 
-                Integer partitionNUm = varietyURLList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
-                List<List<CrawlerVarietyURL>> lists = ListUtils.partition(varietyURLList, partitionNUm);
+                List<CrawlerVarietyURL> urlList = varietyURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                        -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+                Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
+                List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
 
                 ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_VARIETY_THREAD_NUM);
 

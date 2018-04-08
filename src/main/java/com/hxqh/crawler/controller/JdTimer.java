@@ -22,12 +22,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 
 /**
@@ -155,8 +153,11 @@ public class JdTimer {
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findAll();
 
-                Integer partitionNUm = crawlerBookURLList.size() / Constants.JD_THREAD_NUM + 1;
-                List<List<CrawlerBookURL>> lists = ListUtils.partition(crawlerBookURLList, partitionNUm);
+                List<CrawlerBookURL> urlList = crawlerBookURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                        -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+                Integer partitionNUm = urlList.size() / Constants.JD_THREAD_NUM + 1;
+                List<List<CrawlerBookURL>> lists = ListUtils.partition(urlList, partitionNUm);
 
                 ExecutorService service = Executors.newFixedThreadPool(Constants.JD_THREAD_NUM);
                 for (List<CrawlerBookURL> list : lists) {
