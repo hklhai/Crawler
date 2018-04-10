@@ -109,16 +109,4 @@ public class BaiduCrawlerTest {
         }
     }
 
-    //        @Test
-    public void getCompany() {
-        List<String> list = Arrays.asList("芳华", "捉妖记");
-        for (String s : list) {
-            CrawlerURL crawlerURL = new CrawlerURL();
-            crawlerURL.setTitle(s);
-            String s1 = BaiduCompanyUtils.encodeString(crawlerURL);
-            CompanyDto company = BaiduCompanyUtils.getCompany(s1);
-            System.out.println(company.getProductCompany() + "=============================" + company.getIssueCompany());
-
-        }
-    }
 }

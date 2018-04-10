@@ -2,8 +2,8 @@ package com.hxqh.crawler.controller;
 
 import com.hxqh.crawler.repository.BaiduInfoRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
+import com.hxqh.crawler.repository.VBaiduCrawlerRepository;
 import com.hxqh.crawler.service.CrawlerService;
-import com.hxqh.crawler.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,13 +19,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class BaiduCompanyController {
 
     @Autowired
-    private SystemService systemService;
-    @Autowired
     private BaiduInfoRepository baiduInfoRepository;
     @Autowired
     private CrawlerService crawlerService;
     @Autowired
     private CrawlerURLRepository crawlerURLRepository;
+    @Autowired
+    private VBaiduCrawlerRepository vBaiduCrawlerRepository;
+
 
     @RequestMapping("/company")
     public String company() {

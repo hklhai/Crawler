@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.domain.CompanyDto;
-import com.hxqh.crawler.model.CrawlerURL;
+import com.hxqh.crawler.model.VBaiduCrawler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,9 +26,9 @@ public class BaiduCompanyUtils {
     /**
      * @return encode后的title
      */
-    public static String encodeString(CrawlerURL crawlerURL) {
+    public static String encodeString(VBaiduCrawler vBaiduCrawler) {
         try {
-            String encodeUrl = URLEncoder.encode(crawlerURL.getTitle(), "UTF-8");
+            String encodeUrl = URLEncoder.encode(vBaiduCrawler.getTitle(), "UTF-8");
             return encodeUrl;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -66,7 +66,7 @@ public class BaiduCompanyUtils {
         for (Map.Entry<String, String> entry : detailMap.entrySet()) {
             String url = entry.getValue();
             try {
-                Document doc = Jsoup.parse(new URL(url),2000);
+                Document doc = Jsoup.parse(new URL(url), 2000);
                 Elements keys = doc.getElementsByClass("basicInfo-item name");
                 Elements values = doc.getElementsByClass("basicInfo-item value");
 
