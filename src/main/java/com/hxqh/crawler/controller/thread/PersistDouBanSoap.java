@@ -1,7 +1,7 @@
 package com.hxqh.crawler.controller.thread;
 
 import com.hxqh.crawler.common.Constants;
-import com.hxqh.crawler.model.VDouBanCrawlerFilm;
+import com.hxqh.crawler.model.VDouBanCrawlerSoap;
 import com.hxqh.crawler.repository.CrawlerDoubanSocreRepository;
 import com.hxqh.crawler.util.DouBanUtils;
 
@@ -15,30 +15,27 @@ import java.util.List;
  *
  * @author Ocean lin
  */
-public class PersistDouBan implements Runnable {
+public class PersistDouBanSoap implements Runnable {
 
-
-
-    private List<VDouBanCrawlerFilm> l;
+    private List<VDouBanCrawlerSoap> l;
     private CrawlerDoubanSocreRepository crawlerDoubanSocreRepository;
     private String category;
 
-    public PersistDouBan(List<VDouBanCrawlerFilm> l, CrawlerDoubanSocreRepository crawlerDoubanSocreRepository, String category) {
+    public PersistDouBanSoap(List<VDouBanCrawlerSoap> l, CrawlerDoubanSocreRepository crawlerDoubanSocreRepository, String category) {
         this.l = l;
         this.crawlerDoubanSocreRepository = crawlerDoubanSocreRepository;
         this.category = category;
     }
 
-
     @Override
     public void run() {
 
-        String cate = category == "film" ? "电影" : "";
+        String cate = category == "soap" ? "电视剧" : "";
 
         String urlString1 = null;
 
         for (int i = 0; i < l.size(); i++) {
-            VDouBanCrawlerFilm crawlerURL = l.get(i);
+            VDouBanCrawlerSoap crawlerURL = l.get(i);
             try {
                 urlString1 = URLEncoder.encode(crawlerURL.getTitle(), "UTF-8");
             } catch (UnsupportedEncodingException e) {
@@ -55,6 +52,8 @@ public class PersistDouBan implements Runnable {
 
             DouBanUtils.persistDouBan(cate, url, filmName, crawlerDoubanSocreRepository, category);
         }
+
+
     }
 
 

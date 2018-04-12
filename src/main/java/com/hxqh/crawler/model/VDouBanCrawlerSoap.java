@@ -1,52 +1,36 @@
 package com.hxqh.crawler.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * Created by Ocean lin on 2018/1/18.
+ * Created by Ocean lin on 2018/4/12.
+ *
+ * @author Ocean lin
  */
 @Entity
-@Table(name = "crawler_url_book")
-public class CrawlerBookURL {
+@Table(name = "v_douban_crawler_soap")
+public class VDouBanCrawlerSoap {
 
     @Id
-    @GeneratedValue
-    private Long bid;
-
-    private String url;
+    private Long cid;
     private String title;
+    private String url;
     private String addTime;
     private String category;
     private String platform;
+    private String sorted;
 
-    public CrawlerBookURL() {
+    public VDouBanCrawlerSoap() {
     }
 
-    public CrawlerBookURL(String url, String title, String addTime, String category, String platform) {
-        this.url = url;
-        this.title = title;
-        this.addTime = addTime;
-        this.category = category;
-        this.platform = platform;
+    public Long getCid() {
+        return cid;
     }
 
-    public Long getBid() {
-        return bid;
-    }
-
-    public void setBid(Long bid) {
-        this.bid = bid;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
+    public void setCid(Long cid) {
+        this.cid = cid;
     }
 
     public String getTitle() {
@@ -55,6 +39,14 @@ public class CrawlerBookURL {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getAddTime() {
@@ -79,5 +71,13 @@ public class CrawlerBookURL {
 
     public void setPlatform(String platform) {
         this.platform = platform;
+    }
+
+    public String getSorted() {
+        return sorted;
+    }
+
+    public void setSorted(String sorted) {
+        this.sorted = sorted;
     }
 }

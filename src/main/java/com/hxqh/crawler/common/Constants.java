@@ -94,9 +94,8 @@ public interface Constants {
     /**
      * 电视剧 & 电影 & 综艺
      */
-    String FILM_SOAP_VARIETY_INDEX  = "film_data";
-    String FILM_SOAP_VARIETY_TYPE  = "film";
-
+    String FILM_SOAP_VARIETY_INDEX = "film_data";
+    String FILM_SOAP_VARIETY_TYPE = "film";
 
 
     /**
@@ -132,4 +131,9 @@ public interface Constants {
     String BOOK_URL_INDEX = "history_url_book";
     String BOOK_URL_TYPE = "book";
 
+    /**
+     * 豆瓣
+     */
+    Integer DOUBAN_NUM = 4;
+    String DOUBAN_SEARCH_URL = "https://www.douban.com/search?q=";
 }
