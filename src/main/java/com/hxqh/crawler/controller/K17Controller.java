@@ -8,6 +8,7 @@ import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.HdfsUtils;
+import com.hxqh.crawler.util.HostUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,9 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * Created by Ocean lin on 2018/3/14.
@@ -57,8 +61,11 @@ public class K17Controller {
      *
      * @return
      */
-    @RequestMapping("/literatureDataUrl")
-    public String literatureDataUrl() {
+    @RequestMapping("/literatureData")
+    public String literatureData() {
+
+
+
 
 
         return "crawler/notice";
