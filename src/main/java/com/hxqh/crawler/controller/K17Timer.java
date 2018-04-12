@@ -87,11 +87,12 @@ public class K17Timer {
     }
 
     // 每天10点00分触发
-    @Scheduled(cron = "0 0 10 * * ?")
+    @Scheduled(cron = "0 0 12 * * ?")
     public void k17Data() {
 
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
+
 
 
                 List<CrawlerLiteratureURL> varietyURLList = crawlerLiteratureURLRepository.findAll();
@@ -119,6 +120,8 @@ public class K17Timer {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+
 
 
 

@@ -47,7 +47,7 @@ public class PersistLiterature implements Runnable {
             CrawlerLiteratureURL literatureURL = list.get(i);
             Document doc = Jsoup.connect(literatureURL.getUrl()).get();
 
-            String html = CrawlerUtils.fetchHTMLContent(literatureURL.getUrl(), Constants.DEFAULT_SEELP_SECOND_17K);
+            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(literatureURL.getUrl(), Constants.DEFAULT_SEELP_SECOND_17K);
             Document document = Jsoup.parse(html);
 
             String platform = literatureURL.getPlatform();
@@ -72,7 +72,13 @@ public class PersistLiterature implements Runnable {
 
                 String topicCount = document.getElementById("topicCount").text();
                 if (topicCount.endsWith("万")) {
-                    commentnum = Integer.valueOf(topicCount.substring(0, topicCount.length() - 2)) * Constants.TEN_THOUSAND;
+                    String substring = topicCount.substring(0, topicCount.length() - 2);
+                    if (substring.endsWith(".")) {
+                        String substring1 = substring.substring(0, substring.length() - 1);
+                        commentnum = Integer.valueOf(substring1) * Constants.TEN_THOUSAND;
+                    } else {
+                        commentnum = Integer.valueOf(substring) * Constants.TEN_THOUSAND;
+                    }
                 } else {
                     commentnum = Integer.valueOf(topicCount);
                 }
