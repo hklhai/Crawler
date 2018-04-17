@@ -36,7 +36,7 @@ public class PersistJdBook implements Runnable {
     @Override
     public void run() {
         try {
-            parseAndPersist(list, crawlerProblemRepository, systemService) ;
+            parseAndPersist(list, crawlerProblemRepository, systemService);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -63,12 +63,19 @@ public class PersistJdBook implements Runnable {
             try {
                 Element bookNameElement = doc.getElementById("name");
                 if (bookNameElement != null) {
-                    bookName = bookNameElement.select("h1").text();
+                    bookName = bookNameElement.getElementsByClass("sku-name").text();
                 }
 
-                Element categoryLableElement = doc.getElementsByClass("breadcrumb").get(0);
+                Element categoryLableElement = doc.getElementsByClass("crumb fl clearfix").get(0);
                 if (categoryLableElement != null) {
-                    categoryLable = categoryLableElement.select("span").select("a").text();
+                    categoryLable = categoryLableElement.getElementsByClass("item").text();
+                    String[] splits = categoryLable.split(">");
+                    StringBuilder builder = new StringBuilder(25);
+
+                    for (int j = 1; j < splits.length - 1; j++) {
+                        builder.append(splits[j].trim()).append(",");
+                    }
+                    categoryLable = builder.toString().substring(0, builder.length() - 1);
                 }
 
                 Element priceElement = doc.getElementById("jd-price");
@@ -89,7 +96,7 @@ public class PersistJdBook implements Runnable {
                             if (!commnetNum.equals("")) {
                                 Double v = Double.valueOf(commnetNum) * Constants.TEN_THOUSAND;
                                 commnetNum = String.valueOf(v.longValue());
-                            }else {
+                            } else {
                                 commnetNum = String.valueOf(0);
                             }
                         }

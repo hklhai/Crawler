@@ -2,9 +2,6 @@ package com.hxqh.crawler.test;
 
 import org.junit.Test;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 /**
  * Created by Ocean lin on 2018/1/25.
  *
@@ -40,6 +37,16 @@ public class StartCrawlerTest {
     public void testSOH() {
         String s = "0\u0001user0\u0001name0\u000119\u0001professional44\u0001city96\u0001male\n";
         System.out.println(s);
+
+        String x = "图书 > 社会科学 > 语言文字 > 斯坦威（STANDWAY） > 品味公文：公文写作大手笔练就之道";
+        String[] splits = x.split(">");
+        StringBuilder builder = new StringBuilder(25);
+
+        for (int i = 1; i < splits.length; i++) {
+            builder.append(splits[i].trim()).append(" ");
+        }
+        System.out.println(builder.toString().trim());
+
     }
 
 
