@@ -65,7 +65,6 @@ public class K17Controller {
     public String literatureData() {
 
 
-
         List<CrawlerLiteratureURL> varietyURLList = crawlerLiteratureURLRepository.findAll();
 
         List<CrawlerLiteratureURL> urlList = varietyURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()

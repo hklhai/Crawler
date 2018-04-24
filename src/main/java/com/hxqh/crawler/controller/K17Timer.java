@@ -86,13 +86,11 @@ public class K17Timer {
         }
     }
 
-    // 每天10点00分触发
-    @Scheduled(cron = "0 0 12 * * ?")
+
+    @Scheduled(cron = "0 30 5 * * ?")
     public void k17Data() {
-
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
-
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
 
 
 

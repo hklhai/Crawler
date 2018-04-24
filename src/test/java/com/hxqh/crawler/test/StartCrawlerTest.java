@@ -33,7 +33,7 @@ public class StartCrawlerTest {
 //    }
 
 
-    @Test
+//    @Test
     public void testSOH() {
         String s = "0\u0001user0\u0001name0\u000119\u0001professional44\u0001city96\u0001male\n";
         System.out.println(s);
