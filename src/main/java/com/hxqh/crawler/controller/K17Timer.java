@@ -87,12 +87,36 @@ public class K17Timer {
     }
 
 
-    @Scheduled(cron = "0 30 5 * * ?")
+    @Scheduled(cron = "0 3 11 * * ?")
     public void k17Data() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
 
+                List<CrawlerLiteratureURL> varietyURLList = crawlerLiteratureURLRepository.findAll();
 
+                List<CrawlerLiteratureURL> urlList = varietyURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                        -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+                Integer partitionNUm = urlList.size() / Constants.THREAD_NUM_17K + 1;
+                List<List<CrawlerLiteratureURL>> lists = ListUtils.partition(urlList, partitionNUm);
+
+                ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM_17K);
+
+                for (List<CrawlerLiteratureURL> list : lists) {
+                    service.execute(new PersistLiterature(systemService, list));
+                }
+                service.shutdown();
+                while (!service.isTerminated()) {
+                }
+
+                // 2. 上传至HDFS
+                try {
+                    HdfsUtils.persistToHDFS("-literature-17k", Constants.FILE_LOC);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
 
             }
