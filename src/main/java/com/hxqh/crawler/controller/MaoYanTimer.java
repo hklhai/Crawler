@@ -80,24 +80,24 @@ public class MaoYanTimer {
     }
 
 
-    //3s执行一次
-    @Scheduled(cron = "0/3 * * * * ?")
-    public void maoYanPerThreeSecond() {
-        try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
-                //  获取当前时间
-                String dateString = DateUtils.getTodayDate();
-                try {
-                    JsonObject xpath = ReadUrlUtils.getXpath(url);
-                    FileUtils.writeStrToFile(xpath.toString() + "\n",
-                            Constants.MAOYAN_THREE_SECOND_PATH + Constants.FILE_SPLIT + dateString);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    //3s执行一次
+//    @Scheduled(cron = "0/3 * * * * ?")
+//    public void maoYanPerThreeSecond() {
+//        try {
+//            if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
+//                //  获取当前时间
+//                String dateString = DateUtils.getTodayDate();
+//                try {
+//                    JsonObject xpath = ReadUrlUtils.getXpath(url);
+//                    FileUtils.writeStrToFile(xpath.toString() + "\n",
+//                            Constants.MAOYAN_THREE_SECOND_PATH + Constants.FILE_SPLIT + dateString);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 }
