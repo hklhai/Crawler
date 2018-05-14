@@ -150,6 +150,7 @@ public class JdTimer {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
 
+
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findAll();
 
@@ -175,6 +176,7 @@ public class JdTimer {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
 
 
             }
