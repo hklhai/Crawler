@@ -34,7 +34,7 @@ import java.util.concurrent.Executors;
 
 /**
  * @author Ocean Lin
- *
+ * <p>
  * Created by Ocean lin on 2017/7/1.
  */
 @Controller
@@ -64,7 +64,6 @@ public class IqiyiController {
     public String filmUrl() throws Exception {
 
 
-
         return "crawler/notice";
     }
 
@@ -77,7 +76,6 @@ public class IqiyiController {
      */
     @RequestMapping("/filmData")
     public String filmData() throws Exception {
-
 
 
         return "crawler/notice";
@@ -98,9 +96,6 @@ public class IqiyiController {
     }
 
 
-
-
-
     /**
      * 每部综艺节目链接爬取
      *
@@ -111,12 +106,8 @@ public class IqiyiController {
     public String eachVarietyUrl() throws Exception {
 
 
-
         return "crawler/notice";
     }
-
-
-
 
 
     /**
@@ -129,11 +120,8 @@ public class IqiyiController {
     public String varietyUrl() throws Exception {
 
 
-
         return "crawler/notice";
     }
-
-
 
 
     /**
@@ -148,6 +136,46 @@ public class IqiyiController {
 
         return "crawler/notice";
     }
+
+    @RequestMapping("/test")
+    public String test() throws Exception {
+        String url = "http://www.iqiyi.com/v_19rrc370w4.html#vfrm=2-4-0-1";
+        String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, Constants.DEFAULT_SEELP_SECOND_IQIYI);
+        Document doc = Jsoup.parse(html);
+        String filmName = new String();
+        Element filmNameElement = doc.getElementById("widget-videotitle");
+
+        if (filmNameElement != null) {
+            filmName = filmNameElement.text();
+            if (filmName.startsWith(Constants.IQIYI_VARIETY_COLON)) {
+                filmName = filmName.replace(Constants.IQIYI_VARIETY_COLON, "");
+            }
+        }
+
+
+        String commentNum = doc.getElementsByClass("score-user-num").text();
+        if (commentNum.endsWith("万人评分")) {
+            commentNum = commentNum.substring(0, commentNum.length() - 4);
+            Double v = Double.valueOf(commentNum) * Constants.TEN_THOUSAND;
+            commentNum = String.valueOf(v.longValue());
+        }
+        if (commentNum.endsWith("人评分")) {
+            commentNum = commentNum.substring(0, commentNum.length() - 4);
+            if ("".equals(commentNum)) {
+                commentNum = "0";
+            } else {
+                commentNum = String.valueOf(Long.valueOf(commentNum));
+            }
+        }
+        if ("".equals(commentNum)) {
+            commentNum = "0";
+        }
+
+        System.out.println(filmName + ":" + commentNum);
+
+        return "crawler/notice";
+    }
+
 
 }
 
