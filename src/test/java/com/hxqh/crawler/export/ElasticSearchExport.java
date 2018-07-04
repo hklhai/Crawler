@@ -46,15 +46,37 @@ public class ElasticSearchExport {
 
     /**
      * curl -H "Content-Type: application/x-ndjson" -XPOST "spark3:9200/film_data/film/_bulk?pretty" --data-binary @news_data.json
+     *
+     *
      * curl -H "Content-Type: application/x-ndjson" -XPOST "203.93.173.179:9200/news_data/news/_bulk?pretty" --data-binary @news_data.json
+     * curl -H "Content-Type: application/x-ndjson" -XPOST "203.93.173.179:9200/chapter_data/chapter/_bulk?pretty" --data-binary @chapter.json
+     * curl -H "Content-Type: application/x-ndjson" -XPOST "203.93.173.179:9200/book_info/book/_bulk?pretty" --data-binary @book_info.json
+     * curl -H "Content-Type: application/x-ndjson" -XPOST "203.93.173.179:9200/search_text/text/_bulk?pretty" --data-binary @search_text.json
      */
     @Test
     public void test() {
-        String indexName = "news_data";
-        String typeName = "news";
-        String toIndexName = "news_data";
+//        String indexName = "news_data";
+//        String typeName = "news";
+//        String toIndexName = "news_data";
+//        String fileName = "/home/hadoop/export_es/news_data.json";
 
-        String fileName = "/home/hadoop/export_es/news_data.json";
+
+//        String indexName = "chapter_data";
+//        String typeName = "chapter";
+//        String toIndexName = "chapter_data";
+//        String fileName = "/home/hadoop/export_es/chapter.json";
+
+
+//        String indexName = "book_info";
+//        String typeName = "book";
+//        String toIndexName = "book_info";
+//        String fileName = "/home/hadoop/export_es/book_info.json";
+
+
+        String indexName = "search_text";
+        String typeName = "text";
+        String toIndexName = "search_text";
+        String fileName = "/home/hadoop/export_es/search_text.json";
 
         SearchResponse response = client.prepareSearch(indexName).setTypes(typeName).setQuery(QueryBuilders.
                 matchAllQuery()).execute().actionGet();
