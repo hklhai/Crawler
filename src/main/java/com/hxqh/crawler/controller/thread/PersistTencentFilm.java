@@ -123,7 +123,7 @@ public class PersistTencentFilm implements Runnable {
                 /**
                  * 持久化至ES
                  */
-                if (!score.trim().equals("评论人数不足")) {
+                if (!"评论人数不足".equals(score.trim())) {
                     VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, label, score, commentNum, up, addTime, playNum, category);
 
                     systemService.addVideos(videosFilm);

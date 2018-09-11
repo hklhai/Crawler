@@ -81,7 +81,7 @@ public class PersistJdBook implements Runnable {
                 Element priceElement = doc.getElementById("jd-price");
                 if (priceElement != null) {
                     price = priceElement.text().substring(1, priceElement.text().length());
-                    if (price.equals("无报价")) {
+                    if ("无报价".equals(price)) {
                         price = "0";
                     }
                 }

@@ -61,7 +61,8 @@ public interface Constants {
      */
     String HDFS_URL = "hdfs://spark1:9000";
     Integer DEFAULT_SEELP_SECOND = 15;
-    Integer DEFAULT_SEELP_SECOND_IQIYI = 15;
+    Integer DEFAULT_SEELP_SECOND_IQIYI = 30;
+    Integer MORE_SEELP_SECOND_IQIYI = 50;
     Integer DEFAULT_SEELP_SECOND_JD_BOOK = 6;
 
     Integer TEN_THOUSAND = 10000;

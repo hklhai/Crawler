@@ -13,7 +13,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -350,11 +349,16 @@ public class CrawlerUtils {
 
         try {
             Integer sleepTime = second * 1000;
-            System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
-            ChromeDriverService service = new ChromeDriverService
-                    .Builder().usingDriverExecutable(new File(Constants.CHROMEDRIVER)).usingAnyFreePort().build();
-            service.start();
-            webDriver = new ChromeDriver();
+//            System.getProperties().setProperty("webdriver.chrome.driver", Constants.CHROMEDRIVER);
+//            ChromeDriverService service = new ChromeDriverService
+//                    .Builder().usingDriverExecutable(new File(Constants.CHROMEDRIVER)).usingAnyFreePort().build();
+//            service.start();
+
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("headless"); //无界面参数
+            options.addArguments("no-sandbox"); //禁用沙盒 就是被这个参数搞了一天
+
+            webDriver = new ChromeDriver(options);
             webDriver.get(url);
             Thread.sleep(sleepTime);
             WebElement webElement = webDriver.findElement(By.xpath("/html"));

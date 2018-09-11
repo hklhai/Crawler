@@ -56,7 +56,7 @@ public class PersistLiterature implements Runnable {
             String mainclass = new String();
             String subclass = new String();
             String label = new String();
-            Long fans = 0l;
+            Long fans = 0L;
             Integer commentnum = null;
             Long clicknum = null;
 

@@ -13,7 +13,6 @@ import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.List;
@@ -69,6 +68,7 @@ public class PersistFilm implements Runnable {
                                         CrawlerProblemRepository crawlerProblemRepository,
                                         SystemService systemService) {
         StringBuilder stringBuilder = new StringBuilder(STRINGBUILDER_SIZE);
+
         CrawlerURL crawlerURL = null;
         Integer len = null;
         if (null != hrefList) {
@@ -87,6 +87,7 @@ public class PersistFilm implements Runnable {
                 String url = new String();
                 String source = new String();
                 String category = new String();
+                String commentNum = new String();
 
 
                 if (null != hrefList) {
@@ -110,7 +111,7 @@ public class PersistFilm implements Runnable {
                 }
 
 
-                String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, Constants.DEFAULT_SEELP_SECOND_IQIYI);
+                String html = CrawlerUtils.fetchHTMLContent(url, Constants.DEFAULT_SEELP_SECOND_IQIYI);
                 Document doc = Jsoup.parse(html);
 
                 String filmName = new String();
@@ -119,75 +120,49 @@ public class PersistFilm implements Runnable {
                 String label = new String();
                 String score = new String();
 
-                Element filmNameElement = doc.getElementById("widget-videotitle");
-                Elements progInfo = doc.getElementsByClass("progInfo_txt");
-
-                if (filmNameElement != null && progInfo != null) {
-
-                    if (filmNameElement != null) {
-                        filmName = filmNameElement.text();
-                        if (filmName.startsWith(Constants.IQIYI_VARIETY_COLON)) {
-                            filmName = filmName.replace(Constants.IQIYI_VARIETY_COLON, "");
-                        }
+                // 名称
+                if (!"variety".equals(category)) {
+                    filmName = doc.getElementsByClass("header-link").text();
+                } else {
+                    filmName = doc.getElementsByClass("header-link").text();
+                    Elements player_title = doc.getElementsByClass("player-title");
+                    if (player_title.size() > 0) {
+                        filmName += filmName + " : " + player_title.get(0).select("em").text();
                     }
+                }
+                Elements elements = null;
+                Elements intro_detail_elements = doc.getElementsByClass("intro-detail");
+                if (intro_detail_elements.size() > 0) {
+                    elements = intro_detail_elements.get(0).getElementsByClass("intro-detail-item");
+                } else {
+                    continue;
+                }
 
+                // 演员
+                if (!"variety".equals(category)) {
+                    star = elements.get(2).select("a").text();
+                } else {
+                    star = elements.get(0).select("a").text();
+                }
+                // 导演
+                director = elements.get(1).select("a").text();
 
-                    // 电影
-                    if (null != hrefList || null != soapURLList) {
-                        // 演员
-                        Elements starEle = progInfo.select("p");
-                        if (starEle.size() < 3) {
-                            System.out.println(url);
-                            star = " ";
-                        } else {
-                            Elements starElement = doc.getElementsByClass("progInfo_txt").
-                                    select("p").get(2).select("span").get(1).select("a");
-                            if (starElement != null) {
-                                star = starElement.text();
-                            }
-                        }
-                    }
-
-                    // 综艺
-                    if (null != varietyURLList) {
-                        Elements elements = doc.getElementById("datainfo-cast-list").select("a");
-                        star = elements.text();
-                    }
-
-
-                    // 导演
-                    Elements directorEle = doc.getElementsByClass("progInfo_txt").select("p");
-                    if (directorEle.size() < 2) {
-                        System.out.println(url);
-                        director = " ";
-                    } else {
-                        Elements directorElement = doc.getElementsByClass("progInfo_txt").
-                                select("p").get(1).select("span").get(1).select("a");
-                        if (directorElement != null) {
-                            director = directorElement.text();
-                        }
-                    }
-
-                    Element dataInfoElement = doc.getElementById("datainfo-taglist");
-                    if (dataInfoElement != null) {
-                        Elements labelElement = dataInfoElement.select("a");
-                        label = labelElement.text();
-                    } else {
-                        label = " ";
-                    }
-
-                    Element playerAreaScore = doc.getElementById("playerAreaScore");
-                    if (null != playerAreaScore) {
-                        score = playerAreaScore.attr("snsscore");
-                        if ("".equals(score)) {
-                            score = "0.0";
-                        }
+                // label
+                if (!"film".equals(category)) {
+                    label = doc.getElementsByClass("qy-player-tag").get(0).select("a").text();
+                } else if ("".equals(category)) {
+                    label = elements.get(3).select("a").text();
+                }
+                if ("film".equals(category)) {
+                    // 分数 score
+                    Elements span = doc.getElementsByClass("score-new").select("span");
+                    if (span.size() > 0) {
+                        score = span.get(0).text();
                     } else {
                         score = "0.0";
                     }
-
-
-                    String commentNum = doc.getElementsByClass("score-user-num").text();
+                    // 评分人数
+                    commentNum = doc.getElementsByClass("score-user-num").text();
                     if (commentNum.endsWith("万人评分")) {
                         commentNum = commentNum.substring(0, commentNum.length() - 4);
                         Double v = Double.valueOf(commentNum) * Constants.TEN_THOUSAND;
@@ -205,101 +180,123 @@ public class PersistFilm implements Runnable {
                         commentNum = "0";
                     }
 
-                    String up = doc.getElementById("widget-voteupcount").text();
-                    if (up.endsWith("万")) {
-                        up = up.substring(0, up.length() - 1);
-                        if ("".equals(up)) {
-                            up = "0";
-                        } else {
-                            Double v = Double.valueOf(up) * Constants.TEN_THOUSAND;
-                            up = String.valueOf(v.longValue());
-                        }
-                    }
-                    if ("".equals(up)) {
+                } else if (!"film".equals(category)) {
+                    score = "0.0";
+                    commentNum = "0";
+                }
+                String up = new String();
+                Elements func_item = doc.getElementsByClass("func-item func-like");
+                if (func_item.size() > 0) {
+                    Elements span = func_item.get(0).select("span");
+                    if (span.size() > 0) {
+                        up = span.get(0).text();
+                    } else {
                         up = "0";
                     }
-
-                    String addTime = DateUtils.getTodayDate();
-                    String playNum = doc.getElementById("chartTrigger").select("span").text();
-
-                    if (playNum.endsWith("万")) {
-                        playNum = playNum.substring(0, playNum.length() - 1);
-                        Double v = Double.valueOf(playNum) * Constants.TEN_THOUSAND;
-                        playNum = String.valueOf(v.longValue());
+                } else {
+                    up = "0";
+                }
+                if (up.endsWith("万")) {
+                    up = up.substring(0, up.length() - 1);
+                    if ("".equals(up)) {
+                        up = "0";
+                    } else {
+                        Double v = Double.valueOf(up) * Constants.TEN_THOUSAND;
+                        up = String.valueOf(v.longValue());
                     }
-                    if (playNum.endsWith("亿")) {
-                        playNum = playNum.substring(0, playNum.length() - 1);
-                        Double v = Double.valueOf(playNum) * Constants.BILLION;
-                        playNum = String.valueOf(v.longValue());
-                    }
-                    if ("".equals(playNum)) {
+                }
+                if ("".equals(up)) {
+                    up = "0";
+                }
+
+
+                String addTime = DateUtils.getTodayDate();
+                String playNum = doc.getElementById("titleRow").getElementsByClass("basic-txt").get(0).text();
+                if ("影片简介".equals(playNum) || "剧集简介".equals(playNum) || "栏目简介".equals(playNum)) {
+                    html = CrawlerUtils.fetchHTMLContent(url, Constants.MORE_SEELP_SECOND_IQIYI);
+                    doc = Jsoup.parse(html);
+                    playNum = doc.getElementById("titleRow").getElementsByClass("basic-txt").get(0).text();
+                    if ("影片简介".equals(playNum) || "剧集简介".equals(playNum) || "栏目简介".equals(playNum)) {
                         playNum = "0";
                     }
+                }
 
 
-                    /**
-                     * 3.解析并持久化至本地文件系统
-                     */
-                    stringBuilder.append(source.trim()).append("^").
-                            append(filmName.trim()).append("^").
-                            append(star.trim()).append("^").
-                            append(director.trim()).append("^").
-                            append(category.trim()).append("^").
-                            append(label.trim()).append("^").
-                            append(score.trim()).append("^").
-                            append(commentNum.trim()).append("^").
-                            append(up.trim()).append("^").
-                            append(addTime.trim()).append("^").
-                            append(playNum.trim()).append("\n");
+                if (playNum.endsWith("万")) {
+                    playNum = playNum.substring(0, playNum.length() - 1);
+                    Double v = Double.valueOf(playNum) * Constants.TEN_THOUSAND;
+                    playNum = String.valueOf(v.longValue());
+                }
+                if (playNum.endsWith("亿")) {
+                    playNum = playNum.substring(0, playNum.length() - 1);
+                    Double v = Double.valueOf(playNum) * Constants.BILLION;
+                    playNum = String.valueOf(v.longValue());
+                }
+                if ("".equals(playNum)) {
+                    playNum = "0";
+                }
 
 
-                    if (null != hrefList) {
-                        String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT +
-                                DateUtils.getTodayDate() + "-" + source;
-                        String s = stringBuilder.toString();
-                        FileUtils.writeStrToFile(s, fileName);
-                        stringBuilder.setLength(0);
-                        System.out.println(filmName.trim() + " Persist Success!");
-                    }
-                    if (null != varietyURLList) {
+                /**
+                 * 3.解析并持久化至本地文件系统
+                 */
+                stringBuilder.append(source.trim()).append("^").
+                        append(filmName.trim()).append("^").
+                        append(star.trim()).append("^").
+                        append(director.trim()).append("^").
+                        append(category.trim()).append("^").
+                        append(label.trim()).append("^").
+                        append(score.trim()).append("^").
+                        append(commentNum.trim()).append("^").
+                        append(up.trim()).append("^").
+                        append(addTime.trim()).append("^").
+                        append(playNum.trim()).append("\n");
 
-                        String fileName = Constants.SAVE_VARIETY_PATH + Constants.FILE_SPLIT +
-                                DateUtils.getTodayDate() + "-" + source;
-                        String s = stringBuilder.toString();
-                        FileUtils.writeStrToFile(s, fileName);
-                        stringBuilder.setLength(0);
-                        System.out.println(filmName.trim() + " Persist Success!");
-                    }
-                    if (null != soapURLList) {
-                        String fileName = Constants.SAVE_SOAP_PATH + Constants.FILE_SPLIT +
-                                DateUtils.getTodayDate() + "-" + source;
-                        String s = stringBuilder.toString();
-                        FileUtils.writeStrToFile(s, fileName);
-                        stringBuilder.setLength(0);
-                        System.out.println(filmName.trim() + " Persist Success!");
-                    }
+                if (null != hrefList) {
+                    String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT +
+                            DateUtils.getTodayDate() + "-" + source;
+                    String s = stringBuilder.toString();
+                    FileUtils.writeStrToFile(s, fileName);
+                    stringBuilder.setLength(0);
+                    System.out.println(filmName.trim() + " Persist Success!");
+                }
+                if (null != varietyURLList) {
+
+                    String fileName = Constants.SAVE_VARIETY_PATH + Constants.FILE_SPLIT +
+                            DateUtils.getTodayDate() + "-" + source;
+                    String s = stringBuilder.toString();
+                    FileUtils.writeStrToFile(s, fileName);
+                    stringBuilder.setLength(0);
+                    System.out.println(filmName.trim() + " Persist Success!");
+                }
+                if (null != soapURLList) {
+                    String fileName = Constants.SAVE_SOAP_PATH + Constants.FILE_SPLIT +
+                            DateUtils.getTodayDate() + "-" + source;
+                    String s = stringBuilder.toString();
+                    FileUtils.writeStrToFile(s, fileName);
+                    stringBuilder.setLength(0);
+                    System.out.println(filmName.trim() + " Persist Success!");
+                }
 
 
-                    /**
-                     * 持久化至ES
-                     */
-                    if (!score.trim().equals("评分人数不足")) {
-                        VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, category, label, score, commentNum, up, addTime, playNum);
-                        videosFilm.setPlayNum(Integer.valueOf(playNum.trim()));
-                        systemService.addVideos(videosFilm);
-                    } else {
-                        continue;
-                    }
-
+                /**
+                 * 持久化至ES
+                 */
+                if (!"评分人数不足".equals(score.trim())) {
+                    VideosFilm videosFilm = setVideosFilm(source, filmName, star, director, category, label, score, commentNum, up, addTime, playNum);
+                    videosFilm.setPlayNum(Integer.valueOf(playNum.trim()));
+                    systemService.addVideos(videosFilm);
                 } else {
                     continue;
                 }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
             // 持久化无法爬取URL 关闭持久化无法爬取URL
             // CrawlerUtils.persistProblemURL(crawlerProblemRepository, crawlerURL);
         }
+
     }
 
     public static VideosFilm setVideosFilm(String source, String filmName, String star, String director, String category, String label, String score, String commentNum, String up, String addTime, String playNum) {

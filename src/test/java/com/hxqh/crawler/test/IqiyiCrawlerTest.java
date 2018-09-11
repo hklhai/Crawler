@@ -1,10 +1,8 @@
 package com.hxqh.crawler.test;
 
 
-import com.hxqh.crawler.repository.CrawlerProblemRepository;
-import com.hxqh.crawler.repository.CrawlerURLRepository;
-import com.hxqh.crawler.repository.CrawlerVarietyRepository;
-import com.hxqh.crawler.repository.CrawlerVarietyURLRepository;
+import com.hxqh.crawler.model.CrawlerVarietyURL;
+import com.hxqh.crawler.repository.*;
 import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
 import org.junit.Test;
@@ -14,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 /**
@@ -21,8 +20,8 @@ import javax.annotation.Resource;
  *
  * @author Lin
  */
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class IqiyiCrawlerTest {
 
     @Resource
@@ -35,25 +34,23 @@ public class IqiyiCrawlerTest {
     private CrawlerService crawlerService;
     @Autowired
     private CrawlerVarietyRepository crawlerVarietyRepository;
-
-
-
-
-    @Test
-    public void persistEachVarietyUrl() {
-
-    }
+    @Autowired
+    private CrawlerVarietyURLRepository crawlerVarietyURLRepository;
+    @Autowired
+    private CrawlerSoapURLRepository soapURLRepository;
 
 
     @Test
     public void persist() {
+//        List<CrawlerSoapURL> soapURLList = soapURLRepository.findAll();
 
+//        List<CrawlerURL> hrefList = crawlerURLRepository.findFilm();
+        List<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll();
+
+        StringBuilder stringBuilder = new StringBuilder(300);
 
 
     }
-
-
-
 
 
 }
