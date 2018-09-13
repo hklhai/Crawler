@@ -134,7 +134,7 @@ public class K17Timer {
         }
     }
 
-    @Scheduled(cron = "0 0 14 * * ?")
+    @Scheduled(cron = "0 10 14 * * ?")
 //    @Scheduled(cron = "0 0 1 * * ?")
     public void status() {
         try {
