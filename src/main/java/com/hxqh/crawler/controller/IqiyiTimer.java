@@ -135,7 +135,7 @@ public class IqiyiTimer {
     @Scheduled(cron = "0 10 0 * * ?")
     public void iqiyiVariety() {
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
                 List<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll();
 
                 List<CrawlerVarietyURL> urlList = varietyURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
