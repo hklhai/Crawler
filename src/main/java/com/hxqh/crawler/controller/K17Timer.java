@@ -134,8 +134,7 @@ public class K17Timer {
         }
     }
 
-    @Scheduled(cron = "0 10 14 * * ?")
-//    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "0 35 14 * * ?")
     public void status() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
