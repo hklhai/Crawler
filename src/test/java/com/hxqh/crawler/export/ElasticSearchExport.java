@@ -76,7 +76,7 @@ public class ElasticSearchExport {
         String indexName = "search_text";
         String typeName = "text";
         String toIndexName = "search_text";
-        String fileName = "/home/hadoop/export_es/search_text.json";
+        String fileName = "D:\\search_text.json";
 
         SearchResponse response = client.prepareSearch(indexName).setTypes(typeName).setQuery(QueryBuilders.
                 matchAllQuery()).execute().actionGet();
@@ -89,7 +89,7 @@ public class ElasticSearchExport {
         resultHits = response.getHits();
 
         StringBuilder stringBuilder = new StringBuilder(128214);
-        for (int i = 0; i < resultHits.getHits().length; i++) {
+        for (int i = 0; i < resultHits.getHits().length-1; i++) {
             String jsonStr = resultHits.getHits()[i].getSourceAsString();
 
             String index = "{\"index\":{\"_index\":\"" + toIndexName + "\",\"_id\":" + i + "}}\n";

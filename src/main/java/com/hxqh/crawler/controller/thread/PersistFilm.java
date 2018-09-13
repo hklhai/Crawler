@@ -148,11 +148,8 @@ public class PersistFilm implements Runnable {
                 director = elements.get(1).select("a").text();
 
                 // label
-                if (!"film".equals(category)) {
-                    label = doc.getElementsByClass("qy-player-tag").get(0).select("a").text();
-                } else if ("".equals(category)) {
-                    label = elements.get(3).select("a").text();
-                }
+                label = doc.getElementsByClass("qy-player-tag").get(0).select("a").text();
+
                 if ("film".equals(category)) {
                     // 分数 score
                     Elements span = doc.getElementsByClass("score-new").select("span");
