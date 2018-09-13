@@ -1,15 +1,20 @@
 package com.hxqh.crawler.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.controller.thread.PersistLiterature;
 import com.hxqh.crawler.model.CrawlerLiteratureURL;
+import com.hxqh.crawler.model.Status;
 import com.hxqh.crawler.repository.CrawlerLiteratureURLRepository;
+import com.hxqh.crawler.repository.StatusRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.HdfsUtils;
 import com.hxqh.crawler.util.HostUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
+import org.elasticsearch.client.transport.TransportClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -19,10 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -39,6 +41,11 @@ public class K17Timer {
     private SystemService systemService;
     @Autowired
     private CrawlerLiteratureURLRepository crawlerLiteratureURLRepository;
+
+    @Autowired
+    private TransportClient client;
+    @Autowired
+    private StatusRepository statusRepository;
 
     // 每月最后一日的上午10:15触发
     @Scheduled(cron = "0 15 10 14 * ?")
@@ -118,6 +125,43 @@ public class K17Timer {
                     e.printStackTrace();
                 }
 
+
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Scheduled(cron = "0 0 14 * * ?")
+//    @Scheduled(cron = "0 0 1 * * ?")
+    public void status() {
+        try {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
+                Map<String, Integer> map = new HashMap<>();
+
+                GetIndexResponse response = client.admin().indices().prepareGetIndex().execute().actionGet();
+                String[] indices = response.getIndices();
+                for (String index : indices) {
+                    String res = client.prepareSearch(index)
+                            .setSize(0)
+                            .execute()
+                            .actionGet()
+                            .toString();
+
+
+                    JSONObject json = JSONObject.parseObject(res);
+                    String countNumber = json.getJSONObject("hits").getString("total");
+                    map.put(index, Integer.valueOf(countNumber));
+                }
+                Status status = new Status();
+                status.setBook(map.get("market_book2"));
+                status.setIqiyi(map.get("film_data"));
+                status.setLiterature(map.get("market_literature"));
+                status.setMaoyan(map.get("maoyan"));
+                status.setAdddate(new Date());
+                statusRepository.save(status);
 
             }
         } catch (URISyntaxException e) {
