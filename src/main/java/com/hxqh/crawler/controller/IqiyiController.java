@@ -2,18 +2,17 @@ package com.hxqh.crawler.controller;
 
 import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.controller.thread.PersistFilm;
+import com.hxqh.crawler.model.CrawlerSoapURL;
+import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.CrawlerVarietyURL;
 import com.hxqh.crawler.repository.*;
 import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
-import com.hxqh.crawler.util.HdfsUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -25,8 +24,8 @@ import java.util.stream.Collectors;
 
 /**
  * @author Ocean Lin
- *         <p>
- *         Created by Ocean lin on 2017/7/1.
+ * <p>
+ * Created by Ocean lin on 2017/7/1.
  */
 @Controller
 @RequestMapping("/iqiyi")
@@ -67,7 +66,22 @@ public class IqiyiController {
      */
     @RequestMapping("/filmData")
     public String filmData() throws Exception {
+        // 1. 从数据库获取待爬取链接
+        List<CrawlerURL> crawlerURLS = crawlerURLRepository.findFilm();
 
+        List<CrawlerURL> urlList = crawlerURLS.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+        Integer partitionNUm = urlList.size() / Constants.IQIYI_THREAD_NUM + 1;
+        List<List<CrawlerURL>> lists = ListUtils.partition(urlList, partitionNUm);
+        ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
+
+        for (List<CrawlerURL> l : lists) {
+            service.execute(new PersistFilm(l, crawlerProblemRepository, systemService));
+        }
+        service.shutdown();
+        while (!service.isTerminated()) {
+        }
 
         return "crawler/notice";
     }
@@ -81,8 +95,22 @@ public class IqiyiController {
      */
     @RequestMapping("/soapUrl")
     public String soapUrl() throws Exception {
+        List<CrawlerSoapURL> soapURLList = soapURLRepository.findAll();
 
+        List<CrawlerSoapURL> urlList = soapURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
 
+        Integer partitionNUm = urlList.size() / Constants.IQIYI_THREAD_NUM + 1;
+        List<List<CrawlerSoapURL>> lists = ListUtils.partition(urlList, partitionNUm);
+
+        ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
+
+        for (List<CrawlerSoapURL> l : lists) {
+            service.execute(new PersistFilm(l, systemService));
+        }
+        service.shutdown();
+        while (!service.isTerminated()) {
+        }
         return "crawler/notice";
     }
 
@@ -139,23 +167,6 @@ public class IqiyiController {
         service.shutdown();
         while (!service.isTerminated()) {
         }
-
-        // 2. 上传至HDFS
-        try {
-            HdfsUtils.persistToHDFS("-variety-iqiyi", Constants.FILE_LOC_VARIETY);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return "crawler/notice";
-    }
-
-    @RequestMapping("/test")
-    public String test() throws Exception {
-
-
         return "crawler/notice";
     }
 

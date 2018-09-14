@@ -249,31 +249,31 @@ public class PersistFilm implements Runnable {
                         append(addTime.trim()).append("^").
                         append(playNum.trim()).append("\n");
 
-                if (null != hrefList) {
-                    String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT +
-                            DateUtils.getTodayDate() + "-" + source;
-                    String s = stringBuilder.toString();
-                    FileUtils.writeStrToFile(s, fileName);
-                    stringBuilder.setLength(0);
-                    System.out.println(filmName.trim() + " Persist Success!");
-                }
-                if (null != varietyURLList) {
-
-                    String fileName = Constants.SAVE_VARIETY_PATH + Constants.FILE_SPLIT +
-                            DateUtils.getTodayDate() + "-" + source;
-                    String s = stringBuilder.toString();
-                    FileUtils.writeStrToFile(s, fileName);
-                    stringBuilder.setLength(0);
-                    System.out.println(filmName.trim() + " Persist Success!");
-                }
-                if (null != soapURLList) {
-                    String fileName = Constants.SAVE_SOAP_PATH + Constants.FILE_SPLIT +
-                            DateUtils.getTodayDate() + "-" + source;
-                    String s = stringBuilder.toString();
-                    FileUtils.writeStrToFile(s, fileName);
-                    stringBuilder.setLength(0);
-                    System.out.println(filmName.trim() + " Persist Success!");
-                }
+//                if (null != hrefList) {
+//                    String fileName = Constants.SAVE_PATH + Constants.FILE_SPLIT +
+//                            DateUtils.getTodayDate() + "-" + source;
+//                    String s = stringBuilder.toString();
+//                    FileUtils.writeStrToFile(s, fileName);
+//                    stringBuilder.setLength(0);
+//                    System.out.println(filmName.trim() + " Persist Success!");
+//                }
+//                if (null != varietyURLList) {
+//
+//                    String fileName = Constants.SAVE_VARIETY_PATH + Constants.FILE_SPLIT +
+//                            DateUtils.getTodayDate() + "-" + source;
+//                    String s = stringBuilder.toString();
+//                    FileUtils.writeStrToFile(s, fileName);
+//                    stringBuilder.setLength(0);
+//                    System.out.println(filmName.trim() + " Persist Success!");
+//                }
+//                if (null != soapURLList) {
+//                    String fileName = Constants.SAVE_SOAP_PATH + Constants.FILE_SPLIT +
+//                            DateUtils.getTodayDate() + "-" + source;
+//                    String s = stringBuilder.toString();
+//                    FileUtils.writeStrToFile(s, fileName);
+//                    stringBuilder.setLength(0);
+//                    System.out.println(filmName.trim() + " Persist Success!");
+//                }
 
 
                 /**

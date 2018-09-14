@@ -72,14 +72,14 @@ public class IqiyiTimer {
                 while (!service.isTerminated()) {
                 }
 
-                // 2. 上传至HDFS
-                try {
-                    HdfsUtils.persistToHDFS("-iqiyi", Constants.FILE_LOC);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                // 2. 上传至HDFS
+//                try {
+//                    HdfsUtils.persistToHDFS("-iqiyi", Constants.FILE_LOC);
+//                } catch (URISyntaxException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
 
 
             }
@@ -114,15 +114,14 @@ public class IqiyiTimer {
                 service.shutdown();
                 while (!service.isTerminated()) {
                 }
-
-                // 2. 上传至HDFS
-                try {
-                    HdfsUtils.persistToHDFS("-soap-iqiyi", Constants.FILE_LOC_SOAP);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                // 2. 上传至HDFS
+//                try {
+//                    HdfsUtils.persistToHDFS("-soap-iqiyi", Constants.FILE_LOC_SOAP);
+//                } catch (URISyntaxException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,14 +152,14 @@ public class IqiyiTimer {
                 while (!service.isTerminated()) {
                 }
 
-                // 2. 上传至HDFS
-                try {
-                    HdfsUtils.persistToHDFS("-variety-iqiyi", Constants.FILE_LOC_VARIETY);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                // 2. 上传至HDFS
+//                try {
+//                    HdfsUtils.persistToHDFS("-variety-iqiyi", Constants.FILE_LOC_VARIETY);
+//                } catch (URISyntaxException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
             }
         } catch (Exception e) {
             e.printStackTrace();
