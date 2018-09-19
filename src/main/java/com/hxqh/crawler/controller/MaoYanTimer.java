@@ -36,7 +36,7 @@ public class MaoYanTimer {
     @Scheduled(cron = "0 */60 * * * * ")
     public void maoYanOnehour() {
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
                 //  获取当前时间
                 String dateString = DateUtils.getTodayDate();
                 try {

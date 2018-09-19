@@ -57,7 +57,7 @@ public class JdTimer {
     public void jdUrlList() {
 
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
 
                 /**
                  * 爬取数据

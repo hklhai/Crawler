@@ -97,7 +97,7 @@ public class IqiyiTimer {
     @Scheduled(cron = "0 0 1 * * ?")
     public void iqiyiSoap() {
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
                 List<CrawlerSoapURL> soapURLList = soapURLRepository.findAll();
 
                 List<CrawlerSoapURL> urlList = soapURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
@@ -134,7 +134,7 @@ public class IqiyiTimer {
     @Scheduled(cron = "0 10 0 * * ?")
     public void iqiyiVariety() {
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
                 List<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll();
 
                 List<CrawlerVarietyURL> urlList = varietyURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()

@@ -35,7 +35,7 @@ public class BaiduCompanyTimer {
     @Scheduled(cron = "0 10 17 * * ?")
     public void baiduFilmCompany() {
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
 
                 List<VBaiduCrawler> crawlerList = vBaiduCrawlerRepository.findAll();
 

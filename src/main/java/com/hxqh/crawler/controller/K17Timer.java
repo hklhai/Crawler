@@ -97,7 +97,7 @@ public class K17Timer {
     @Scheduled(cron = "0 3 11 * * ?")
     public void k17Data() {
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
 
                 List<CrawlerLiteratureURL> varietyURLList = crawlerLiteratureURLRepository.findAll();
 
