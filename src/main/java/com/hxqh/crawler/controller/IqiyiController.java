@@ -10,6 +10,10 @@ import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -21,11 +25,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import static com.hxqh.crawler.common.Constants.PAGE;
+import static com.hxqh.crawler.common.Constants.SIZE;
+
 
 /**
  * @author Ocean Lin
- * <p>
- * Created by Ocean lin on 2017/7/1.
+ *         <p>
+ *         Created by Ocean lin on 2017/7/1.
  */
 @Controller
 @RequestMapping("/iqiyi")
@@ -151,22 +158,36 @@ public class IqiyiController {
      */
     @RequestMapping("/varietyDataUrl")
     public String varietyDataUrl() throws Exception {
-        List<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll();
 
-        List<CrawlerVarietyURL> urlList = varietyURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
-                -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+        // 需要增加分页 vid
+        Sort sort = new Sort(Sort.Direction.ASC, "vid");
 
-        Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
-        List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
+        Pageable pageable = new PageRequest(PAGE, SIZE, sort);
+        Page<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll(pageable);
+        Integer totalPages = varietyURLList.getTotalPages();
 
-        ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_VARIETY_THREAD_NUM);
 
-        for (List<CrawlerVarietyURL> l : lists) {
-            service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
+        for (int i = 0; i < totalPages; i++) {
+            pageable = new PageRequest(i, SIZE, sort);
+            Page<CrawlerVarietyURL> batch = crawlerVarietyURLRepository.findAll(pageable);
+            List<CrawlerVarietyURL> content = batch.getContent();
+
+            List<CrawlerVarietyURL> urlList = content.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                    -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+            Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
+            List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
+
+            ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_VARIETY_THREAD_NUM);
+
+            for (List<CrawlerVarietyURL> l : lists) {
+                service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
+            }
+            service.shutdown();
+            while (!service.isTerminated()) {
+            }
         }
-        service.shutdown();
-        while (!service.isTerminated()) {
-        }
+
         return "crawler/notice";
     }
 

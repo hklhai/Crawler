@@ -10,10 +10,13 @@ import com.hxqh.crawler.repository.CrawlerSoapURLRepository;
 import com.hxqh.crawler.repository.CrawlerURLRepository;
 import com.hxqh.crawler.repository.CrawlerVarietyURLRepository;
 import com.hxqh.crawler.service.SystemService;
-import com.hxqh.crawler.util.HdfsUtils;
 import com.hxqh.crawler.util.HostUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -27,9 +30,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import static com.hxqh.crawler.common.Constants.PAGE;
+import static com.hxqh.crawler.common.Constants.SIZE;
+
 /**
  * @author Ocean Lin
- * Created by Ocean lin on 2017/7/9.
+ *         Created by Ocean lin on 2017/7/9.
  */
 @Component
 public class IqiyiTimer {
@@ -49,7 +55,7 @@ public class IqiyiTimer {
     /**
      * 爬取爱奇艺电影数据
      */
-    @Scheduled(cron = "0 0 10 * * ?")
+    @Scheduled(cron = "0 10 0 * * ?")
     public void iqiyiFilm() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
@@ -94,7 +100,7 @@ public class IqiyiTimer {
     /**
      * 爬取爱奇艺电视剧数据
      */
-    @Scheduled(cron = "0 0 8 * * ?")
+    @Scheduled(cron = "0 0 2 * * ?")
     public void iqiyiSoap() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
@@ -130,28 +136,60 @@ public class IqiyiTimer {
 
     /**
      * 爬取爱奇艺综艺节目数据
+     *
+     * @Scheduled(cron = "0 10 0 * * ?"
+     * <p>
+     * 改为每周六0点30执行
      */
-    @Scheduled(cron = "0 10 0 * * ?")
+    @Scheduled(cron = "0 1 0 ? * SAT")
     public void iqiyiVariety() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
-                List<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll();
 
-                List<CrawlerVarietyURL> urlList = varietyURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
-                        -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+                // 需要增加分页 vid
+                Sort sort = new Sort(Sort.Direction.ASC, "vid");
 
-                Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
-                List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
+                Pageable pageable = new PageRequest(PAGE, SIZE, sort);
+                Page<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll(pageable);
+                Integer totalPages = varietyURLList.getTotalPages();
 
-                ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_VARIETY_THREAD_NUM);
+                for (int i = 0; i < totalPages; i++) {
+                    pageable = new PageRequest(i, PAGE, sort);
+                    Page<CrawlerVarietyURL> batch = crawlerVarietyURLRepository.findAll(pageable);
+                    List<CrawlerVarietyURL> content = batch.getContent();
 
-                for (List<CrawlerVarietyURL> l : lists) {
-                    service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
+                    List<CrawlerVarietyURL> urlList = content.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                            -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+                    Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
+                    List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
+
+                    ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_VARIETY_THREAD_NUM);
+
+                    for (List<CrawlerVarietyURL> l : lists) {
+                        service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
+                    }
+                    service.shutdown();
+                    while (!service.isTerminated()) {
+                    }
                 }
-                service.shutdown();
-                while (!service.isTerminated()) {
-                }
 
+//                List<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll();
+//
+//                List<CrawlerVarietyURL> urlList = varietyURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+//                        -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+//
+//                Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
+//                List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
+//
+//                ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_VARIETY_THREAD_NUM);
+//
+//                for (List<CrawlerVarietyURL> l : lists) {
+//                    service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
+//                }
+//                service.shutdown();
+//                while (!service.isTerminated()) {
+//                }
 //                // 2. 上传至HDFS
 //                try {
 //                    HdfsUtils.persistToHDFS("-variety-iqiyi", Constants.FILE_LOC_VARIETY);

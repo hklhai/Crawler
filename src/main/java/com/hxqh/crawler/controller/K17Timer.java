@@ -138,7 +138,7 @@ public class K17Timer {
     public void status() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
-                Map<String, Integer> map = new HashMap<>();
+                Map<String, Integer> map = new HashMap<>(10);
 
                 GetIndexResponse response = client.admin().indices().prepareGetIndex().execute().actionGet();
                 String[] indices = response.getIndices();
