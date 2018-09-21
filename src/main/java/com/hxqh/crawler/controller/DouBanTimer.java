@@ -13,6 +13,7 @@ import com.hxqh.crawler.repository.VDouBanCrawlerFilmRepository;
 import com.hxqh.crawler.repository.VDouBanCrawlerSoapRepository;
 import com.hxqh.crawler.util.HostUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * Created by Ocean lin on 2018/3/9.
@@ -50,7 +53,9 @@ public class DouBanTimer {
                 Integer partitionNUm = douBanCrawlerFilmList.size() / Constants.DOUBAN_THREAD_NUM + 1;
                 List<List<VDouBanCrawlerFilm>> lists = ListUtils.partition(douBanCrawlerFilmList, partitionNUm);
 
-                ExecutorService service = Executors.newFixedThreadPool(Constants.DOUBAN_THREAD_NUM);
+                // ExecutorService service = Executors.newFixedThreadPool(Constants.DOUBAN_THREAD_NUM);
+                ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.DOUBAN_THREAD_NUM,
+                        new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
 
                 for (List<VDouBanCrawlerFilm> l : lists) {
                     service.execute(new PersistDouBan(l, crawlerDoubanSocreRepository, "film"));
@@ -76,8 +81,9 @@ public class DouBanTimer {
                 Integer partitionNUm = douBanCrawlerSoapList.size() / Constants.DOUBAN_THREAD_NUM + 1;
                 List<List<VDouBanCrawlerSoap>> lists = ListUtils.partition(douBanCrawlerSoapList, partitionNUm);
 
-                ExecutorService service = Executors.newFixedThreadPool(Constants.DOUBAN_THREAD_NUM);
-
+                // ExecutorService service = Executors.newFixedThreadPool(Constants.DOUBAN_THREAD_NUM);
+                ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.DOUBAN_THREAD_NUM,
+                        new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
                 for (List<VDouBanCrawlerSoap> l : lists) {
                     service.execute(new PersistDouBanSoap(l, crawlerDoubanSocreRepository, "soap"));
                 }
@@ -102,8 +108,9 @@ public class DouBanTimer {
                 Integer partitionNUm = douBanCrawlerBookList.size() / Constants.DOUBAN_THREAD_NUM + 1;
                 List<List<VDouBanCrawlerBook>> lists = ListUtils.partition(douBanCrawlerBookList, partitionNUm);
 
-                ExecutorService service = Executors.newFixedThreadPool(Constants.DOUBAN_THREAD_NUM);
-
+                // ExecutorService service = Executors.newFixedThreadPool(Constants.DOUBAN_THREAD_NUM);
+                ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.DOUBAN_THREAD_NUM,
+                        new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
                 for (List<VDouBanCrawlerBook> l : lists) {
                     service.execute(new PersistDouBanBook(l, crawlerDoubanSocreRepository, "soap"));
                 }

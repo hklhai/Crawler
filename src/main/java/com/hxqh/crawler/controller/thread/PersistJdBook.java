@@ -93,7 +93,7 @@ public class PersistJdBook implements Runnable {
                         commnetNum = commnetNum.substring(0, commnetNum.length() - 1);
                         if (commnetNum.endsWith("万")) {
                             commnetNum = commnetNum.substring(0, commnetNum.length() - 2);
-                            if (!commnetNum.equals("")) {
+                            if (!"".equals(commnetNum)) {
                                 Double v = Double.valueOf(commnetNum) * Constants.TEN_THOUSAND;
                                 commnetNum = String.valueOf(v.longValue());
                             } else {

@@ -9,6 +9,9 @@ import java.util.regex.Pattern;
  */
 public class NumUtils {
 
+    private static Pattern INTEGER_PATTERN = Pattern.compile("^[-\\+]?[\\d]*$");
+    private static Pattern FLOAT_PATTERN = Pattern.compile("^[-\\+]?[.\\d]*$");
+
     public static Double getNumber(String stringNum) {
         Double v = null;
         if (stringNum.endsWith("万")) {
@@ -26,7 +29,7 @@ public class NumUtils {
     public static Integer getReleaseInfo(String releaseInfo) {
         Integer integer = null;
         String s = releaseInfo.replaceAll("上映", "").replaceAll("天", "");
-        if (s.equals("首日")) {
+        if ("首日".equals(s)) {
             integer = 1;
         } else {
             integer = Integer.valueOf(s);
@@ -44,8 +47,7 @@ public class NumUtils {
         if (null == str || "".equals(str)) {
             return false;
         }
-        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
-        return pattern.matcher(str).matches();
+        return INTEGER_PATTERN.matcher(str).matches();
     }
 
 
@@ -59,7 +61,6 @@ public class NumUtils {
         if (null == str || "".equals(str)) {
             return false;
         }
-        Pattern pattern = Pattern.compile("^[-\\+]?[.\\d]*$");
-        return pattern.matcher(str).matches();
+        return FLOAT_PATTERN.matcher(str).matches();
     }
 }

@@ -12,6 +12,7 @@ import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.HdfsUtils;
 import com.hxqh.crawler.util.HostUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,8 +24,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 
@@ -163,7 +164,10 @@ public class JdTimer {
                 Integer partitionNUm = urlList.size() / Constants.JD_THREAD_NUM + 1;
                 List<List<CrawlerBookURL>> lists = ListUtils.partition(urlList, partitionNUm);
 
-                ExecutorService service = Executors.newFixedThreadPool(Constants.JD_THREAD_NUM);
+                // ExecutorService service = Executors.newFixedThreadPool(Constants.JD_THREAD_NUM);
+                ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.JD_THREAD_NUM,
+                        new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
+
                 for (List<CrawlerBookURL> list : lists) {
                     service.execute(new PersistJdBook(list, crawlerProblemRepository, systemService));
                 }

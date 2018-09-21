@@ -9,6 +9,7 @@ import com.hxqh.crawler.repository.*;
 import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 import static com.hxqh.crawler.common.Constants.PAGE;
@@ -81,7 +82,8 @@ public class IqiyiController {
 
         Integer partitionNUm = urlList.size() / Constants.IQIYI_THREAD_NUM + 1;
         List<List<CrawlerURL>> lists = ListUtils.partition(urlList, partitionNUm);
-        ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
+        ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.IQIYI_THREAD_NUM,
+                new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
 
         for (List<CrawlerURL> l : lists) {
             service.execute(new PersistFilm(l, crawlerProblemRepository, systemService));
@@ -110,7 +112,8 @@ public class IqiyiController {
         Integer partitionNUm = urlList.size() / Constants.IQIYI_THREAD_NUM + 1;
         List<List<CrawlerSoapURL>> lists = ListUtils.partition(urlList, partitionNUm);
 
-        ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
+        ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.IQIYI_THREAD_NUM,
+                new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
 
         for (List<CrawlerSoapURL> l : lists) {
             service.execute(new PersistFilm(l, systemService));
@@ -178,7 +181,8 @@ public class IqiyiController {
             Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
             List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
 
-            ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_VARIETY_THREAD_NUM);
+            ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.IQIYI_VARIETY_THREAD_NUM,
+                    new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
 
             for (List<CrawlerVarietyURL> l : lists) {
                 service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));

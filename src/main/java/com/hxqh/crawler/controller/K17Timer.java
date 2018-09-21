@@ -13,6 +13,7 @@ import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.HdfsUtils;
 import com.hxqh.crawler.util.HostUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.jsoup.Jsoup;
@@ -27,6 +28,8 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 /**
@@ -109,7 +112,9 @@ public class K17Timer {
                 Integer partitionNUm = urlList.size() / Constants.THREAD_NUM_17K + 1;
                 List<List<CrawlerLiteratureURL>> lists = ListUtils.partition(urlList, partitionNUm);
 
-                ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM_17K);
+                // ExecutorService service = Executors.newFixedThreadPool(Constants.THREAD_NUM_17K);
+                ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.THREAD_NUM_17K,
+                        new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
 
                 for (List<CrawlerLiteratureURL> list : lists) {
                     service.execute(new PersistLiterature(systemService, list));

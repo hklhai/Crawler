@@ -27,7 +27,7 @@ import java.util.List;
 @Component
 public class MaoYanTimer {
 
-    private static final String url = "https://box.maoyan.com/promovie/api/box/second.json";
+    private static final String URL = "https://box.maoyan.com/promovie/api/box/second.json";
 
     @Autowired
     private SystemService systemService;
@@ -43,7 +43,7 @@ public class MaoYanTimer {
                 String dateString = DateUtils.getTodayDate();
                 try {
 
-                    JsonObject xpath = ReadUrlUtils.getXpath(url);
+                    JsonObject xpath = ReadUrlUtils.getXpath(URL);
                     JSONObject json = JSONObject.parseObject(xpath.toString());
                     JSONArray array = json.getJSONObject("data").getJSONArray("list");
 
@@ -90,7 +90,7 @@ public class MaoYanTimer {
 //                //  获取当前时间
 //                String dateString = DateUtils.getTodayDate();
 //                try {
-//                    JsonObject xpath = ReadUrlUtils.getXpath(url);
+//                    JsonObject xpath = ReadUrlUtils.getXpath(URL);
 //                    FileUtils.writeStrToFile(xpath.toString() + "\n",
 //                            Constants.MAOYAN_THREE_SECOND_PATH + Constants.FILE_SPLIT + dateString);
 //                } catch (Exception e) {

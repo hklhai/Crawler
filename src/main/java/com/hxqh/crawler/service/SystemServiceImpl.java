@@ -6,6 +6,7 @@ import com.hxqh.crawler.model.*;
 import com.hxqh.crawler.repository.UserRepository;
 import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.FileUtils;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -27,8 +28,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * Created by Ocean lin on 2017/7/1.
@@ -175,7 +176,11 @@ public class SystemServiceImpl implements SystemService {
         String destiIndexName = "film_data";
         String destiIndexType = "film";
         BulkRequestBuilder bulk = client.prepareBulk();
-        ExecutorService executor = Executors.newFixedThreadPool(5);
+        // ExecutorService executor = Executors.newFixedThreadPool(5);
+
+        ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(5,
+                new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
+
         while (true) {
             bulk = client.prepareBulk();
             final BulkRequestBuilder bulk_new = bulk;
