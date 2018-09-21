@@ -47,7 +47,7 @@ public class PersistLiterature implements Runnable {
             CrawlerLiteratureURL literatureURL = list.get(i);
             Document doc = Jsoup.connect(literatureURL.getUrl()).get();
 
-            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(literatureURL.getUrl(), Constants.DEFAULT_SEELP_SECOND_17K);
+            String html = CrawlerUtils.fetchHTMLContent(literatureURL.getUrl(), Constants.DEFAULT_SEELP_SECOND_17K);
             Document document = Jsoup.parse(html);
 
             String platform = literatureURL.getPlatform();

@@ -80,6 +80,15 @@ public class JdController {
         while (!service.isTerminated()) {
         }
 
+        // 2. 上传至HDFS
+        try {
+            HdfsUtils.persistToHDFS("-jd", Constants.BOOK_JD_FILE_LOC);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         return "crawler/notice";
     }

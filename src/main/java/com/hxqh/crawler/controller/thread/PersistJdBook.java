@@ -48,7 +48,7 @@ public class PersistJdBook implements Runnable {
 
         for (int i = 0; i < hrefList.size(); i++) {
             CrawlerBookURL crawlerBookURL = hrefList.get(i);
-            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(crawlerBookURL.getUrl(), Constants.DEFAULT_SEELP_SECOND_JD_BOOK);
+            String html = CrawlerUtils.fetchHTMLContent(crawlerBookURL.getUrl(), Constants.DEFAULT_SEELP_SECOND_JD_BOOK);
             Document doc = Jsoup.parse(html);
 
             String bookName = new String();

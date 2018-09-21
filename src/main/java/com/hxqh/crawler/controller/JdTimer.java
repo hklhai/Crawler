@@ -148,7 +148,7 @@ public class JdTimer {
     /**
      * 每天0点10分触发
      */
-    @Scheduled(cron = "0 10 0 * * ?")
+    @Scheduled(cron = "0 18 0 * * ?")
     public void jdData() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
