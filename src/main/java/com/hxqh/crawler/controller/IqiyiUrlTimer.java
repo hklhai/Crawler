@@ -58,8 +58,9 @@ public class IqiyiUrlTimer {
      * 1. 获取爬取列表前先将数据写入ES
      * 2. 清除所有mysql数据
      * 3. 进行爬取
+     *
+     * 每月15日上午10:15触发
      */
-    // 每月15日上午10:15触发
     @Scheduled(cron = "0 15 10 15 * ?")
     public void iqiyiFilmUrlList() {
         try {
@@ -122,7 +123,9 @@ public class IqiyiUrlTimer {
     }
 
 
-    // 每月15日上午10:15触发
+    /**
+     * 每月15日上午10:15触发
+     */
     @Scheduled(cron = "0 15 10 15 * ?")
     public void iqiyiSoapUrlList() {
         try {
@@ -200,8 +203,9 @@ public class IqiyiUrlTimer {
     /**
      * 1. 先爬取节目链接
      * 2. 再爬取每个链接对应节目URl
+     *
+     * 每月15日上午10:15触发
      */
-    // 每月15日上午10:15触发
     @Scheduled(cron = "0 15 10 15 * ?")
     public void iqiyiVarietyUrlList() {
 

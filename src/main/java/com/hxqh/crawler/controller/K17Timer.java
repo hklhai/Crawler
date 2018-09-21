@@ -47,7 +47,9 @@ public class K17Timer {
     @Autowired
     private StatusRepository statusRepository;
 
-    // 每月最后一日的上午10:15触发
+    /**
+     * 每月最后一日的上午10:15触发
+     */
     @Scheduled(cron = "0 15 10 14 * ?")
     public void k17Url() {
         try {

@@ -51,8 +51,9 @@ public class JdTimer {
      * 1. 获取爬取列表前先将数据写入ES
      * 2. 清除所有mysql数据
      * 3. 进行爬取
+     * <p>
+     * 每月14日上午10:15触发
      */
-    // 每月14日上午10:15触发
     @Scheduled(cron = "0 15 10 14 * ?")
     public void jdUrlList() {
 
@@ -144,7 +145,9 @@ public class JdTimer {
     }
 
 
-    // 每天0点10分触发
+    /**
+     * 每天0点10分触发
+     */
     @Scheduled(cron = "0 10 0 * * ?")
     public void jdData() {
         try {
@@ -176,7 +179,6 @@ public class JdTimer {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
 
 
             }

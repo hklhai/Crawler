@@ -32,7 +32,9 @@ public class MaoYanTimer {
     @Autowired
     private SystemService systemService;
 
-    //每一个小时执行一次
+    /**
+     * 每一个小时执行一次
+     */
     @Scheduled(cron = "0 */60 * * * * ")
     public void maoYanOnehour() {
         try {
