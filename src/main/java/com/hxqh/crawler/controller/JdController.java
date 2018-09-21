@@ -63,7 +63,22 @@ public class JdController {
      */
     @RequestMapping("/jdBookData")
     public String jdBookData() {
+        // 1. 从数据库获取待爬取链接
+        List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findAll();
 
+        List<CrawlerBookURL> urlList = crawlerBookURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+        Integer partitionNUm = urlList.size() / Constants.JD_THREAD_NUM + 1;
+        List<List<CrawlerBookURL>> lists = ListUtils.partition(urlList, partitionNUm);
+
+        ExecutorService service = Executors.newFixedThreadPool(Constants.JD_THREAD_NUM);
+        for (List<CrawlerBookURL> list : lists) {
+            service.execute(new PersistJdBook(list, crawlerProblemRepository, systemService));
+        }
+        service.shutdown();
+        while (!service.isTerminated()) {
+        }
 
 
         return "crawler/notice";
