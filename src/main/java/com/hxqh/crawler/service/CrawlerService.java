@@ -22,6 +22,8 @@ public interface CrawlerService {
 
     void save(BaiduInfo baiduInfo);
 
+    void deleteIqiyiVariety();
+
     void persistVarietyUrlList(List<CrawlerVarietyURL> varietyURLList);
 
     void persistEachVarietyUrlList(List<CrawlerVariety> list);

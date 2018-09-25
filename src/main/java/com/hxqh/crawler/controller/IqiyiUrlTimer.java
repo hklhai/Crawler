@@ -32,8 +32,8 @@ import java.util.Map;
  * 仅执行爬取URL操作
  *
  * @author Ocean Lin
- * <p>
- * Created by Ocean lin on 2017/7/9.
+ *         <p>
+ *         Created by Ocean lin on 2017/7/9.
  */
 @Component
 public class IqiyiUrlTimer {
@@ -58,7 +58,7 @@ public class IqiyiUrlTimer {
      * 1. 获取爬取列表前先将数据写入ES
      * 2. 清除所有mysql数据
      * 3. 进行爬取
-     *
+     * <p>
      * 每月15日上午10:15触发
      */
     @Scheduled(cron = "0 15 10 15 * ?")
@@ -203,7 +203,7 @@ public class IqiyiUrlTimer {
     /**
      * 1. 先爬取节目链接
      * 2. 再爬取每个链接对应节目URl
-     *
+     * <p>
      * 每月15日上午10:15触发
      */
     @Scheduled(cron = "0 15 10 15 * ?")
@@ -237,6 +237,10 @@ public class IqiyiUrlTimer {
 
         /****************************  爬取综艺节目 ********************************/
         List<CrawlerVariety> varietyList = crawlerVarietyRepository.findAll();
+
+        // 清除综艺url
+        crawlerService.deleteIqiyiVariety();
+
         /**
          * 持久化每部综艺作品的不同集
          */

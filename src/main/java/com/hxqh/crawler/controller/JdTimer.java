@@ -134,6 +134,7 @@ public class JdTimer {
                         }
                         // 完成持久化
                         crawlerService.persistBookUrl(crawlerURLList);
+                        crawlerService.persistBookUrl(crawlerURLList);
                     }
                 }
 
@@ -152,8 +153,7 @@ public class JdTimer {
     @Scheduled(cron = "0 18 0 * * ?")
     public void jdData() {
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
-
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
 
                 // 1. 从数据库获取待爬取链接
                 List<CrawlerBookURL> crawlerBookURLList = crawlerBookURLRepository.findAll();
@@ -164,7 +164,6 @@ public class JdTimer {
                 Integer partitionNUm = urlList.size() / Constants.JD_THREAD_NUM + 1;
                 List<List<CrawlerBookURL>> lists = ListUtils.partition(urlList, partitionNUm);
 
-                // ExecutorService service = Executors.newFixedThreadPool(Constants.JD_THREAD_NUM);
                 ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.JD_THREAD_NUM,
                         new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
 

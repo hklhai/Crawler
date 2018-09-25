@@ -60,9 +60,16 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
+    public void deleteIqiyiVariety() {
+        crawlerVarietyURLRepository.deleteIqiyiVariety();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public void persistVarietyUrlList(List<CrawlerVarietyURL> varietyURLList) {
         crawlerVarietyURLRepository.save(varietyURLList);
     }
+
 
     @Transactional(rollbackFor = Exception.class)
     @Override

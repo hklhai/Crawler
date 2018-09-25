@@ -73,7 +73,6 @@ public class JdController {
         Integer partitionNUm = urlList.size() / Constants.JD_THREAD_NUM + 1;
         List<List<CrawlerBookURL>> lists = ListUtils.partition(urlList, partitionNUm);
 
-        // ExecutorService service = Executors.newFixedThreadPool(Constants.JD_THREAD_NUM);
         ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.JD_THREAD_NUM,
                 new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
 
