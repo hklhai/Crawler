@@ -53,17 +53,17 @@ public class JdTimer {
      * 2. 清除所有mysql数据
      * 3. 进行爬取
      * <p>
-     * 每月14日上午10:15触发
+     * 每月14日上午18:15触发
      */
-    @Scheduled(cron = "0 15 10 14 * ?")
+    @Scheduled(cron = "0 15 18 14 * ?")
     public void jdUrlList() {
 
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
 
-                /**
-                 * 爬取数据
-                 */
+/**
+ * 爬取数据
+ */
                 // 根据其实页面，爬取页面获取Url对应关系
                 Map<String, String> map = new HashMap<>(500);
 
@@ -92,6 +92,8 @@ public class JdTimer {
                  *
                  * 根据url反向截取，获取前5页每页20条数据url
                  */
+                List<CrawlerBookURL> crawlerURLList = new ArrayList<>();
+
                 for (Map.Entry<String, String> m : map.entrySet()) {
                     List<String> urlList = new ArrayList<>();
 
@@ -109,7 +111,6 @@ public class JdTimer {
                         urlList.add(url);
                     }
                     // 爬取页面中所有的url对应的页面中每本书的信息
-                    List<CrawlerBookURL> crawlerURLList = new ArrayList<>();
                     for (String url : urlList) {
                         try {
                             // 解析url获取其中的每本的信息
@@ -132,11 +133,10 @@ public class JdTimer {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        // 完成持久化
-                        crawlerService.persistBookUrl(crawlerURLList);
-                        crawlerService.persistBookUrl(crawlerURLList);
                     }
                 }
+                // 完成持久化
+                crawlerService.persistBookUrl(crawlerURLList);
 
 
             }
