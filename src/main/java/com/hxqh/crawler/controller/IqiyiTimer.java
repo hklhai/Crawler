@@ -52,11 +52,12 @@ public class IqiyiTimer {
     @Autowired
     private CrawlerSoapURLRepository soapURLRepository;
 
+    private static Integer TOTAL_PAGE = 15;
 
     /**
      * 爬取爱奇艺电影数据
      */
-    @Scheduled(cron = "0 10 0 * * ?")
+    @Scheduled(cron = "0 30 22 * * ?")
     public void iqiyiFilm() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
@@ -103,7 +104,7 @@ public class IqiyiTimer {
     /**
      * 爬取爱奇艺电视剧数据
      */
-    @Scheduled(cron = "0 0 2 * * ?")
+    @Scheduled(cron = "0 50 0 * * ?")
     public void iqiyiSoap() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
@@ -144,19 +145,24 @@ public class IqiyiTimer {
      *
      * @Scheduled(cron = "0 10 0 * * ?"
      * <p>
-     * 改为每周六0点30执行
+     * 改为每周五18点00执行
      */
-    @Scheduled(cron = "0 1 0 ? * SAT")
+    @Scheduled(cron = "0 0 18 ? * Fri")
     public void iqiyiVariety() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
 
                 // 需要增加分页 vid
-                Sort sort = new Sort(Sort.Direction.ASC, "vid");
+                Sort sort = new Sort(Sort.Direction.DESC, "vid");
 
                 Pageable pageable = new PageRequest(PAGE, SIZE, sort);
                 Page<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll(pageable);
                 Integer totalPages = varietyURLList.getTotalPages();
+
+                // todo 后期移除 暂时爬取15万
+                if (totalPages > TOTAL_PAGE) {
+                    totalPages = TOTAL_PAGE;
+                }
 
                 for (int i = 0; i < totalPages; i++) {
                     pageable = new PageRequest(i, PAGE, sort);
@@ -180,31 +186,6 @@ public class IqiyiTimer {
                     while (!service.isTerminated()) {
                     }
                 }
-
-//                List<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll();
-//
-//                List<CrawlerVarietyURL> urlList = varietyURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
-//                        -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
-//
-//                Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
-//                List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
-//
-//                ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_VARIETY_THREAD_NUM);
-//
-//                for (List<CrawlerVarietyURL> l : lists) {
-//                    service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
-//                }
-//                service.shutdown();
-//                while (!service.isTerminated()) {
-//                }
-//                // 2. 上传至HDFS
-//                try {
-//                    HdfsUtils.persistToHDFS("-variety-iqiyi", Constants.FILE_LOC_VARIETY);
-//                } catch (URISyntaxException e) {
-//                    e.printStackTrace();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
             }
         } catch (Exception e) {
             e.printStackTrace();
