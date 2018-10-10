@@ -37,7 +37,9 @@ public interface SystemService {
 
     void saveLiterature(CrawlerLiteratureURL literatureURL);
 
-    void addVariety(List<CrawlerVarietyURL> urlList);
+    void addVarietyURL(List<CrawlerVarietyURL> urlList);
 
     void addBookURL(CrawlerBookURL crawlerBookURL);
+
+    void addVariety(List<CrawlerVariety> list);
 }

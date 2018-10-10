@@ -349,7 +349,26 @@ public class SystemServiceImpl implements SystemService {
     }
 
     @Override
-    public void addVariety(List<CrawlerVarietyURL> urlList) {
+    public void addVariety(List<CrawlerVariety> list) {
+        for (int i = 0; i < list.size(); i++) {
+            CrawlerVariety crawlerVariety = list.get(i);
+            try {
+                String todayTime = DateUtils.getTodayTime();
+                XContentBuilder content = XContentFactory.jsonBuilder().startObject().
+                        field("addTime", crawlerVariety.getAddTime()).
+                        field("sorted", crawlerVariety.getSorted()).
+                        field("url", crawlerVariety.getUrl()).
+                        field("createTime", todayTime).endObject();
+                this.client.prepareIndex(Constants.HISTORY_VARIETY_INDEX, Constants.HISTORY_VARIETY_TYPE).setSource(content).get();
+                System.out.println(crawlerVariety.getUrl() + " Persist to ES Success!");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void addVarietyURL(List<CrawlerVarietyURL> urlList) {
         for (int i = 0; i < urlList.size(); i++) {
             CrawlerVarietyURL crawlerVariety = urlList.get(i);
             try {
@@ -361,9 +380,10 @@ public class SystemServiceImpl implements SystemService {
                         field("title", crawlerVariety.getTitle()).
                         field("url", crawlerVariety.getUrl()).
                         field("platform", crawlerVariety.getPlatform()).
+                        field("varietyname", crawlerVariety.getVarietyName()).
                         field("createTime", todayTime).endObject();
 
-                this.client.prepareIndex(Constants.VARIETY_URL_INDEX, Constants.VARIETY_URL_TYPE).setSource(content).get();
+                this.client.prepareIndex(Constants.HISTORY_VARIETY_URL_INDEX, Constants.HISTORY_VARIETY_URL_TYPE).setSource(content).get();
                 System.out.println(crawlerVariety.getTitle() + " Persist to ES Success!");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -389,5 +409,6 @@ public class SystemServiceImpl implements SystemService {
             e.printStackTrace();
         }
     }
+
 
 }

@@ -16,6 +16,6 @@ public interface CrawlerVarietyURLRepository extends JpaRepository<CrawlerVariet
 
     @Modifying
     @Query("delete from CrawlerVarietyURL o ")
-    void deleteIqiyiVariety();
+    void deleteIqiyiVarietyURL();
 
 }

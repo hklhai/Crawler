@@ -121,8 +121,10 @@ public interface Constants {
     /**
      * 综艺 URL
      */
-    String VARIETY_URL_INDEX = "history_url_variety";
-    String VARIETY_URL_TYPE = "variety";
+    String HISTORY_VARIETY_URL_INDEX = "history_url_variety";
+    String HISTORY_VARIETY_URL_TYPE = "variety";
+    String HISTORY_VARIETY_INDEX = "history_variety";
+    String HISTORY_VARIETY_TYPE = "variety";
 
 
     /**

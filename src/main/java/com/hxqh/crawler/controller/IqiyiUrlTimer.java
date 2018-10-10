@@ -32,8 +32,8 @@ import java.util.Map;
  * 仅执行爬取URL操作
  *
  * @author Ocean Lin
- *         <p>
- *         Created by Ocean lin on 2017/7/9.
+ * <p>
+ * Created by Ocean lin on 2017/7/9.
  */
 @Component
 public class IqiyiUrlTimer {
@@ -209,6 +209,8 @@ public class IqiyiUrlTimer {
     @Scheduled(cron = "0 15 10 15 * ?")
     public void iqiyiVarietyUrlList() {
 
+
+        // todo 待测试
         /****************************** 爬取链接 ************************************/
 
         List<String> hotList = new ArrayList<>();
@@ -221,16 +223,19 @@ public class IqiyiUrlTimer {
             newList.add("http://list.iqiyi.com/www/6/-------------4-" + i + "-1-iqiyi--.html");
         }
 
+        crawlerService.deleteIqiyiVariety();
         /**
          * 获取每部综艺作品链接
          */
         for (String s : hotList) {
             List<CrawlerVariety> list = eachVarietyUrlList(s, "hot");
             crawlerService.persistEachVarietyUrlList(list);
+            systemService.addVariety(list);
         }
         for (String s : newList) {
             List<CrawlerVariety> list = eachVarietyUrlList(s, "new");
             crawlerService.persistEachVarietyUrlList(list);
+            systemService.addVariety(list);
         }
         /****************************** 爬取链接 ************************************/
 
@@ -239,7 +244,7 @@ public class IqiyiUrlTimer {
         List<CrawlerVariety> varietyList = crawlerVarietyRepository.findAll();
 
         // 清除综艺url
-        crawlerService.deleteIqiyiVariety();
+        crawlerService.deleteIqiyiVarietyURL();
 
         /**
          * 持久化每部综艺作品的不同集
@@ -250,7 +255,7 @@ public class IqiyiUrlTimer {
             List<CrawlerVarietyURL> urlList = persistVarietyUrlList(url, sorted);
             crawlerService.persistVarietyUrlList(urlList);
             // 持久化至ElasticSearch
-            systemService.addVariety(urlList);
+            systemService.addVarietyURL(urlList);
         }
         /****************************  爬取综艺节目 ********************************/
 

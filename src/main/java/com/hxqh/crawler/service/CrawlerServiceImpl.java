@@ -45,7 +45,6 @@ public class CrawlerServiceImpl implements CrawlerService {
         crawlerURLRepository.deleteIqiyiSoap();
     }
 
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delTencentFilm() {
@@ -60,9 +59,16 @@ public class CrawlerServiceImpl implements CrawlerService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void deleteIqiyiVariety() {
-        crawlerVarietyURLRepository.deleteIqiyiVariety();
+    public void deleteIqiyiVarietyURL() {
+        crawlerVarietyURLRepository.deleteIqiyiVarietyURL();
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteIqiyiVariety() {
+        crawlerVarietyRepository.deleteIqiyiVariety();
+    }
+
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -104,6 +110,5 @@ public class CrawlerServiceImpl implements CrawlerService {
         crawlerBookURLRepository.deleteJdBooks();
         crawlerBookURLRepository.save(crawlerURLList);
     }
-
 
 }

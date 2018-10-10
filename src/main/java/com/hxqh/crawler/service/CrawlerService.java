@@ -22,7 +22,10 @@ public interface CrawlerService {
 
     void save(BaiduInfo baiduInfo);
 
-    void deleteIqiyiVariety();
+    /**
+     * 删除综艺节目每期url
+     */
+    void deleteIqiyiVarietyURL();
 
     void persistVarietyUrlList(List<CrawlerVarietyURL> varietyURLList);
 
@@ -34,4 +37,9 @@ public interface CrawlerService {
     void saveSoap(List<CrawlerSoapURL> soapURLList);
 
     void persistBookUrl(List<CrawlerBookURL> crawlerURLList);
+
+    /**
+     * 删除综艺节目总体
+     */
+    void deleteIqiyiVariety();
 }
