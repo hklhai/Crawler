@@ -322,7 +322,7 @@ public class SystemServiceImpl implements SystemService {
                     field("createTime", todayTime).endObject();
 
             this.client.prepareIndex(Constants.SOAP_URL_INDEX, Constants.SOAP_URL_TYPE).setSource(content).get();
-            System.out.println(crawlerURL.getTitle() + " Persist to ES Success!");
+            // System.out.println(crawlerURL.getTitle() + " Persist to ES Success!");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -342,7 +342,7 @@ public class SystemServiceImpl implements SystemService {
                     field("createTime", todayTime).endObject();
 
             this.client.prepareIndex(Constants.LITERATURE_URL_INDEX, Constants.LITERATURE_URL_TYPE).setSource(content).get();
-            System.out.println(literature.getTitle() + " Persist to ES Success!");
+            // System.out.println(literature.getTitle() + " Persist to ES Success!");
         } catch (IOException e) {
             e.printStackTrace();
         }

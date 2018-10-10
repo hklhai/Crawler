@@ -140,57 +140,55 @@ public class IqiyiTimer {
         }
     }
 
-//    /**
-//     * 爬取爱奇艺综艺节目数据
-//     *
-//     * @Scheduled(cron = "0 10 0 * * ?"
-//     * <p>
-//     * 改为每周五18点00执行
-//     */
-//    @Scheduled(cron = "0 0 18 ? * Fri")
-//    public void iqiyiVariety() {
-//        try {
-//            if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
-//
-//                // 需要增加分页 vid
-//                Sort sort = new Sort(Sort.Direction.DESC, "vid");
-//
-//                Pageable pageable = new PageRequest(PAGE, SIZE, sort);
-//                Page<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll(pageable);
-//                Integer totalPages = varietyURLList.getTotalPages();
-//
-//                // todo 后期移除 暂时爬取15万
-//                if (totalPages > TOTAL_PAGE) {
-//                    totalPages = TOTAL_PAGE;
-//                }
-//
-//                for (int i = 0; i < totalPages; i++) {
-//                    pageable = new PageRequest(i, PAGE, sort);
-//                    Page<CrawlerVarietyURL> batch = crawlerVarietyURLRepository.findAll(pageable);
-//                    List<CrawlerVarietyURL> content = batch.getContent();
-//
-//                    List<CrawlerVarietyURL> urlList = content.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
-//                            -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
-//
-//                    Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
-//                    List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
-//
-//                    // ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_VARIETY_THREAD_NUM);
-//                    ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.IQIYI_VARIETY_THREAD_NUM,
-//                            new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
-//
-//                    for (List<CrawlerVarietyURL> l : lists) {
-//                        service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
-//                    }
-//                    service.shutdown();
-//                    while (!service.isTerminated()) {
-//                    }
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    /**
+     * 爬取爱奇艺综艺节目数据
+     *
+     * 改为每天17:30执行
+     */
+    @Scheduled(cron = "0 30 17 * * ?")
+    public void iqiyiVariety() {
+        try {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
+
+                // 需要增加分页 vid
+                Sort sort = new Sort(Sort.Direction.DESC, "vid");
+
+                Pageable pageable = new PageRequest(PAGE, SIZE, sort);
+                Page<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll(pageable);
+                Integer totalPages = varietyURLList.getTotalPages();
+
+                // todo 后期移除 暂时爬取15万
+                if (totalPages > TOTAL_PAGE) {
+                    totalPages = TOTAL_PAGE;
+                }
+
+                for (int i = 0; i < totalPages; i++) {
+                    pageable = new PageRequest(i, PAGE, sort);
+                    Page<CrawlerVarietyURL> batch = crawlerVarietyURLRepository.findAll(pageable);
+                    List<CrawlerVarietyURL> content = batch.getContent();
+
+                    List<CrawlerVarietyURL> urlList = content.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                            -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+                    Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
+                    List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
+
+                    // ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_VARIETY_THREAD_NUM);
+                    ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.IQIYI_VARIETY_THREAD_NUM,
+                            new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
+
+                    for (List<CrawlerVarietyURL> l : lists) {
+                        service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
+                    }
+                    service.shutdown();
+                    while (!service.isTerminated()) {
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }
