@@ -4,6 +4,7 @@ import com.hxqh.crawler.common.Constants;
 import com.hxqh.crawler.controller.thread.PersistFilm;
 import com.hxqh.crawler.model.CrawlerSoapURL;
 import com.hxqh.crawler.model.CrawlerURL;
+import com.hxqh.crawler.model.CrawlerVariety;
 import com.hxqh.crawler.model.CrawlerVarietyURL;
 import com.hxqh.crawler.repository.*;
 import com.hxqh.crawler.service.CrawlerService;
@@ -32,8 +33,8 @@ import static com.hxqh.crawler.common.Constants.SIZE;
 
 /**
  * @author Ocean Lin
- *         <p>
- *         Created by Ocean lin on 2017/7/1.
+ * <p>
+ * Created by Ocean lin on 2017/7/1.
  */
 @Controller
 @RequestMapping("/iqiyi")
@@ -56,7 +57,6 @@ public class IqiyiController {
     private CrawlerVarietyRepository crawlerVarietyRepository;
     @Autowired
     private CrawlerSoapURLRepository soapURLRepository;
-
 
     @RequestMapping("/filmUrl")
     public String filmUrl() throws Exception {
@@ -195,9 +195,25 @@ public class IqiyiController {
         return "crawler/notice";
     }
 
+    /**
+     * 综艺整体迁移
+     */
+    @RequestMapping("/varietyMigrate")
+    public String varietyMigrate() {
+        Sort sort = new Sort(Sort.Direction.ASC, "vid");
 
+        Pageable pageable = new PageRequest(PAGE, SIZE, sort);
+        Page<CrawlerVariety> varietyURLList = crawlerVarietyRepository.findAll(pageable);
+        Integer totalPages = varietyURLList.getTotalPages();
 
-
+        for (int i = 0; i < totalPages; i++) {
+            pageable = new PageRequest(i, SIZE, sort);
+            Page<CrawlerVariety> batch = crawlerVarietyRepository.findAll(pageable);
+            List<CrawlerVariety> content = batch.getContent();
+            systemService.addVariety(content);
+        }
+        return "crawler/notice";
+    }
 
 
 }
