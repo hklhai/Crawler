@@ -147,7 +147,7 @@ public class PersistFilm implements Runnable {
                         star += attr;
                         star += " ";
                     }
-                    star = star.substring(0, star.length() - 1);
+                    star = star.trim();
                 }
 
                 // 导演
