@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,12 +61,12 @@ public class IqiyiUrlTimer {
      * 2. 清除所有mysql数据
      * 3. 进行爬取
      * <p>
-     * 每月15日上午10:15触发
+     * 每月最后一个周六上午8:00
      */
-    @Scheduled(cron = "0 15 10 15 * ?")
+    @Scheduled(cron = "0 0 8 ? * 7L")
     public void iqiyiFilmUrlList() {
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
 
                 /**
                  * 爬取数据
@@ -124,9 +126,9 @@ public class IqiyiUrlTimer {
 
 
     /**
-     * 每月15日上午10:15触发
+     * 每月最后一个周六上午8:00
      */
-    @Scheduled(cron = "0 15 10 15 * ?")
+    @Scheduled(cron = "0 0 14 ? * 7L")
     public void iqiyiSoapUrlList() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
@@ -204,61 +206,66 @@ public class IqiyiUrlTimer {
      * 1. 先爬取节目链接
      * 2. 再爬取每个链接对应节目URl
      * <p>
-     * 每月15日上午10:15触发
+     * "0 15 10 ? * 7L" 每月的最后一个星期六上午10:15触发
      */
-    @Scheduled(cron = "0 15 10 15 * ?")
+    @Scheduled(cron = "0 15 10 ? * 7L")
     public void iqiyiVarietyUrlList() {
+        try {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
+
+                /****************************** 爬取链接 ************************************/
+
+                List<String> hotList = new ArrayList<>();
+                List<String> newList = new ArrayList<>();
+
+                for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
+                    hotList.add("http://list.iqiyi.com/www/6/-------------11-" + i + "-1-iqiyi--.html");
+                }
+                for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
+                    newList.add("http://list.iqiyi.com/www/6/-------------4-" + i + "-1-iqiyi--.html");
+                }
+
+                crawlerService.deleteIqiyiVariety();
+                /**
+                 * 获取每部综艺作品链接
+                 */
+                for (String s : hotList) {
+                    List<CrawlerVariety> list = eachVarietyUrlList(s, "hot");
+                    crawlerService.persistEachVarietyUrlList(list);
+                    systemService.addVariety(list);
+                }
+                for (String s : newList) {
+                    List<CrawlerVariety> list = eachVarietyUrlList(s, "new");
+                    crawlerService.persistEachVarietyUrlList(list);
+                    systemService.addVariety(list);
+                }
+                /****************************** 爬取链接 ************************************/
 
 
-        // todo 待测试
-        /****************************** 爬取链接 ************************************/
+                /****************************  爬取综艺节目 ********************************/
+                List<CrawlerVariety> varietyList = crawlerVarietyRepository.findAll();
 
-        List<String> hotList = new ArrayList<>();
-        List<String> newList = new ArrayList<>();
+                // 清除综艺url
+                crawlerService.deleteIqiyiVarietyURL();
 
-        for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
-            hotList.add("http://list.iqiyi.com/www/6/-------------11-" + i + "-1-iqiyi--.html");
+                /**
+                 * 持久化每部综艺作品的不同集
+                 */
+                for (CrawlerVariety variety : varietyList) {
+                    String url = variety.getUrl();
+                    String sorted = variety.getSorted();
+                    List<CrawlerVarietyURL> urlList = persistVarietyUrlList(url, sorted);
+                    crawlerService.persistVarietyUrlList(urlList);
+                    // 持久化至ElasticSearch
+                    systemService.addVarietyURL(urlList);
+                }
+                /****************************  爬取综艺节目 ********************************/
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
-            newList.add("http://list.iqiyi.com/www/6/-------------4-" + i + "-1-iqiyi--.html");
-        }
-
-        crawlerService.deleteIqiyiVariety();
-        /**
-         * 获取每部综艺作品链接
-         */
-        for (String s : hotList) {
-            List<CrawlerVariety> list = eachVarietyUrlList(s, "hot");
-            crawlerService.persistEachVarietyUrlList(list);
-            systemService.addVariety(list);
-        }
-        for (String s : newList) {
-            List<CrawlerVariety> list = eachVarietyUrlList(s, "new");
-            crawlerService.persistEachVarietyUrlList(list);
-            systemService.addVariety(list);
-        }
-        /****************************** 爬取链接 ************************************/
-
-
-        /****************************  爬取综艺节目 ********************************/
-        List<CrawlerVariety> varietyList = crawlerVarietyRepository.findAll();
-
-        // 清除综艺url
-        crawlerService.deleteIqiyiVarietyURL();
-
-        /**
-         * 持久化每部综艺作品的不同集
-         */
-        for (CrawlerVariety variety : varietyList) {
-            String url = variety.getUrl();
-            String sorted = variety.getSorted();
-            List<CrawlerVarietyURL> urlList = persistVarietyUrlList(url, sorted);
-            crawlerService.persistVarietyUrlList(urlList);
-            // 持久化至ElasticSearch
-            systemService.addVarietyURL(urlList);
-        }
-        /****************************  爬取综艺节目 ********************************/
-
     }
 
     /**

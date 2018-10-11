@@ -36,11 +36,10 @@ import static com.hxqh.crawler.common.Constants.SIZE;
 
 /**
  * @author Ocean Lin
- *         Created by Ocean lin on 2017/7/9.
+ * Created by Ocean lin on 2017/7/9.
  */
 @Component
 public class IqiyiTimer {
-
     @Autowired
     private SystemService systemService;
     @Autowired
@@ -51,8 +50,6 @@ public class IqiyiTimer {
     private CrawlerVarietyURLRepository crawlerVarietyURLRepository;
     @Autowired
     private CrawlerSoapURLRepository soapURLRepository;
-
-    private static Integer TOTAL_PAGE = 15;
 
     /**
      * 爬取爱奇艺电影数据
@@ -71,7 +68,6 @@ public class IqiyiTimer {
 
                 Integer partitionNUm = urlList.size() / Constants.IQIYI_THREAD_NUM + 1;
                 List<List<CrawlerURL>> lists = ListUtils.partition(urlList, partitionNUm);
-                // ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
                 ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.IQIYI_THREAD_NUM,
                         new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
 
@@ -116,7 +112,6 @@ public class IqiyiTimer {
                 Integer partitionNUm = urlList.size() / Constants.IQIYI_THREAD_NUM + 1;
                 List<List<CrawlerSoapURL>> lists = ListUtils.partition(urlList, partitionNUm);
 
-                // ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_THREAD_NUM);
                 ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.IQIYI_THREAD_NUM,
                         new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
 
@@ -142,25 +137,19 @@ public class IqiyiTimer {
 
     /**
      * 爬取爱奇艺综艺节目数据
-     *
+     * <p>
      * 改为每天17:30执行
      */
     @Scheduled(cron = "0 30 17 * * ?")
     public void iqiyiVariety() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
-
                 // 需要增加分页 vid
                 Sort sort = new Sort(Sort.Direction.DESC, "vid");
 
                 Pageable pageable = new PageRequest(PAGE, SIZE, sort);
                 Page<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll(pageable);
                 Integer totalPages = varietyURLList.getTotalPages();
-
-                // todo 后期移除 暂时爬取15万
-                if (totalPages > TOTAL_PAGE) {
-                    totalPages = TOTAL_PAGE;
-                }
 
                 for (int i = 0; i < totalPages; i++) {
                     pageable = new PageRequest(i, PAGE, sort);
@@ -173,7 +162,6 @@ public class IqiyiTimer {
                     Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
                     List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
 
-                    // ExecutorService service = Executors.newFixedThreadPool(Constants.IQIYI_VARIETY_THREAD_NUM);
                     ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.IQIYI_VARIETY_THREAD_NUM,
                             new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
 

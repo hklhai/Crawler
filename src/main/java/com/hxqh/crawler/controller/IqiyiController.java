@@ -5,18 +5,11 @@ import com.hxqh.crawler.controller.thread.PersistFilm;
 import com.hxqh.crawler.model.CrawlerSoapURL;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.CrawlerVariety;
-import com.hxqh.crawler.model.CrawlerVarietyURL;
 import com.hxqh.crawler.repository.*;
 import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
-import com.hxqh.crawler.util.CrawlerUtils;
-import com.hxqh.crawler.util.DateUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -131,19 +124,6 @@ public class IqiyiController {
     }
 
 
-    /**
-     * 每部综艺节目链接爬取
-     *
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping("/eachVarietyUrl")
-    public String eachVarietyUrl() throws Exception {
-
-
-        return "crawler/notice";
-    }
-
 
     /**
      * 每部综艺节目爬取
@@ -151,60 +131,8 @@ public class IqiyiController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/varietyUrl")
-    public String varietyUrl() throws Exception {
-
-
-        // todo 待测试
-        /****************************** 爬取链接 ************************************/
-
-        List<String> hotList = new ArrayList<>();
-        List<String> newList = new ArrayList<>();
-
-        for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
-            hotList.add("http://list.iqiyi.com/www/6/-------------11-" + i + "-1-iqiyi--.html");
-        }
-        for (int i = Constants.PAGE_START_NUM; i < Constants.PAGE_END_NUM; i++) {
-            newList.add("http://list.iqiyi.com/www/6/-------------4-" + i + "-1-iqiyi--.html");
-        }
-
-        crawlerService.deleteIqiyiVariety();
-        /**
-         * 获取每部综艺作品链接
-         */
-        for (String s : hotList) {
-            List<CrawlerVariety> list = eachVarietyUrlList(s, "hot");
-            crawlerService.persistEachVarietyUrlList(list);
-            systemService.addVariety(list);
-        }
-        for (String s : newList) {
-            List<CrawlerVariety> list = eachVarietyUrlList(s, "new");
-            crawlerService.persistEachVarietyUrlList(list);
-            systemService.addVariety(list);
-        }
-        /****************************** 爬取链接 ************************************/
-
-
-        /****************************  爬取综艺节目 ********************************/
-        List<CrawlerVariety> varietyList = crawlerVarietyRepository.findAll();
-
-        // 清除综艺url
-        crawlerService.deleteIqiyiVarietyURL();
-
-        /**
-         * 持久化每部综艺作品的不同集
-         */
-        for (CrawlerVariety variety : varietyList) {
-            String url = variety.getUrl();
-            String sorted = variety.getSorted();
-            List<CrawlerVarietyURL> urlList = persistVarietyUrlList(url, sorted);
-            crawlerService.persistVarietyUrlList(urlList);
-            // 持久化至ElasticSearch
-            systemService.addVarietyURL(urlList);
-        }
-        /****************************  爬取综艺节目 ********************************/
-
-
+    @RequestMapping("/variety")
+    public String variety() throws Exception {
 
 
         return "crawler/notice";
@@ -212,7 +140,7 @@ public class IqiyiController {
 
 
     /**
-     * 持久化综艺内容
+     * 采集每部综艺节目每集url
      *
      * @return
      * @throws Exception
@@ -220,35 +148,6 @@ public class IqiyiController {
     @RequestMapping("/varietyDataUrl")
     public String varietyDataUrl() throws Exception {
 
-        // 需要增加分页 vid
-        Sort sort = new Sort(Sort.Direction.ASC, "vid");
-
-        Pageable pageable = new PageRequest(PAGE, SIZE, sort);
-        Page<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll(pageable);
-        Integer totalPages = varietyURLList.getTotalPages();
-
-
-        for (int i = 0; i < totalPages; i++) {
-            pageable = new PageRequest(i, SIZE, sort);
-            Page<CrawlerVarietyURL> batch = crawlerVarietyURLRepository.findAll(pageable);
-            List<CrawlerVarietyURL> content = batch.getContent();
-
-            List<CrawlerVarietyURL> urlList = content.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
-                    -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
-
-            Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
-            List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
-
-            ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.IQIYI_VARIETY_THREAD_NUM,
-                    new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
-
-            for (List<CrawlerVarietyURL> l : lists) {
-                service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
-            }
-            service.shutdown();
-            while (!service.isTerminated()) {
-            }
-        }
 
         return "crawler/notice";
     }
@@ -273,46 +172,6 @@ public class IqiyiController {
         return "crawler/notice";
     }
 
-
-    /**
-     * @param url    每部综艺节目爬取URL
-     * @param sorted 综艺节目类别
-     * @return
-     */
-    private List<CrawlerVariety> eachVarietyUrlList(String url, String sorted) {
-        List<CrawlerVariety> eachVarietyList = new ArrayList<>();
-        try {
-            String html = CrawlerUtils.fetchHTMLContentByPhantomJs(url, 4);
-            Document document = Jsoup.parse(html);
-            Elements elements = document.getElementsByClass("site-piclist_pic");
-            Elements as = elements.select("a");
-            for (Element e : as) {
-                CrawlerVariety crawlerVariety = new CrawlerVariety(
-                        e.attr("href"),
-                        DateUtils.getTodayDate(),
-                        sorted);
-                eachVarietyList.add(crawlerVariety);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return eachVarietyList;
-    }
-
-    /**
-     * @param url    每部综艺节目爬取URL
-     * @param sorted 综艺节目类别
-     * @return
-     */
-    private List<CrawlerVarietyURL> persistVarietyUrlList(String url, String sorted) {
-        List<CrawlerVarietyURL> varietyURLList = new ArrayList<>();
-        try {
-            varietyURLList = CrawlerUtils.fetchVarietyURLByPhantomJs(url, Constants.IQIYI_VARIETY_WAIT_TIME, sorted);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return varietyURLList;
-    }
 
 }
 
