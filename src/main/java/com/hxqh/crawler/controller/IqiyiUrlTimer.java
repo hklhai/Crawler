@@ -61,9 +61,9 @@ public class IqiyiUrlTimer {
      * 2. 清除所有mysql数据
      * 3. 进行爬取
      * <p>
-     * 每月最后一个周六上午8:00
+     * 每月15号8点
      */
-    @Scheduled(cron = "0 0 8 ? * 7L")
+    @Scheduled(cron = "0 0 8 15 * ?")
     public void iqiyiFilmUrlList() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
@@ -126,9 +126,9 @@ public class IqiyiUrlTimer {
 
 
     /**
-     * 每月最后一个周六上午8:00
+     * 每月15号14点
      */
-    @Scheduled(cron = "0 0 14 ? * 7L")
+    @Scheduled(cron = "0 0 14 15 * ?")
     public void iqiyiSoapUrlList() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
@@ -206,13 +206,12 @@ public class IqiyiUrlTimer {
      * 1. 先爬取节目链接
      * 2. 再爬取每个链接对应节目URl
      * <p>
-     * "0 15 10 ? * 7L" 每月的最后一个星期六上午10:15触发
+     * 每月15号10点
      */
-    @Scheduled(cron = "0 15 10 ? * 7L")
+    @Scheduled(cron = "0 0 10 15 * ?")
     public void iqiyiVarietyUrlList() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {
-
                 /****************************** 爬取链接 ************************************/
 
                 List<String> hotList = new ArrayList<>();

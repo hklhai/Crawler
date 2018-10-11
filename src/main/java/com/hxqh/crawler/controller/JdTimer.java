@@ -7,23 +7,20 @@ import com.hxqh.crawler.repository.CrawlerBookURLRepository;
 import com.hxqh.crawler.repository.CrawlerProblemRepository;
 import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
-import com.hxqh.crawler.util.CrawlerUtils;
-import com.hxqh.crawler.util.DateUtils;
 import com.hxqh.crawler.util.HdfsUtils;
 import com.hxqh.crawler.util.HostUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.stream.Collectors;
@@ -53,9 +50,9 @@ public class JdTimer {
      * 2. 清除所有mysql数据
      * 3. 进行爬取
      * <p>
-     * "0 15 10 ? * 7L" 每月的最后一个星期六上午10:15触发
+     * 每月15号上午10:15触发
      */
-    @Scheduled(cron = "0 15 10 ? * 7L")
+    @Scheduled(cron = "0 15 10 15 * ?")
     public void jdUrlList() {
 
 
