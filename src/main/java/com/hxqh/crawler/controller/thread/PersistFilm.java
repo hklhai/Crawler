@@ -10,7 +10,6 @@ import com.hxqh.crawler.repository.CrawlerVarietyURLRepository;
 import com.hxqh.crawler.service.SystemService;
 import com.hxqh.crawler.util.CrawlerUtils;
 import com.hxqh.crawler.util.DateUtils;
-import com.hxqh.crawler.util.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -139,13 +138,26 @@ public class PersistFilm implements Runnable {
                 }
 
                 // 演员
+                Elements starList = doc.getElementsByClass("actor-name");
                 if (!"variety".equals(category)) {
-                    star = elements.get(2).select("a").text();
+                    star = starList.text().substring(5, starList.text().length());
                 } else {
-                    star = elements.get(0).select("a").text();
+                    for (int j = 1; j < starList.size(); j++) {
+                        String attr = starList.get(j).select("a").attr("title");
+                        star += attr;
+                        star += " ";
+                    }
+                    star = star.substring(0, star.length() - 1);
                 }
+
                 // 导演
-                director = elements.get(1).select("a").text();
+                if ("variety".equals(category)) {
+                    director = " ";
+                } else if ("film".equals(category)) {
+                    director = elements.get(0).select("a").text();
+                } else {
+                    director = elements.get(0).select("a").text();
+                }
 
                 // label
                 label = doc.getElementsByClass("qy-player-tag").get(0).select("a").text();

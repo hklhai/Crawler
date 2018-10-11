@@ -5,6 +5,7 @@ import com.hxqh.crawler.controller.thread.PersistFilm;
 import com.hxqh.crawler.model.CrawlerSoapURL;
 import com.hxqh.crawler.model.CrawlerURL;
 import com.hxqh.crawler.model.CrawlerVariety;
+import com.hxqh.crawler.model.CrawlerVarietyURL;
 import com.hxqh.crawler.repository.*;
 import com.hxqh.crawler.service.CrawlerService;
 import com.hxqh.crawler.service.SystemService;
@@ -102,7 +103,7 @@ public class IqiyiController {
      * @throws Exception
      */
     @RequestMapping("/soapUrl")
-    public String soapUrl() throws Exception {
+    public String soapUrl() {
         List<CrawlerSoapURL> soapURLList = soapURLRepository.findAll();
 
         List<CrawlerSoapURL> urlList = soapURLList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
@@ -122,7 +123,6 @@ public class IqiyiController {
         }
         return "crawler/notice";
     }
-
 
 
     /**
@@ -147,7 +147,34 @@ public class IqiyiController {
      */
     @RequestMapping("/varietyDataUrl")
     public String varietyDataUrl() throws Exception {
+        // 需要增加分页 vid
+        Sort sort = new Sort(Sort.Direction.DESC, "vid");
 
+        Pageable pageable = new PageRequest(PAGE, SIZE, sort);
+        Page<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll(pageable);
+        Integer totalPages = varietyURLList.getTotalPages();
+
+        for (int i = 0; i < totalPages; i++) {
+            pageable = new PageRequest(i, PAGE, sort);
+            Page<CrawlerVarietyURL> batch = crawlerVarietyURLRepository.findAll(pageable);
+            List<CrawlerVarietyURL> content = batch.getContent();
+
+            List<CrawlerVarietyURL> urlList = content.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                    -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+            Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
+            List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
+
+            ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.IQIYI_VARIETY_THREAD_NUM,
+                    new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
+
+            for (List<CrawlerVarietyURL> l : lists) {
+                service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
+            }
+            service.shutdown();
+            while (!service.isTerminated()) {
+            }
+        }
 
         return "crawler/notice";
     }
