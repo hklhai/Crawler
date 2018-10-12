@@ -155,7 +155,7 @@ public class IqiyiController {
         Integer totalPages = varietyURLList.getTotalPages();
 
         for (int i = 0; i < totalPages; i++) {
-            pageable = new PageRequest(i, PAGE, sort);
+            pageable = new PageRequest(i, SIZE, sort);
             Page<CrawlerVarietyURL> batch = crawlerVarietyURLRepository.findAll(pageable);
             List<CrawlerVarietyURL> content = batch.getContent();
 

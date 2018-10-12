@@ -140,6 +140,6 @@ public interface Constants {
     String DOUBAN_SEARCH_URL = "https://www.douban.com/search?q=";
 
 
-    Integer PAGE = 1;
+    Integer PAGE = 0;
     Integer SIZE = 10000;
 }
