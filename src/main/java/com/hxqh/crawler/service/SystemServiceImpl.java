@@ -289,7 +289,7 @@ public class SystemServiceImpl implements SystemService {
                     field("addtime", todayTime).endObject();
 
             IndexResponse result = this.client.prepareIndex(Constants.LITERATURE_INDEX, Constants.LITERATURE_TYPE).setSource(content).get();
-            System.out.println(literature.getName() + " Persist to ES Success!");
+            // System.out.println(literature.getName() + " Persist to ES Success!");
             return new ResponseEntity(result.getId(), HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
@@ -360,7 +360,7 @@ public class SystemServiceImpl implements SystemService {
                         field("url", crawlerVariety.getUrl()).
                         field("createTime", todayTime).endObject();
                 this.client.prepareIndex(Constants.HISTORY_VARIETY_INDEX, Constants.HISTORY_VARIETY_TYPE).setSource(content).get();
-                System.out.println(crawlerVariety.getUrl() + " Persist to ES Success!");
+                // System.out.println(crawlerVariety.getUrl() + " Persist to ES Success!");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -384,7 +384,7 @@ public class SystemServiceImpl implements SystemService {
                         field("createTime", todayTime).endObject();
 
                 this.client.prepareIndex(Constants.HISTORY_VARIETY_URL_INDEX, Constants.HISTORY_VARIETY_URL_TYPE).setSource(content).get();
-                System.out.println(crawlerVariety.getTitle() + " Persist to ES Success!");
+                // System.out.println(crawlerVariety.getTitle() + " Persist to ES Success!");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -404,7 +404,7 @@ public class SystemServiceImpl implements SystemService {
                     field("createTime", todayTime).endObject();
 
             this.client.prepareIndex(Constants.BOOK_URL_INDEX, Constants.BOOK_URL_TYPE).setSource(content).get();
-            System.out.println(crawlerBookURL.getTitle() + " Persist to ES Success!");
+            // System.out.println(crawlerBookURL.getTitle() + " Persist to ES Success!");
         } catch (IOException e) {
             e.printStackTrace();
         }
