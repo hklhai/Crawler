@@ -51,9 +51,6 @@ public class IqiyiTimer {
     @Autowired
     private CrawlerSoapURLRepository soapURLRepository;
 
-
-    private final static Integer TOTAL_PAGES = 2;
-
     /**
      * 爬取爱奇艺电影数据
      */
@@ -153,11 +150,6 @@ public class IqiyiTimer {
                 Pageable pageable = new PageRequest(PAGE, SIZE, sort);
                 Page<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll(pageable);
                 Integer totalPages = varietyURLList.getTotalPages();
-
-                // todo 2w 网络资源不足
-                if (totalPages > TOTAL_PAGES) {
-                    totalPages = TOTAL_PAGES;
-                }
 
                 for (int i = 0; i < totalPages; i++) {
                     pageable = new PageRequest(i, SIZE, sort);
