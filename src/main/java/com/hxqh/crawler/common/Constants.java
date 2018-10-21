@@ -40,7 +40,7 @@ public interface Constants {
      * Linux 爬虫线程数据与各分区的数量
      */
     Integer IQIYI_THREAD_NUM = 10;
-    Integer IQIYI_VARIETY_THREAD_NUM = 35;
+    Integer IQIYI_VARIETY_THREAD_NUM = 55;
     Integer TENCENT_THREAD_NUM = 10;
     Integer JD_THREAD_NUM = 10;
     Integer DOUBAN_THREAD_NUM = 10;
