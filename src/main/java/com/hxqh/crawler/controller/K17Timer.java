@@ -144,7 +144,7 @@ public class K17Timer {
     @Scheduled(cron = "0 3 15 * * ?")
     public void status() {
         try {
-            if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
+            if (HostUtils.getHostName().equals(Constants.HOST_SPARK3)) {
                 Map<String, Integer> map = new HashMap<>(10);
 
                 GetIndexResponse response = client.admin().indices().prepareGetIndex().execute().actionGet();
