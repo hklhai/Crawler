@@ -141,5 +141,8 @@ public interface Constants {
 
 
     Integer PAGE = 0;
-    Integer SIZE = 10000;
+    Integer SIZE = 1000;
+
+    Integer TOTAL_PAGES = 15;
+
 }

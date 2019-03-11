@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import static com.hxqh.crawler.common.Constants.PAGE;
 import static com.hxqh.crawler.common.Constants.SIZE;
+import static com.hxqh.crawler.common.Constants.TOTAL_PAGES;
 
 /**
  * @author Ocean Lin
@@ -51,7 +52,6 @@ public class IqiyiTimer {
     @Autowired
     private CrawlerSoapURLRepository soapURLRepository;
 
-    private final static Integer TOTAL_PAGES = 2;
     /**
      * 爬取爱奇艺电影数据
      */

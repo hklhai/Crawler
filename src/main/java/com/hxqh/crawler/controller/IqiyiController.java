@@ -27,8 +27,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.stream.Collectors;
 
-import static com.hxqh.crawler.common.Constants.PAGE;
-import static com.hxqh.crawler.common.Constants.SIZE;
+import static com.hxqh.crawler.common.Constants.*;
 
 
 /**
@@ -132,6 +131,41 @@ public class IqiyiController {
      */
     @RequestMapping("/variety")
     public String variety() throws Exception {
+
+
+        // 需要增加分页 vid
+        Sort sort = new Sort(Sort.Direction.DESC, "vid");
+
+        Pageable pageable = new PageRequest(PAGE, SIZE, sort);
+        Page<CrawlerVarietyURL> varietyURLList = crawlerVarietyURLRepository.findAll(pageable);
+        Integer totalPages = varietyURLList.getTotalPages();
+
+        // todo 2w 网络资源不足
+        if (totalPages > TOTAL_PAGES) {
+            totalPages = TOTAL_PAGES;
+        }
+
+        for (int i = 0; i < totalPages; i++) {
+            pageable = new PageRequest(i, SIZE, sort);
+            Page<CrawlerVarietyURL> batch = crawlerVarietyURLRepository.findAll(pageable);
+            List<CrawlerVarietyURL> content = batch.getContent();
+
+            List<CrawlerVarietyURL> urlList = content.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                    -> new TreeSet<>(Comparator.comparing(o -> o.getUrl()))), ArrayList::new));
+
+            Integer partitionNUm = urlList.size() / Constants.IQIYI_VARIETY_THREAD_NUM + 1;
+            List<List<CrawlerVarietyURL>> lists = ListUtils.partition(urlList, partitionNUm);
+
+            ScheduledExecutorService service = new ScheduledThreadPoolExecutor(Constants.IQIYI_VARIETY_THREAD_NUM,
+                    new BasicThreadFactory.Builder().namingPattern("example-schedule-pool-%d").daemon(true).build());
+
+            for (List<CrawlerVarietyURL> l : lists) {
+                service.execute(new PersistFilm(l, crawlerVarietyURLRepository, systemService));
+            }
+            service.shutdown();
+            while (!service.isTerminated()) {
+            }
+        }
 
 
         return "crawler/notice";
