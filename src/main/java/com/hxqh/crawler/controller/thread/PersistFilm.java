@@ -110,6 +110,10 @@ public class PersistFilm implements Runnable {
                 }
 
 
+                if (!url.startsWith("http")) {
+                    url = "http:" + url;
+                }
+
                 String html = CrawlerUtils.fetchHTMLContent(url, Constants.DEFAULT_SEELP_SECOND_IQIYI);
                 Document doc = Jsoup.parse(html);
 
