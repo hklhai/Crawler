@@ -39,6 +39,7 @@ import static com.hxqh.crawler.common.Constants.TOTAL_PAGES;
  * @author Ocean Lin
  * Created by Ocean lin on 2017/7/9.
  */
+@SuppressWarnings("Duplicates")
 @Component
 public class IqiyiTimer {
     @Autowired
@@ -183,6 +184,9 @@ public class IqiyiTimer {
             e.printStackTrace();
         }
     }
+
+
+
 
 
 }
