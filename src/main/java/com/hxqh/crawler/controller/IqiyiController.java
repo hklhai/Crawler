@@ -114,8 +114,6 @@ public class IqiyiController {
         }
         crawlerService.persistFilmUrl(hrefMap);
 
-
-
         return "crawler/notice";
     }
 
@@ -327,7 +325,7 @@ public class IqiyiController {
         List<CrawlerVariety> varietyList = crawlerVarietyRepository.findAll();
 
         // 清除综艺url
-        crawlerService.deleteIqiyiVarietyURL();
+        // crawlerService.deleteIqiyiVarietyURL();
 
         /**
          * 持久化每部综艺作品的不同集

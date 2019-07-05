@@ -63,7 +63,7 @@ public class IqiyiUrlTimer {
      * <p>
      * 每月15号8点
      */
-    @Scheduled(cron = "0 0 8 15 * ?")
+    // @Scheduled(cron = "0 0 8 15 * ?")
     public void iqiyiFilmUrlList() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK1)) {
@@ -128,7 +128,7 @@ public class IqiyiUrlTimer {
     /**
      * 每月15号14点
      */
-    @Scheduled(cron = "0 0 14 15 * ?")
+    // @Scheduled(cron = "0 0 14 15 * ?")
     public void iqiyiSoapUrlList() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK4)) {
@@ -208,7 +208,7 @@ public class IqiyiUrlTimer {
      * <p>
      * 每月15号10点
      */
-    @Scheduled(cron = "0 0 10 15 * ?")
+    //@Scheduled(cron = "0 0 10 15 * ?")
     public void iqiyiVarietyUrlList() {
         try {
             if (HostUtils.getHostName().equals(Constants.HOST_SPARK2)) {

@@ -88,7 +88,7 @@ public class CrawlerServiceImpl implements CrawlerService {
     @Override
     public void persistFilmUrl(Map<String, URLInfo> hrefMap) {
         // 清除所有mysql数据
-        deleteIqiyiFilm();
+//        deleteIqiyiFilm();
         CrawlerUtils.persistCrawlerURL(hrefMap, crawlerURLRepository);
     }
 
